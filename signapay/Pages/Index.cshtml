@@ -1,0 +1,167 @@
+﻿@page
+@using System.Transactions
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+</div>
+<div class="container">
+    <div class="mb-3 mt-3">
+        <form method="post" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label class="form-label">Upload File</label>
+                <input type="file" name="file" class="form-control" />
+            </div>
+            <div class="mb-3">
+                <button type="submit" class="btn btn-primary">Upload</button>
+            </div>
+        </form>
+    </div>
+
+    <hr/>
+
+    <h1>Account and cards with totals</h1>
+    <table class="table table-striped" data-sort-name="Account Name" data-sort-order="desc">
+        <thead>
+            <tr>
+                <th scope="col">Account Name</th>
+                <th scope="col">Card Number</th>
+                <th scope="col">Amount</th>
+            </tr>
+        </thead>
+        <tbody id="table-body-report1">
+            @foreach (String account in Model.accounts)
+            {
+                @foreach (KeyValuePair<string, double> info in Model.accountInfo[@account])
+                {
+                    <tr>
+                        <td>
+                            @account
+                        </td>
+                        <td>
+                            @info.Key
+                        </td>
+                        <td>
+                            @info.Value
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+
+    <h1>Go to collections</h1>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">Account Name</th>
+                <th scope="col">Card Number</th>
+                <th scope="col">Amount</th>
+            </tr>
+        </thead>
+        <tbody id="table-body-report2">
+            @foreach (String account in Model.accounts)
+            {
+                @foreach (KeyValuePair<string, double> info in Model.accountInfo[@account])
+                {
+                    @if (@info.Value < 0.0){
+                        <tr>
+                            <td>
+                                @account
+                            </td>
+                            <td>
+                                @info.Key
+                            </td>
+                            <td>
+                                @info.Value
+                            </td>
+                        </tr>
+                    }
+                }
+            }
+        </tbody>
+    </table>
+
+    <h1>Bad Transactions</h1>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">Account Name</th>
+                <th scope="col">Card Number</th>
+                <th scope="col">Transaction Amount</th>
+                <th scope="col">Transaction Type</th>
+                <th scope="col">Description</th>
+                <th scope="col">Target Card Number</th>
+            </tr>
+        </thead>
+        <tbody id="table-body-report3">
+            @foreach (Transaction transaction in Model.BadTransactions)
+            {
+                <tr>
+                    <td>
+                        @transaction.AccountName
+                    </td>
+                    <td>
+                        @transaction.CardNumber
+                    </td>
+                    <td>
+                        @transaction.TransactionAmount
+                    </td>
+                    <td>
+                        @transaction.TransactionType
+                    </td>
+                    <td>
+                        @transaction.Description
+                    </td>
+                    <td>
+                        @transaction.TargetCardNumber
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <h1>All Transactions</h1>
+    <table class="table table-striped" data-sort-name="Account Name" data-sort-order="desc">
+        <thead>
+            <tr>
+                <th scope="col">Account Name</th>
+                <th scope="col">Card Number</th>
+                <th scope="col">Transaction Amount</th>
+                <th scope="col">Transaction Type</th>
+                <th scope="col">Description</th>
+                <th scope="col">Target Card Number</th>
+            </tr>
+        </thead>
+        <tbody id="table-body">
+            @foreach (Transaction transaction in Model.Transactions)
+            {
+                <tr>
+                    <td>
+                        @transaction.AccountName
+                    </td>
+                    <td>
+                        @transaction.CardNumber
+                    </td>
+                    <td>
+                        @transaction.TransactionAmount
+                    </td>
+                    <td>
+                        @transaction.TransactionType
+                    </td>
+                    <td>
+                        @transaction.Description
+                    </td>
+                    <td>
+                        @transaction.TargetCardNumber
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+
+</div>
