@@ -1,0 +1,82 @@
+﻿@{
+    ViewData["Title"] = "Report";
+    var accounts = ViewBag.Accounts as List<DataReader.Models.Account>;
+    var collections = ViewBag.Collections as List<DataReader.Models.Account>;
+    var badTransactions = ViewBag.BadTransactions as List<DataReader.Models.BadTransaction>;
+}
+
+<h2>Accounts</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Account Name</th>
+            <th>Card</th>
+            <th>Balance</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (accounts != null && accounts.Count > 0)
+        {
+            @foreach (var account in accounts)
+            {
+                foreach (var card in account.Cards)
+                {
+                    <tr>
+                        <td>@account.Name</td>
+                        <td>@card.Number</td>
+                        <td>@card.Balance</td>
+                    </tr>
+                }
+            }
+        }
+    </tbody>
+</table>
+
+<h2>Collections</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Account Name</th>
+            <th>Card</th>
+            <th>Balance</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (collections != null && collections.Count > 0)
+        {
+            @foreach (var account in collections)
+            {
+                foreach (var card in account.Cards)
+                {
+                    <tr>
+                        <td>@account.Name</td>
+                        <td>@card.Number</td>
+                        <td>@card.Balance</td>
+                    </tr>
+                }
+            }
+        }
+    </tbody>
+</table>
+
+<h2>Bad Transactions</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Transaction ID</th>
+            <th>Details</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (badTransactions != null && badTransactions.Count > 0)
+        {
+            @foreach (var transaction in badTransactions)
+            {
+                <tr>
+                    <td>@transaction.TransactionId</td>
+                    <td>@transaction.Details</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

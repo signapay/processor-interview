@@ -1,0 +1,14 @@
+﻿
+
+<form method="post" enctype="multipart/form-data">
+    <div class="row">
+        <label>Select File</label>
+        <input type="file" name="file" />
+    </div>
+    <div class="row" style="padding-top: 10px;">
+        <div class="col-3">
+            <input type="submit" asp-controller="Home" asp-action="CsvFileReader" class="btn btn-dark" value="Read Excel File" />
+        </div>
+    </div>
+</form>
+

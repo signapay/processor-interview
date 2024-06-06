@@ -1,0 +1,57 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v7.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v7.0": {
+      "DataReader/1.0.0": {
+        "dependencies": {
+          "CsvHelper": "32.0.3",
+          "ExcelDataReader": "3.6.0"
+        },
+        "runtime": {
+          "DataReader.dll": {}
+        }
+      },
+      "CsvHelper/32.0.3": {
+        "runtime": {
+          "lib/net7.0/CsvHelper.dll": {
+            "assemblyVersion": "32.0.0.0",
+            "fileVersion": "32.0.3.22"
+          }
+        }
+      },
+      "ExcelDataReader/3.6.0": {
+        "runtime": {
+          "lib/netstandard2.0/ExcelDataReader.dll": {
+            "assemblyVersion": "3.6.0.0",
+            "fileVersion": "3.6.0.0"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "DataReader/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "CsvHelper/32.0.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-JNDkd4Wc2Tim5IuyL8Ai13RhzRvaHItseEvlJ2YRkx2SMBFrIsW8a5+/o4/O1jsb6mlviihR6Hfyn+nqY6CurA==",
+      "path": "csvhelper/32.0.3",
+      "hashPath": "csvhelper.32.0.3.nupkg.sha512"
+    },
+    "ExcelDataReader/3.6.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-eXyxTwG7EEWpgQX3juZ2KcndqTqm/ydx9GXS2lUiMJU54U4h5eXdygRtVgINv0t60ezPWEb+lL7uM7Q+wm5BBA==",
+      "path": "exceldatareader/3.6.0",
+      "hashPath": "exceldatareader.3.6.0.nupkg.sha512"
+    }
+  }
+}

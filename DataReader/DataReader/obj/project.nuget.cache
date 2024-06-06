@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "kIqV1lRENqlbrg/vXy5EgxxatanSDe56dh/+JHcJRqLMFlhsdD6dPHxhxvexoKUBpHuo/caK3ijwNoISsahjfw==",
+  "success": true,
+  "projectFilePath": "C:\\Workspace\\processor-interview\\DataReader\\DataReader\\DataReader.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\preet\\.nuget\\packages\\csvhelper\\32.0.3\\csvhelper.32.0.3.nupkg.sha512",
+    "C:\\Users\\preet\\.nuget\\packages\\exceldatareader\\3.6.0\\exceldatareader.3.6.0.nupkg.sha512"
+  ],
+  "logs": []
+}
