@@ -35,94 +35,98 @@ namespace signapay.Pages
             this.ifileUploadService = ifileUploadService;
         }
 
-        public void OnGet()
+        public async void OnGet()
         {
 
         }
 
-        public async void OnPost(IFormFile file)
+        public async Task OnPostAsync(IFormFile file)
         {
             if (file != null)
             {
                 FilePath = await ifileUploadService.UploadFileAsync(file);
-
-                int x = 0;
-                using (var reader = new StreamReader(FilePath))
+                await Task.Run(() => 
                 {
-                    while (reader.EndOfStream == false)
+                    int x = 0;
+                    using (var reader = new StreamReader(FilePath))
                     {
-                        var content = reader.ReadLine();
-                        var cells = content.Split(',').ToList();
-                        if (RowHasData(cells))
+                        while(reader.EndOfStream == false)
                         {
-                            if (string.IsNullOrEmpty(cells[0]) || string.IsNullOrEmpty(cells[1]) || string.IsNullOrEmpty(cells[3]) || string.IsNullOrEmpty(cells[4]))
+                            var content = reader.ReadLine();
+                            var cells = content.Split(',').ToList();
+                            if (RowHasData(cells))
                             {
-                                Debug.WriteLine("Bad!");
-                                Debug.WriteLine(cells[0]);
-                                BadTransactions.Add(new Transaction { AccountName = cells[0], CardNumber = cells[1], TransactionAmount = cells[2], TransactionType = cells[3], Description = cells[4], TargetCardNumber = cells[5] });
-
-                            }
-                            else
-                            {
-                                Debug.WriteLine("Good!");
-                                Debug.WriteLine(cells[0]);
-                                Transactions.Add(new Transaction { AccountName = cells[0], CardNumber = cells[1], TransactionAmount = cells[2], TransactionType = cells[3], Description = cells[4], TargetCardNumber = cells[5] });
-
-                                if (!accounts.Contains(cells[0]))
+                                if (string.IsNullOrEmpty(cells[0]) || string.IsNullOrEmpty(cells[1]) || string.IsNullOrEmpty(cells[3]) || string.IsNullOrEmpty(cells[4]))
                                 {
-                                    accounts.Add(cells[0]);
+                                    Debug.WriteLine("Bad!");
+                                    Debug.WriteLine(cells[0]);
+                                    BadTransactions.Add(new Transaction { AccountName = cells[0], CardNumber = cells[1], TransactionAmount = cells[2], TransactionType = cells[3], Description = cells[4], TargetCardNumber = cells[5] });
+
                                 }
-                            }
+                                else
+                                {
+                                    Debug.WriteLine("Good!");
+                                    Debug.WriteLine(cells[0]);
+                                    Transactions.Add(new Transaction { AccountName = cells[0], CardNumber = cells[1], TransactionAmount = cells[2], TransactionType = cells[3], Description = cells[4], TargetCardNumber = cells[5] });
+
+                                    if (!accounts.Contains(cells[0]))
+                                    {
+                                        accounts.Add(cells[0]);
+                                    }
+                                }
                             
-                        }
-
-                    }
-
-                    foreach (var item in Transactions)
-                    {
-                        Dictionary<string, double> cardInfo = new Dictionary<string, double>();
-                        if (!accountInfo.ContainsKey(item.AccountName))
-                        {
-                            double transactionAmount = 0;
-                            if (double.TryParse(item.TransactionAmount, out transactionAmount))
-                            {
-                                cardInfo.Add(item.CardNumber, transactionAmount);
                             }
-                            accountInfo.Add(item.AccountName, cardInfo);
+
                         }
-                        else
+
+                        foreach (var item in Transactions)
                         {
-                            if (!accountInfo[item.AccountName].ContainsKey(item.CardNumber))
+                            Dictionary<string, double> cardInfo = new Dictionary<string, double>();
+                            if (!accountInfo.ContainsKey(item.AccountName))
                             {
                                 double transactionAmount = 0;
                                 if (double.TryParse(item.TransactionAmount, out transactionAmount))
                                 {
-                                    foreach (var moreInfo in accountInfo[item.AccountName])
-                                    {
-                                        cardInfo.Add(moreInfo.Key, moreInfo.Value);
-                                    }
                                     cardInfo.Add(item.CardNumber, transactionAmount);
-
-                                    accountInfo[item.AccountName] = cardInfo;
-
                                 }
+                                accountInfo.Add(item.AccountName, cardInfo);
                             }
                             else
                             {
-                                double val;
-                                if (accountInfo[item.AccountName].TryGetValue(item.CardNumber, out val))
+                                if (!accountInfo[item.AccountName].ContainsKey(item.CardNumber))
                                 {
                                     double transactionAmount = 0;
                                     if (double.TryParse(item.TransactionAmount, out transactionAmount))
                                     {
-                                        accountInfo[item.AccountName][item.CardNumber] = val + transactionAmount;
+                                        foreach (var moreInfo in accountInfo[item.AccountName])
+                                        {
+                                            cardInfo.Add(moreInfo.Key, moreInfo.Value);
+                                        }
+                                        cardInfo.Add(item.CardNumber, transactionAmount);
+
+                                        accountInfo[item.AccountName] = cardInfo;
+
+                                    }
+                                }
+                                else
+                                {
+                                    double val;
+                                    if (accountInfo[item.AccountName].TryGetValue(item.CardNumber, out val))
+                                    {
+                                        double transactionAmount = 0;
+                                        if (double.TryParse(item.TransactionAmount, out transactionAmount))
+                                        {
+                                            accountInfo[item.AccountName][item.CardNumber] = val + transactionAmount;
+                                        }
                                     }
                                 }
                             }
                         }
+                        Debug.WriteLine("DONE!");
                     }
-                }
+                });
             }
+            return;
         }
 
         static bool RowHasData(List<string> cells)

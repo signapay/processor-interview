@@ -20,3 +20,15 @@ html {
 body {
   margin-bottom: 60px;
 }
+#AccountInfo{
+    display: none;
+}
+#Collections {
+    display: none;
+}
+#BadTransactions {
+    display: none;
+}
+#AllTransactions {
+    display: none;
+}

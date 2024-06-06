@@ -20,54 +20,30 @@
             </div>
         </form>
     </div>
-
     <hr/>
-
-    <h1>Account and cards with totals</h1>
-    <table class="table table-striped" data-sort-name="Account Name" data-sort-order="desc">
-        <thead>
-            <tr>
-                <th scope="col">Account Name</th>
-                <th scope="col">Card Number</th>
-                <th scope="col">Amount</th>
-            </tr>
-        </thead>
-        <tbody id="table-body-report1">
-            @foreach (String account in Model.accounts)
-            {
-                @foreach (KeyValuePair<string, double> info in Model.accountInfo[@account])
+    <div>
+        <div class="mb-3">
+            <button type="button" id="accountInfo" class="btn btn-primary" onclick="accountInfo('AccountInfo')">Account Info Display</button>
+            <button type="button" id="collections" class="btn btn-primary" onclick="accountInfo('Collections')">Collections Display</button>
+            <button type="button" id="badTransactions" class="btn btn-primary" onclick="accountInfo('BadTransactions')">Bad Transactions</button>
+            <button type="button" id="badTransactions" class="btn btn-primary" onclick="accountInfo('AllTransactions')">All Transactions</button>
+        </div>
+    </div>
+    <div id="AccountInfo" class="accountTables">
+        <h1>Account and cards with totals</h1>
+        <table class="table table-striped" data-sort-name="Account Name" data-sort-order="desc">
+            <thead>
+                <tr>
+                    <th scope="col">Account Name</th>
+                    <th scope="col">Card Number</th>
+                    <th scope="col">Amount</th>
+                </tr>
+            </thead>
+            <tbody id="table-body-report1">
+                @foreach (String account in Model.accounts)
                 {
-                    <tr>
-                        <td>
-                            @account
-                        </td>
-                        <td>
-                            @info.Key
-                        </td>
-                        <td>
-                            @info.Value
-                        </td>
-                    </tr>
-                }
-            }
-        </tbody>
-    </table>
-
-    <h1>Go to collections</h1>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th scope="col">Account Name</th>
-                <th scope="col">Card Number</th>
-                <th scope="col">Amount</th>
-            </tr>
-        </thead>
-        <tbody id="table-body-report2">
-            @foreach (String account in Model.accounts)
-            {
-                @foreach (KeyValuePair<string, double> info in Model.accountInfo[@account])
-                {
-                    @if (@info.Value < 0.0){
+                    @foreach (KeyValuePair<string, double> info in Model.accountInfo[@account])
+                    {
                         <tr>
                             <td>
                                 @account
@@ -81,87 +57,125 @@
                         </tr>
                     }
                 }
-            }
-        </tbody>
-    </table>
+            </tbody>
+        </table>
+    </div>
 
-    <h1>Bad Transactions</h1>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th scope="col">Account Name</th>
-                <th scope="col">Card Number</th>
-                <th scope="col">Transaction Amount</th>
-                <th scope="col">Transaction Type</th>
-                <th scope="col">Description</th>
-                <th scope="col">Target Card Number</th>
-            </tr>
-        </thead>
-        <tbody id="table-body-report3">
-            @foreach (Transaction transaction in Model.BadTransactions)
-            {
+    <div id="Collections" class="accountTables">
+        <h1>Go to collections</h1>
+        <table class="table table-striped">
+            <thead>
                 <tr>
-                    <td>
-                        @transaction.AccountName
-                    </td>
-                    <td>
-                        @transaction.CardNumber
-                    </td>
-                    <td>
-                        @transaction.TransactionAmount
-                    </td>
-                    <td>
-                        @transaction.TransactionType
-                    </td>
-                    <td>
-                        @transaction.Description
-                    </td>
-                    <td>
-                        @transaction.TargetCardNumber
-                    </td>
+                    <th scope="col">Account Name</th>
+                    <th scope="col">Card Number</th>
+                    <th scope="col">Amount</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody id="table-body-report2">
+                @foreach (String account in Model.accounts)
+                {
+                    @foreach (KeyValuePair<string, double> info in Model.accountInfo[@account])
+                    {
+                        @if (@info.Value < 0.0)
+                        {
+                            <tr>
+                                <td>
+                                    @account
+                                </td>
+                                <td>
+                                    @info.Key
+                                </td>
+                                <td>
+                                    @info.Value
+                                </td>
+                            </tr>
+                        }
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
 
-    <h1>All Transactions</h1>
-    <table class="table table-striped" data-sort-name="Account Name" data-sort-order="desc">
-        <thead>
-            <tr>
-                <th scope="col">Account Name</th>
-                <th scope="col">Card Number</th>
-                <th scope="col">Transaction Amount</th>
-                <th scope="col">Transaction Type</th>
-                <th scope="col">Description</th>
-                <th scope="col">Target Card Number</th>
-            </tr>
-        </thead>
-        <tbody id="table-body">
-            @foreach (Transaction transaction in Model.Transactions)
-            {
+    <div id="BadTransactions" class="accountTables">
+        <h1>Bad Transactions</h1>
+        <table class="table table-striped">
+            <thead>
                 <tr>
-                    <td>
-                        @transaction.AccountName
-                    </td>
-                    <td>
-                        @transaction.CardNumber
-                    </td>
-                    <td>
-                        @transaction.TransactionAmount
-                    </td>
-                    <td>
-                        @transaction.TransactionType
-                    </td>
-                    <td>
-                        @transaction.Description
-                    </td>
-                    <td>
-                        @transaction.TargetCardNumber
-                    </td>
+                    <th scope="col">Account Name</th>
+                    <th scope="col">Card Number</th>
+                    <th scope="col">Transaction Amount</th>
+                    <th scope="col">Transaction Type</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Target Card Number</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody id="table-body-report3">
+                @foreach (Transaction transaction in Model.BadTransactions)
+                {
+                    <tr>
+                        <td>
+                            @transaction.AccountName
+                        </td>
+                        <td>
+                            @transaction.CardNumber
+                        </td>
+                        <td>
+                            @transaction.TransactionAmount
+                        </td>
+                        <td>
+                            @transaction.TransactionType
+                        </td>
+                        <td>
+                            @transaction.Description
+                        </td>
+                        <td>
+                            @transaction.TargetCardNumber
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 
-
+    <div id="AllTransactions" class="accountTables">
+        <h1>All Transactions</h1>
+        <table class="table table-striped" data-sort-name="Account Name" data-sort-order="desc">
+            <thead>
+                <tr>
+                    <th scope="col">Account Name</th>
+                    <th scope="col">Card Number</th>
+                    <th scope="col">Transaction Amount</th>
+                    <th scope="col">Transaction Type</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Target Card Number</th>
+                </tr>
+            </thead>
+            <tbody id="table-body">
+                @foreach (Transaction transaction in Model.Transactions)
+                {
+                    <tr>
+                        <td>
+                            @transaction.AccountName
+                        </td>
+                        <td>
+                            @transaction.CardNumber
+                        </td>
+                        <td>
+                            @transaction.TransactionAmount
+                        </td>
+                        <td>
+                            @transaction.TransactionType
+                        </td>
+                        <td>
+                            @transaction.Description
+                        </td>
+                        <td>
+                            @transaction.TargetCardNumber
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    
 </div>
