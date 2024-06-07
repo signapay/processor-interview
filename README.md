@@ -1,3 +1,8 @@
+# Install
+Visual studios -> ASP.NET and web dev workloads
+When opened in visual studios click on the signapay.sln and wait for project to build 
+Run http play button.
+
 # Transaction Processor
 
 ## Context
