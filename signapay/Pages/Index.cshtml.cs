@@ -2,12 +2,14 @@ using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Caching.Memory;
 using signapay.FileUpload;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using System.Security.Principal;
 using System.Transactions;
 using static System.Formats.Asn1.AsnWriter;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -18,6 +20,9 @@ namespace signapay.Pages
     {
         private readonly ILogger<IndexModel> _logger;
         private readonly IfileUploadService ifileUploadService;
+        private readonly IMemoryCache _cache;
+
+        //private readonly string cacheKey = "AccountCacheKey";
 
         public string FilePath;
 
@@ -28,20 +33,38 @@ namespace signapay.Pages
 
         public List<string> accounts = new List<string>();
 
+        
+        public Dictionary<string, Dictionary<string, double>> SavedAccountInfo = new Dictionary<string, Dictionary<string, double>>();
 
-        public IndexModel(ILogger<IndexModel> logger, IfileUploadService ifileUploadService)
+        public List<Transaction> SavedTransactions { get; set; } = new List<Transaction>();
+        public List<Transaction> SavedBadTransactions { get; set; } = new List<Transaction>();
+
+        public List<string> Savedaccounts = new List<string>();
+
+
+        public IndexModel(ILogger<IndexModel> logger, IfileUploadService ifileUploadService, IMemoryCache cache)
         {
             _logger = logger;
             this.ifileUploadService = ifileUploadService;
+            _cache = cache;
         }
 
         public async void OnGet()
         {
+            if (_cache.TryGetValue("AccountCacheKey", out List<string> cacheValue))
+            {
+                Savedaccounts = cacheValue;
 
+                SavedAccountInfo = (Dictionary<string, Dictionary<string, double>>)_cache.Get("AccountInfoCacheKey");
+
+                SavedTransactions = (List<Transaction>)_cache.Get("SavedTransactionsCacheKey");
+
+                SavedBadTransactions = (List<Transaction>)_cache.Get("SavedBadTransactionsCacheKey");
+            }
         }
-
-        public async Task OnPostAsync(IFormFile file)
+        public async Task OnPostAsync(IFormFile file) 
         {
+            Debug.WriteLine("On Post");
             if (file != null)
             {
                 FilePath = await ifileUploadService.UploadFileAsync(file);
@@ -50,7 +73,18 @@ namespace signapay.Pages
                     int x = 0;
                     using (var reader = new StreamReader(FilePath))
                     {
-                        while(reader.EndOfStream == false)
+                        if (_cache.TryGetValue("AccountCacheKey", out List<string> cacheValue))
+                        {
+
+                            accounts = cacheValue;
+
+                            accountInfo = (Dictionary<string, Dictionary<string, double>>)_cache.Get("AccountInfoCacheKey");
+
+                            Transactions = (List<Transaction>)_cache.Get("SavedTransactionsCacheKey");
+
+                            BadTransactions = (List<Transaction>)_cache.Get("SavedBadTransactionsCacheKey");
+                        }
+                        while (reader.EndOfStream == false)
                         {
                             var content = reader.ReadLine();
                             var cells = content.Split(',').ToList();
@@ -58,15 +92,11 @@ namespace signapay.Pages
                             {
                                 if (string.IsNullOrEmpty(cells[0]) || string.IsNullOrEmpty(cells[1]) || string.IsNullOrEmpty(cells[3]) || string.IsNullOrEmpty(cells[4]))
                                 {
-                                    Debug.WriteLine("Bad!");
-                                    Debug.WriteLine(cells[0]);
                                     BadTransactions.Add(new Transaction { AccountName = cells[0], CardNumber = cells[1], TransactionAmount = cells[2], TransactionType = cells[3], Description = cells[4], TargetCardNumber = cells[5] });
 
                                 }
                                 else
                                 {
-                                    Debug.WriteLine("Good!");
-                                    Debug.WriteLine(cells[0]);
                                     Transactions.Add(new Transaction { AccountName = cells[0], CardNumber = cells[1], TransactionAmount = cells[2], TransactionType = cells[3], Description = cells[4], TargetCardNumber = cells[5] });
 
                                     if (!accounts.Contains(cells[0]))
@@ -122,9 +152,28 @@ namespace signapay.Pages
                                 }
                             }
                         }
-                        Debug.WriteLine("DONE!");
+                        var cacheEntryOptions = new MemoryCacheEntryOptions()
+                        .SetSlidingExpiration(TimeSpan.FromSeconds(500))
+                        .SetPriority(CacheItemPriority.Normal);
+
+                        _cache.Set("AccountCacheKey", accounts, cacheEntryOptions);
+                        _cache.Set("AccountInfoCacheKey", accountInfo, cacheEntryOptions);
+                        _cache.Set("SavedTransactionsCacheKey", Transactions, cacheEntryOptions);
+                        _cache.Set("BadTransactions", BadTransactions, cacheEntryOptions);
                     }
                 });
+            }
+
+            if (_cache.TryGetValue("AccountCacheKey", out List<string> cacheValueSave))
+            {
+
+                Savedaccounts = cacheValueSave;
+
+                SavedAccountInfo = (Dictionary<string, Dictionary<string, double>>)_cache.Get("AccountInfoCacheKey");
+
+                SavedTransactions = (List<Transaction>)_cache.Get("SavedTransactionsCacheKey");
+
+                SavedBadTransactions = (List<Transaction>)_cache.Get("SavedBadTransactionsCacheKey");
             }
             return;
         }
@@ -133,7 +182,20 @@ namespace signapay.Pages
         {
             return cells.Any(x => x.Length > 0);
         }
+
+        [HttpPost("ClearCache")]
+        public IActionResult ClearCache()
+        {
+            Debug.WriteLine("Cleared Cache");
+            _cache.Remove("AccountCacheKey");
+            _cache.Remove("AccountInfoCacheKey");
+            _cache.Remove("SavedTransactionsCacheKey");
+            _cache.Remove("BadTransactions");
+
+            return RedirectToAction("Index");
+        }
     }
+
     public class Transaction
     {
         public string AccountName { get; set; }

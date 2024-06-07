@@ -11,3 +11,15 @@ function accountInfo(id) {
     }
     document.getElementById(id).style.display = 'block';
 }
+function submitFile() {
+    document.getElementById("uploadText").remove();
+    document.getElementById("submitSpinner").style.display = 'block';
+}
+function ClearCache() {
+    $.ajax({
+        type: "GET",
+        url: 'ClearCache',
+    }).done(function (result) {
+       
+    });
+}

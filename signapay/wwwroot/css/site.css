@@ -32,3 +32,6 @@ body {
 #AllTransactions {
     display: none;
 }
+.spinner-border{
+    display: none;
+}
