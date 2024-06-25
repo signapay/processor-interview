@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction Processor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 1em 0;
+            text-align: center;
+        }
+        main {
+            padding: 2em;
+            max-width: 800px;
+            margin: auto;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-top: 2em;
+        }
+        h1 {
+            margin-top: 0;
+        }
+        form {
+            margin-bottom: 2em;
+        }
+        input[type="file"] {
+            display: block;
+            margin-bottom: 1em;
+        }
+        button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 0.5em 1em;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        nav ul {
+            list-style: none;
+            padding: 0;
+        }
+        nav li {
+            display: inline;
+            margin-right: 1em;
+        }
+        nav a {
+            text-decoration: none;
+            color: #007bff;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+        #message {
+            margin-top: 1em;
+            padding: 1em;
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            border-radius: 0.25em;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Transaction Processor</h1>
+    </header>
+    <main>
+        <form id="uploadForm" action="/api/transactions/upload" method="POST" enctype="multipart/form-data">
+            <input type="file" name="file" accept=".csv" required>
+            <button type="submit">Upload</button>
+        </form>
+        <form id="resetForm" action="/api/transactions/reset" method="POST">
+            <button type="submit">Reset</button>
+        </form>
+        <nav>
+            <ul>
+                <li><a href="/accounts">View Accounts</a></li>
+                <li><a href="/collections">View Collections</a></li>
+                <li><a href="/bad-transactions">View Bad Transactions</a></li>
+            </ul>
+        </nav>
+        <div id="message"></div>
+    </main>
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+            fetch('/api/transactions/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                const messageDiv = document.getElementById('message');
+                messageDiv.textContent = data.message;
+                messageDiv.style.display = 'block';
+                messageDiv.style.backgroundColor = '#d4edda';
+                messageDiv.style.color = '#155724';
+                setTimeout(() => { messageDiv.style.display = 'none'; }, 3000);
+            })
+            .catch(error => {
+                const messageDiv = document.getElementById('message');
+                messageDiv.textContent = 'Error uploading file';
+                messageDiv.style.display = 'block';
+                messageDiv.style.backgroundColor = '#f8d7da';
+                messageDiv.style.color = '#721c24';
+                setTimeout(() => { messageDiv.style.display = 'none'; }, 3000);
+            });
+        });
+
+        document.getElementById('resetForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            fetch('/api/transactions/reset', {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                const messageDiv = document.getElementById('message');
+                messageDiv.textContent = data.message;
+                messageDiv.style.display = 'block';
+                messageDiv.style.backgroundColor = '#d4edda';
+                messageDiv.style.color = '#155724';
+                setTimeout(() => { messageDiv.style.display = 'none'; }, 3000);
+            })
+            .catch(error => {
+                const messageDiv = document.getElementById('message');
+                messageDiv.textContent = 'Error resetting transactions';
+                messageDiv.style.display = 'block';
+                messageDiv.style.backgroundColor = '#f8d7da';
+                messageDiv.style.color = '#721c24';
+                setTimeout(() => { messageDiv.style.display = 'none'; }, 3000);
+            });
+        });
+    </script>
+</body>
+</html>

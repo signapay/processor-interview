@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accounts</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        #back-button {
+            margin: 20px 0;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .head {
+            display: flex;
+            justify-content: space-between;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="head">
+        <h1>Accounts</h1>
+        <button id="back-button" onclick="window.location.href='/'">Back to Home</button>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Account Name</th>
+                <th>Balance</th>
+            </tr>
+        </thead>
+        <tbody id="account-list"></tbody>
+    </table>
+    <script>
+        fetch('/api/transactions/accounts')
+            .then(response => response.json())
+            .then(data => {
+                const list = document.getElementById('account-list');
+                data.forEach(account => {
+                    const row = document.createElement('tr');
+                    const nameCell = document.createElement('td');
+                    const balanceCell = document.createElement('td');
+
+                    nameCell.textContent = account.name;
+                    balanceCell.textContent = account.balance;
+
+                    row.appendChild(nameCell);
+                    row.appendChild(balanceCell);
+                    list.appendChild(row);
+                });
+            });
+    </script>
+</body>
+
+</html>
