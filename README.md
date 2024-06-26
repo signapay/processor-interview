@@ -79,5 +79,3 @@ You should fork this repo to your own account and then submit a PR when you are 
     - This scenario is obviously simplified from reality, that said you should consider future requests like other transaction types, different file formats, etc. - this will at minimum, be a topic in the conversation
 - While it should be obvious, this scenario involves "money". This means numerical accuracy is required and at least minimal security should be considered in your submission (we aren't going to "hack your solution", but there shouldn't be open API endpoints either).
 - We do NOT expect you to be a designer, we do expect you to consider your user and make the experience intuitive and easy to use
-
-As we said above, if you have any questions, please reach out.
