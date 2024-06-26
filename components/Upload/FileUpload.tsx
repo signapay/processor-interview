@@ -34,7 +34,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ onUpload, onReset, uploadRecord
   const handleUpload = async () => {
     if (!file) return;
 
-    setLoading(true); // Set loading state to true
+    setLoading(true);
 
     try {
       const formData = new FormData();
@@ -60,7 +60,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ onUpload, onReset, uploadRecord
       console.error('Error uploading file:', error);
       alert('An error occurred while uploading the file.');
     } finally {
-      setLoading(false); // Set loading state to false
+      setLoading(false);
     }
   };
 

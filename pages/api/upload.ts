@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import formidable, { IncomingForm, File } from 'formidable';
 import fs from 'fs';
 import path from 'path';
-import { parseAndProcessCSV } from '../../utils/csvUtils';  // Adjust the import path as needed
+import { parseAndProcessCSV } from '../../utils/csvUtils'; 
 import { withAuth } from '../../utils/authMiddleware';
 
 export const config = {
@@ -15,7 +15,7 @@ const uploadsDir = path.join(process.cwd(), '/public/uploads');
 const dataDir = path.join(process.cwd(), '/public/data');
 const uploadsFilePath = path.join(dataDir, 'uploads.json');
 
-// Ensure the required directories and files exist
+// Ensure the required directories and files exist, if not make it
 const ensureDirectoryExistence = (dir: string) => {
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, { recursive: true });

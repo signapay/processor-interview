@@ -12,10 +12,6 @@ const Upload: React.FC = () => {
   const [collections, setCollections] = useState<string[]>([]);
   const [totalTransactionCount, setTotalTransactionCount] = useState<number>(0);
   const [uploadRecords, setUploadRecords] = useState<UploadRecord[]>([]);
-  const [totalTransactionsOnFile, setTotalTransactionsOnFile] = useState<number>(0);
-  const [invalidSchemaCount, setInvalidSchemaCount] = useState<number>(0);
-  const [invalidTransactionTypeCount, setInvalidTransactionTypeCount] = useState<number>(0);
-  const [invalidTransferCount, setInvalidTransferCount] = useState<number>(0);
 
   const handleUpload = (result: {
     cardReports: CardReport[],
@@ -33,10 +29,6 @@ const Upload: React.FC = () => {
       const newFiles = result.files.filter(file => !existingFiles.has(file.filename));
       return [...prevUploadRecords, ...newFiles];
     });
-    //setTotalTransactionsOnFile(result.totalTransactionsOnFile);
-    //setInvalidSchemaCount(result.invalidSchema);
-    //setInvalidTransactionTypeCount(result.invalidTransactionType);
-    //setInvalidTransferCount(result.invalidTransfer);
   };
 
   const handleReset = async () => {
@@ -53,10 +45,6 @@ const Upload: React.FC = () => {
       setCollections([]);
       setTotalTransactionCount(0);
       setUploadRecords([]);
-      setTotalTransactionsOnFile(0);
-      setInvalidSchemaCount(0);
-      setInvalidTransactionTypeCount(0);
-      setInvalidTransferCount(0);
     } else {
       alert(result.error);
     }
