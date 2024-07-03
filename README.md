@@ -1,46 +1,58 @@
-# Getting Started with Create React App
+# Install instructions:
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## 1) From project root folder run this - npm install
 
-## Available Scripts
+## 2) Go to server folder and run this - npm install
 
-In the project directory, you can run:
+Note - In case of any install/version mismatch error trying installing node version 18.20.2 and repeat the above steps
+Make sure to delete node_modules folder in both root directory and in server folder
 
-### `npm start`
+## 3) Kafka setup:
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+    Note - make sure Java is installed. If not install Java before proceeding with Kafka setup.
+    Reference - https://kafka.apache.org/quickstart
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+    — Download latest Kafka from this link - https://www.apache.org/dyn/closer.cgi?path=/kafka/3.7.1/kafka_2.13-3.7.1.tgz  
 
-### `npm test`
+    - Extract the zip file and go inside the folder and change the below properties (this is make sure kafka can accept and process bugger files)
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+        add these lines in ./config/server.properties:
+            message.max.bytes=15728640
+            replica.fetch.max.bytes=15728640
 
-### `npm run build`
+        add these lines in ./config/consumer.properties:
+            fetch.message.max.bytes=15728640
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+        add these lines in ./config/producer.properties:
+            max.request.size=15728640
+         
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+    — Run below commands inside kafka folder:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+        bin/zookeeper-server-start.sh config/zookeeper.properties
+        bin/kafka-server-start.sh config/server.properties
+        bin/kafka-topics.sh --create --topic transactions --bootstrap-server localhost:9092 max.message.bytes=4096
 
-### `npm run eject`
+    Note - If you want to restart kafka, CTRL+C all the scripts and run the below command to clean it. After this all the above scripts can be run to start it again.
+    
+    rm -rf /tmp/kafka-logs /tmp/zookeeper /tmp/kraft-combined-logs
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+## 4) Start express server in server folder - npx ts-node app.ts
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## 5) Start consumer in server folder - npx ts-node consumer.ts
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+## 6) Start front end - go to root directory and run this - npm start
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+    Note - Once the UI is up and running, click on ‘Reset system’ button once - this will reset all the existing data and create the DB tables required.
 
-## Learn More
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+# TODO list:
+==============
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+     Proper validations for each field in the file (Right now, I have only the shell implemented)
+     Handling other file types
+     Encryption/Decryption for all data exchange
+     User authorizations and access tokens for API calls
+     Unit test cases/ Functional test cases creation for all files
+     Use react-virtualize/pagination to display huge transaction list as table
+     Handling amount transfer when target account name is not specified
