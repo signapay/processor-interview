@@ -51,7 +51,7 @@ export const statcolumns: ColumnDef<Stats>[] = [
             <DialogContent className="min-w-[1200px]">
               <DialogTitle>{row.original.accountName} analytics</DialogTitle>
               <div className="max-h-[720px] overflow-y-auto">
-                <AccountChart data={filterData}/>
+                <AccountChart data={filterData} />
               </div>
             </DialogContent>
           </Dialog>
@@ -124,7 +124,6 @@ export const statcolumns: ColumnDef<Stats>[] = [
             variant={"link"}
             onClick={() => {
               setShowPreview(true);
-              console.log(showPreview);
             }}
             className="underline"
           >

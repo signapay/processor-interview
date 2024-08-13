@@ -63,26 +63,28 @@ export const useDataStore = create<DataStore>()(
         set((state) => {
           let temp = data;
           if (state.data) temp = temp.concat(state.data);
-
+          
+          //create a list of distinct accounts
           let distinctAccounts: string[] = [
             ...new Set(temp?.map((data: any) => data.accountName)),
           ];
+
           //using the distinct accounts we have lets start grouping data..
           const stats = distinctAccounts.map((name) => {
-            const transList = temp?.filter((f: any) => f.accountName == name);
-            const totalTransactions = transList?.length;
-            const totalNegRecordsCount = transList?.filter(
+            const transactionList = temp?.filter((f: any) => f.accountName == name);
+            const totalTransactionsCount = transactionList?.length;
+            const totalNegRecordsCount = transactionList?.filter(
               (f: any) => f.amount < 0.0
             ).length;
-            const totalBal = transList?.reduce((acc, bal: any) => {
+            const totalBalance = transactionList?.reduce((acc, bal: any) => {
               return acc + bal.amount;
             }, 0);
 
             return {
               accountName: name,
-              totalTransactions: totalTransactions,
+              totalTransactions: totalTransactionsCount,
               totalNegative: totalNegRecordsCount,
-              totalAmount: totalBal,
+              totalAmount: totalBalance,
             };
           });
 
@@ -100,15 +102,13 @@ export const useDataStore = create<DataStore>()(
       storage: createJSONStorage(() => storage),
       onRehydrateStorage: (state) => {
         state.isLoadingStore = true
-
         // optional
         return (state, error) => {
             state?.updateLoadingState(false);
           if (error) {
             //console.log("an error happened during hydration", error);
           } else {
-            //console.log("hydration finished");
-            
+            //console.log("hydration finished");            
           }
         };
       },

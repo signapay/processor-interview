@@ -6,7 +6,6 @@ import { collectioncolumns } from "./tables/collection-columns";
 
 export default function Collections() {
   const { collectionsData } = useDataStore();
-  console.log(collectionsData);
 
   return (
     <>

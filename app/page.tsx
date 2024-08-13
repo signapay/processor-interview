@@ -13,28 +13,38 @@ export default function Home() {
   const { data, isLoadingStore } = useDataStore();
   return (
     <Container>
-      {isLoadingStore && <div className="mx-auto justify-center flex py-4"><PageSkeleton /></div>}
+      {isLoadingStore && (
+        <div className="mx-auto justify-center flex py-4">
+          <PageSkeleton />
+        </div>
+      )}
       {!isLoadingStore && (
         <main className="py-4 space-y-3">
           <div className="flex justify-end space-x-3">
             <UploadFile />
             {data && <ClearStore />}
           </div>
-          {!data && <div className="mx-auto justify-center flex py-4">Please upload data to continue!</div>}
+          {!data && (
+            <div className="mx-auto justify-center flex py-4">
+              Please upload data to continue!
+            </div>
+          )}
           {data && data.length > 0 && (
             <Tabs defaultValue="account">
               <TabsList>
-                <TabsTrigger value="account">Accounts</TabsTrigger>
-                <TabsTrigger value="password">Bad Transactions</TabsTrigger>
-                <TabsTrigger value="wer">Collections</TabsTrigger>
+                <TabsTrigger value="accounts">Accounts</TabsTrigger>
+                <TabsTrigger value="badtransactions">
+                  Bad Transactions
+                </TabsTrigger>
+                <TabsTrigger value="collections">Collections</TabsTrigger>
               </TabsList>
               <TabsContent value="account">
                 <Accounts />
               </TabsContent>
-              <TabsContent value="password">
+              <TabsContent value="badtransactions">
                 <BadTransactions />
               </TabsContent>
-              <TabsContent value="wer">
+              <TabsContent value="collections">
                 <Collections />
               </TabsContent>
             </Tabs>
