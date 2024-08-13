@@ -13,7 +13,7 @@ export default function BadTransactions() {
           title="Bad Transactions"
           desc={
             <>
-              We are unable to processes these records due to the highlighted{" "}
+              We are unable to process these records due to the highlighted{" "}
               <span className="text-red-500 underline">red</span> fields.. please correct these issues and try again!
             </>
           }

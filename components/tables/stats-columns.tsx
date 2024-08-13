@@ -4,13 +4,10 @@ import { ChartBar, Eye } from "lucide-react";
 import { useDataStore } from "@/stores/data-stores";
 import { useState } from "react";
 
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { DataTable } from "./data-table";
 import { columns } from "./columns";
+import { AccountChart } from "../account-chart";
 
 export type Stats = {
   accountName: string;
@@ -28,6 +25,7 @@ export const statcolumns: ColumnDef<Stats>[] = [
         (f) => f.accountName == row.original.accountName
       );
       const [showPreview, setShowPreview] = useState(false);
+      const [showChart, setShowChart] = useState(false);
       return (
         <>
           <Dialog open={showPreview} onOpenChange={setShowPreview}>
@@ -48,28 +46,37 @@ export const statcolumns: ColumnDef<Stats>[] = [
               </div>
             </DialogContent>
           </Dialog>
-          
-        <div className="flex items-center space-x-3">
-        <Button
-            variant={"ghost"}
-            onClick={() => {
-              setShowPreview(true);
-              console.log(showPreview);
-            }}
-          >
-            <Eye />
-          </Button>
 
-          <Button
-            variant={"ghost"}
-            onClick={() => {
-                console.log('do nothing ')
-            }}
-          >
-            <ChartBar />
-          </Button>
-        </div>
-          
+          <Dialog open={showChart} onOpenChange={setShowChart}>
+            <DialogContent className="min-w-[1200px]">
+              <DialogTitle>{row.original.accountName} analytics</DialogTitle>
+              <div className="max-h-[720px] overflow-y-auto">
+                <AccountChart data={filterData}/>
+              </div>
+            </DialogContent>
+          </Dialog>
+
+          <div className="flex items-center space-x-3">
+            <Button
+              variant={"ghost"}
+              onClick={() => {
+                setShowPreview(true);
+                console.log(showPreview);
+              }}
+            >
+              <Eye />
+            </Button>
+
+            <Button
+              variant={"ghost"}
+              className="hover:text-green-500"
+              onClick={() => {
+                setShowChart(true);
+              }}
+            >
+              <ChartBar />
+            </Button>
+          </div>
         </>
       );
     },
