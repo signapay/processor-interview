@@ -1,13 +1,13 @@
 
-
 import axios from "axios";
 import React, { Component } from "react";
 
 class App extends Component {
     state = {
         selectedFile: null,
-        cleanData: [],    // Initialize as empty array
         errorData: [],    // Initialize as empty array
+        chartOfAccounts: [], // Initialize as empty array
+        collectionsList: [], // Initialize as empty array
         uploadStatus: "", // To show status messages
     };
 
@@ -21,29 +21,28 @@ class App extends Component {
     onFileUpload = () => {
         if (!this.state.selectedFile) {
             alert("Please select a file before uploading.");
-            return;  // Stop further execution
+            return;  
         }
 
         const formData = new FormData();
         formData.append(
-            "myfile",  // Ensure this key matches the key used on the server
+            "myfile",  
             this.state.selectedFile,
             this.state.selectedFile.name
         );
 
         axios.post("http://127.0.0.1:5000/view", formData)
-            .then((response)=>JSON.parse(response.data))
             .then(response => {
-              //here I CHANGED CONSOLE.LOG TO RESPONSE WHILE IT WAS 'RESPONSE.DATA'
                 console.log("API Response:", response); // Log the API response
 
                 // Extract data from the response
-                
-                const cleanData = response.clean_data;
-                const errorData = response.error_data;
+                const errorData = response.data.error_data;
+                const chartOfAccounts = response.data.chart_of_accounts;
+                const collectionsList = response.data.collections_list;
 
-                console.log("Clean Data from API:", cleanData);
                 console.log("Error Data from API:", errorData);
+                console.log("Chart of Accounts from API:", chartOfAccounts);
+                console.log("Collections List from API:", collectionsList);
 
                 // Sanitize data to handle potential NaN values
                 const sanitizeData = (data) => {
@@ -51,20 +50,27 @@ class App extends Component {
                         Object.keys(item).forEach(key => {
                             if (item[key] === 'NaN') {
                                 item[key] = null;
+                            } else if (typeof item[key] === 'object') {
+                                // Convert objects to strings for rendering
+                                item[key] = JSON.stringify(item[key]);
                             }
                         });
                         return item;
                     });
                 };
+ 
 
-                if (Array.isArray(cleanData) && Array.isArray(errorData)) {
+                if (Array.isArray(errorData)
+                     && Array.isArray(chartOfAccounts)
+                     && Array.isArray(collectionsList)) {
                     this.setState({
-                        cleanData: sanitizeData(cleanData),
                         errorData: sanitizeData(errorData),
+                        chartOfAccounts: sanitizeData(chartOfAccounts),
+                        collectionsList: sanitizeData(collectionsList),
                         uploadStatus: "Upload successful!",
                     });
                 } else {
-                    console.error("Invalid data format from API. Expected arrays for clean_data and error_data.");
+                    console.error("Invalid data format from API. Expected arrays for all data types.");
                     this.setState({
                         uploadStatus: "Upload successful but data format is incorrect.",
                     });
@@ -80,10 +86,11 @@ class App extends Component {
 
     renderTable = (data, title) => {
         if (data.length === 0) {
-            return <p>No data available</p>;
+            return <></>;
         }
 
         const headers = Object.keys(data[0]);
+
         return (
             <table>
                 <thead>
@@ -97,7 +104,11 @@ class App extends Component {
                     {data.map((row, rowIndex) => (
                         <tr key={rowIndex}>
                             {headers.map((header, colIndex) => (
-                                <td key={colIndex}>{row[header] || "N/A"}</td>
+                                <td key={colIndex}>
+                                    {typeof row[header] === 'object'
+                                        ? JSON.stringify(row[header])
+                                        : row[header] || "N/A"}
+                                </td>
                             ))}
                         </tr>
                     ))}
@@ -113,10 +124,12 @@ class App extends Component {
                 <input type="file" onChange={this.onFileChange} />
                 <button onClick={this.onFileUpload}>Upload!</button>
                 <p>{this.state.uploadStatus}</p>
-                <h2>Clean Data</h2>
-                {this.renderTable(this.state.cleanData, "Clean Data")}
-                <h2>Error Data</h2>
+                {this.state.errorData.length !== 0 && <h2>Error Data</h2>}
                 {this.renderTable(this.state.errorData, "Error Data")}
+                {this.state.chartOfAccounts.length !== 0 && <h2>Chart of Accounts</h2>}
+                {this.renderTable(this.state.chartOfAccounts, "Chart of Accounts")}
+                {this.state.collectionsList.length !== 0 && <h2>Accounts Needing Collections</h2>}
+                {this.renderTable(this.state.collectionsList, "Accounts Needing Collections")}
             </div>
         );
     }
