@@ -1,5 +1,5 @@
 "use client";
-import { useToast } from "@/components/ui/use-toast"
+import { useToast } from "@/components/ui/use-toast";
 
 import {
   Dialog,
@@ -40,9 +40,9 @@ import { columns } from "./tables/columns";
 import { useDataStore } from "@/stores/data-stores";
 
 export default function UploadFile() {
-  const { updateData,updateBadData } = useDataStore();
+  const { updateData, updateBadData } = useDataStore();
 
-  const {toast} = useToast();
+  const { toast } = useToast();
 
   const [file, setFile] = useState<File>();
   const [showUpload, setShowUpload] = useState<boolean | undefined>(false);
@@ -89,13 +89,12 @@ export default function UploadFile() {
                 data.badFields = fieldNames;
                 errors.push(data);
               } else {
-                console.error("Unexpected error: ", error);
+                //console.error("Unexpected error: ", error);
               }
             }
           });
           //filter out any bad records we aren't able to process them correctly..
           let temp = formattedData.filter((f: any) => f.hasErrors == false);
-          
           setTempBadTransactions(errors);
           setTempData(temp); //will be used in our preview..
         },
@@ -104,31 +103,26 @@ export default function UploadFile() {
   };
 
   const handleUploadClick = () => {
-    if (tempBadTransactions && tempBadTransactions?.length > 0) return setShowAlert(true);
+    if (tempBadTransactions && tempBadTransactions?.length > 0)
+      return setShowAlert(true);
     handleUpload();
   };
 
   const handleUpload = () => {
-    if(!tempData) return;
+    if (!tempData) return;
     try {
-        if(tempData)
-            updateData(tempData);
-        if(tempBadTransactions)
-            updateBadData(tempBadTransactions);
-        
-        toast({
-            title: "Success",
-            description: "File uploaded successfully!",
-          })
-        setShowUpload(false);
-        clearVariables()
-    }
-    catch(error) {
-        console.log(error)
-    }
-    
-    
+      if (tempData) updateData(tempData);
+      if (tempBadTransactions) updateBadData(tempBadTransactions);
 
+      toast({
+        title: "Success",
+        description: "File uploaded successfully!",
+      });
+      setShowUpload(false);
+      clearVariables();
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handleClick = () => {
@@ -140,14 +134,14 @@ export default function UploadFile() {
   };
 
   const handleCancel = () => {
-    clearVariables()
+    clearVariables();
   };
 
   const clearVariables = () => {
     setFile(undefined);
     setTempBadTransactions(undefined);
     setTempData(undefined);
-  }
+  };
 
   return (
     <>

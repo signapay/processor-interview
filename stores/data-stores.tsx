@@ -1,4 +1,3 @@
-import { init } from "next/dist/compiled/webpack/webpack";
 import { create } from "zustand";
 import { persist, createJSONStorage, StateStorage } from "zustand/middleware";
 import { get, set, del } from "idb-keyval";
@@ -26,6 +25,7 @@ const initialState = {
   statsData: undefined,
 };
 
+//custom storage using indexdb w/ zustand  
 const storage: StateStorage = {
   getItem: async (name: string): Promise<string | null> => {
     return (await get(name)) || null;
@@ -53,25 +53,25 @@ export const useDataStore = create<DataStore>()(
         set((state) => ({ targetMask: !state.targetMask })),
       updateBadData: (data) => {
         set((state) => {
-          let tmp = data;
+          let temp = data;
           if (state.badTransactionsData)
-            tmp = tmp.concat(state.badTransactionsData);
-          return { badTransactionsData: tmp };
+            temp = temp.concat(state.badTransactionsData);
+          return { badTransactionsData: temp };
         });
       },
       updateData: (data) => {
         set((state) => {
-          let tmp = data;
-          if (state.data) tmp = tmp.concat(state.data);
+          let temp = data;
+          if (state.data) temp = temp.concat(state.data);
 
           let distinctAccounts: string[] = [
-            ...new Set(tmp?.map((data: any) => data.accountName)),
+            ...new Set(temp?.map((data: any) => data.accountName)),
           ];
           //using the distinct accounts we have lets start grouping data..
           const stats = distinctAccounts.map((name) => {
-            const transList = tmp?.filter((f: any) => f.accountName == name);
-            const totalTrans = transList?.length;
-            const totalNegRecords = transList?.filter(
+            const transList = temp?.filter((f: any) => f.accountName == name);
+            const totalTransactions = transList?.length;
+            const totalNegRecordsCount = transList?.filter(
               (f: any) => f.amount < 0.0
             ).length;
             const totalBal = transList?.reduce((acc, bal: any) => {
@@ -80,8 +80,8 @@ export const useDataStore = create<DataStore>()(
 
             return {
               accountName: name,
-              totalTransactions: totalTrans,
-              totalNegative: totalNegRecords,
+              totalTransactions: totalTransactions,
+              totalNegative: totalNegRecordsCount,
               totalAmount: totalBal,
             };
           });
@@ -89,7 +89,7 @@ export const useDataStore = create<DataStore>()(
           state.statsData = stats;
           state.collectionsData = stats.filter((f) => f.totalAmount < 0.0); //anyone with a -neg total should be marked for collections
 
-          return { data: tmp };
+          return { data: temp };
         });
       },
       reset: () => set(initialState),
@@ -105,9 +105,9 @@ export const useDataStore = create<DataStore>()(
         return (state, error) => {
             state?.updateLoadingState(false);
           if (error) {
-            console.log("an error happened during hydration", error);
+            //console.log("an error happened during hydration", error);
           } else {
-            console.log("hydration finished");
+            //console.log("hydration finished");
             
           }
         };
