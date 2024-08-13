@@ -1,5 +1,4 @@
 
-
 from flask import Flask, request, jsonify
 import json
 from flask_cors import CORS
@@ -20,7 +19,7 @@ def view():
         return jsonify({'message': 'Preflight request successful'}), 200
 
     files = request.files
-    response = {"clean_data": [], "error_data": []}
+    response = { "error_data": [], "chart_of_accounts": [], "collections_list": []}
     
     if not files:
         return jsonify({"error": "No files uploaded"}), 400
@@ -148,22 +147,28 @@ def view():
     df_errors['Error Message'] = df_errors.apply(get_error_message, axis=1)
     df_clean = df[~mask_errors]
     
-    # Convert DataFrames to JSON serializable format
+    # Generate additional reports
+    chart_of_accounts = df.groupby('Account Name').apply(lambda x: x[['Card Number', 'Transaction Amount']].to_dict(orient='records')).reset_index()
+    chart_of_accounts.columns = ['Account Name', 'Cards']
+    chart_of_accounts = json.loads(chart_of_accounts.to_json(orient='records'))
+    
+    collections_list = df[df['Transaction Amount'] < 0][['Account Name', 'Card Number', 'Transaction Amount']].to_json(orient='records')
+    collections_list = json.loads(collections_list)
+    
+
+
     def nan_to_none(value):
         return None if isinstance(value, float) and np.isnan(value) else value 
-        #return None if np.isnan(value) else value
-    df_clean.replace({np.nan,None})
-    df_errors.replace({np.nan,None})
-    response['clean_data'] = df_clean.applymap(nan_to_none).to_json(orient='records')
-    response['error_data'] = df_errors.applymap(nan_to_none).to_json(orient='records')
     
-    # Optionally remove the saved file after processing
-    try:
-        os.remove(file_path)
-    except Exception as e:
-        return jsonify({"error": f"Failed to remove file: {str(e)}"}), 500
-    
-    return jsonify(json.loads(response))
+
+    response['error_data'] = json.loads(df_errors.to_json(orient='records'))
+    response['chart_of_accounts'] = chart_of_accounts  
+    response['collections_list'] = collections_list 
+
+    return jsonify(response)
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+
+
