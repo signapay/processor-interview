@@ -39,7 +39,10 @@ import { DataTable } from "./tables/data-table";
 import { columns } from "./tables/columns";
 import { useDataStore } from "@/stores/data-stores";
 
+const VALID_EXT = "csv"; //could be an array in future for more accepted formats 
+
 export default function UploadFile() {
+
   const { updateData, updateBadData } = useDataStore();
 
   const { toast } = useToast();
@@ -55,6 +58,15 @@ export default function UploadFile() {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
+      const ext = e.target.files[0].name.split(".").pop();
+      if(ext !== VALID_EXT) 
+      {
+        clearVariables()
+        return toast({
+            title: "Wrong file extension",
+            description: "Currently only .csv files are accepted. Please try again",
+          });
+      }
       setFile(e.target.files[0]);
       Papa.parse(e.target.files[0], {
         header: false,
@@ -137,6 +149,7 @@ export default function UploadFile() {
     clearVariables();
   };
 
+
   const clearVariables = () => {
     setFile(undefined);
     setTempBadTransactions(undefined);
@@ -207,28 +220,28 @@ export default function UploadFile() {
 
           {!file && (
             <div className="flex items-center justify-center w-full">
-              <label
-                htmlFor="dropzone-file"
-                className="flex flex-col items-center justify-center w-full h-48 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-gray-800 dark:bg-neutral-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
-              >
-                <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                  <CloudUpload />
-                  <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
-                    <span className="font-semibold">Click to upload</span> or
-                    drag and drop
-                  </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
-                    .CSV files only
-                  </p>
-                </div>
-                <input
-                  id="dropzone-file"
-                  type="file"
-                  accept=".csv"
-                  onChange={handleFileChange}
-                  className="hidden"
-                />
-              </label>
+                <label
+                  htmlFor="dropzone-file"
+                  className="relative flex flex-col items-center justify-center w-full h-48 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-gray-800 dark:bg-neutral-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
+                >
+                  <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                    <CloudUpload />
+                    <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                      <span className="font-semibold">Click to upload</span> or
+                      drag and drop
+                    </p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      .CSV files only
+                    </p>
+                  </div>
+                  <input
+                    id="dropzone-file"
+                    type="file"
+                    accept=".csv"
+                    onChange={handleFileChange}
+                    className="-absolute top-0 left-0 w-full h-full opacity-0 cursor-pointer"
+                  />
+                </label>
             </div>
           )}
           {file && (
