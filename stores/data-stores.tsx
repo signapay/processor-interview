@@ -5,6 +5,7 @@ import { get, set, del } from "idb-keyval";
 
 interface DataStore {
   data: any[] | undefined;
+  isLoadingStore:boolean;
   badTransactionsData: any[] | undefined;
   collectionsData: any[] | undefined;
   statsData: any[] | undefined;
@@ -14,6 +15,7 @@ interface DataStore {
   toggleCreditMask: () => void;
   updateData: (data: any[]) => void;
   updateBadData: (data: any[]) => void;
+  updateLoadingState: (val:boolean) => void;
   reset: () => void;
 }
 
@@ -40,20 +42,26 @@ export const useDataStore = create<DataStore>()(
   persist(
     (set) => ({
       ...initialState,
+      isLoadingStore:false,
       creditMask: true,
       targetMask: true,
+      updateLoadingState: (val) =>
+        set((state) => ({ isLoadingStore: val })),
       toggleCreditMask: () =>
         set((state) => ({ creditMask: !state.creditMask })),
       toggleTargetMask: () =>
         set((state) => ({ targetMask: !state.targetMask })),
-      updateBadData: (temp) => {
+      updateBadData: (data) => {
         set((state) => {
-          return { badTransactionsData: temp };
+          let tmp = data;
+          if (state.badTransactionsData)
+            tmp = tmp.concat(state.badTransactionsData);
+          return { badTransactionsData: tmp };
         });
       },
-      updateData: (temp) => {
+      updateData: (data) => {
         set((state) => {
-          let tmp = temp;
+          let tmp = data;
           if (state.data) tmp = tmp.concat(state.data);
 
           let distinctAccounts: string[] = [
@@ -86,6 +94,24 @@ export const useDataStore = create<DataStore>()(
       },
       reset: () => set(initialState),
     }),
-    { name: "data-store", storage: createJSONStorage(() => storage) }
+
+    {
+      name: "data-store",
+      storage: createJSONStorage(() => storage),
+      onRehydrateStorage: (state) => {
+        state.isLoadingStore = true
+
+        // optional
+        return (state, error) => {
+            state?.updateLoadingState(false);
+          if (error) {
+            console.log("an error happened during hydration", error);
+          } else {
+            console.log("hydration finished");
+            
+          }
+        };
+      },
+    }
   )
 );
