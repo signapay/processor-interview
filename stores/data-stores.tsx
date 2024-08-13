@@ -1,29 +1,76 @@
+import { init } from "next/dist/compiled/webpack/webpack";
 import { create } from "zustand";
-import { persist,createJSONStorage  } from "zustand/middleware";
+import { persist, createJSONStorage } from "zustand/middleware";
 
 interface DataStore {
-  data: any[] | null;
-  creditMask:boolean;  
-  targetMask:boolean;
-  updateData: (data:any[]) => void;
-};
+  data: any[] | undefined;
+  badTransactionsData: any[] | undefined;
+  collectionsData: any[] | undefined;
+  statsData: any[] | undefined;
+  creditMask: boolean;
+  targetMask: boolean;
+  toggleTargetMask: () => void;
+  toggleCreditMask: () => void;
+  updateData: (data: any[]) => void;
+  updateBadData: (data: any[]) => void;
+  reset: () => void;
+}
+
+const initialState = {
+    data: undefined,
+    badTransactionsData: undefined,
+    collectionsData: undefined,
+    statsData: undefined,
+}
 
 export const useDataStore = create<DataStore>()(
   persist(
     (set) => ({
-      data: [],
-      creditMask:true,
-      targetMask:true,
-      toggleCreditMask: () => set((state) => ({creditMask: !state.creditMask})),
-      toggleTargetMask: () => set((state) => ({targetMask: !state.targetMask})),
-      updateData: (d) => {
+      ...initialState,
+      creditMask: true,
+      targetMask: true,
+      toggleCreditMask: () =>
+        set((state) => ({ creditMask: !state.creditMask })),
+      toggleTargetMask: () =>
+        set((state) => ({ targetMask: !state.targetMask })),
+      updateBadData: (temp) => {
         set((state) => {
-          return { data: d };
+          return { badTransactionsData: temp };
         });
       },
+      updateData: (temp) => {
+        set((state) => {
+          let distinctAccounts: string[] = [
+            ...new Set(temp?.map((data: any) => data.accountName)),
+          ];
+
+          //using the distinct accounts we have lets start grouping data..
+          const stats = distinctAccounts.map((name) => {
+            const transList = temp?.filter((f: any) => f.accountName == name);
+            const totalTrans = transList?.length;
+            const totalNegRecords = transList?.filter(
+              (f: any) => f.amount < 0.0
+            ).length;
+            const totalBal = transList?.reduce((acc, bal: any) => {
+              return acc + bal.amount;
+            }, 0);
+
+            return {
+              accountName: name,
+              totalTransactions: totalTrans,
+              totalNegative: totalNegRecords,
+              totalAmount: totalBal,
+            };
+          });
+
+          state.statsData = stats;
+          state.collectionsData = stats.filter((f) => f.totalAmount < 0.0); //anyone with a -neg total should be marked for collections
+
+          return { data: temp };
+        });
+      },
+      reset: () => set(initialState)      
     }),
     { name: "data-store", storage: createJSONStorage(() => localStorage) }
   )
-); 
-
-
+);

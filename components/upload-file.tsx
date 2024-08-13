@@ -40,7 +40,7 @@ import { columns } from "./tables/columns";
 import { useDataStore } from "@/stores/data-stores";
 
 export default function UploadFile() {
-  const { updateData } = useDataStore();
+  const { updateData,updateBadData } = useDataStore();
 
   const {toast} = useToast();
 
@@ -104,13 +104,14 @@ export default function UploadFile() {
   };
 
   const handleUploadClick = () => {
-    if (tempBadTransactions) return setShowAlert(true);
+    if (tempBadTransactions && tempBadTransactions?.length > 0) return setShowAlert(true);
     handleUpload();
   };
 
   const handleUpload = () => {
     if(!tempData) return alert("unable to upload file. please try again..")
     updateData(tempData);
+    updateBadData(tempBadTransactions);
     toast({
         title: "Success",
         description: "File uploaded successfully!",
