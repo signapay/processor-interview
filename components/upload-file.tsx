@@ -1,4 +1,5 @@
 "use client";
+import { useToast } from "@/components/ui/use-toast"
 
 import {
   Dialog,
@@ -7,6 +8,17 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 import Papa from "papaparse";
 import { z } from "zod";
@@ -23,8 +35,15 @@ const csvSchema = z.object({
 import { Upload, CloudUpload, X, Eye, Sheet } from "lucide-react";
 import { Button } from "./ui/button";
 import { useState } from "react";
+import { DataTable } from "./tables/data-table";
+import { columns } from "./tables/columns";
+import { useDataStore } from "@/stores/data-stores";
 
 export default function UploadFile() {
+  const { updateData } = useDataStore();
+
+  const {toast} = useToast();
+
   const [file, setFile] = useState<File>();
   const [showUpload, setShowUpload] = useState<boolean | undefined>(false);
 
@@ -32,6 +51,7 @@ export default function UploadFile() {
   const [tempData, setTempData] = useState<any[]>();
 
   const [showPreview, setShowPreview] = useState<boolean | undefined>(false);
+  const [showAlert, setShowAlert] = useState<boolean | undefined>(false);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -75,15 +95,31 @@ export default function UploadFile() {
           });
           //filter out any bad records we aren't able to process them correctly..
           let temp = formattedData.filter((f: any) => f.hasErrors == false);
-
+          
           setTempBadTransactions(errors);
-          setTempData(temp);//will be used in our preview..
+          setTempData(temp); //will be used in our preview..
         },
       });
     }
   };
-  
-  const handleUpload = () => {};
+
+  const handleUploadClick = () => {
+    if (tempBadTransactions) return setShowAlert(true);
+    handleUpload();
+  };
+
+  const handleUpload = () => {
+    if(!tempData) return alert("unable to upload file. please try again..")
+    updateData(tempData);
+    toast({
+        title: "Success",
+        description: "File uploaded successfully!",
+      })
+    setShowUpload(false);
+    clearVariables()
+    
+
+  };
 
   const handleClick = () => {
     setShowUpload(true);
@@ -94,13 +130,38 @@ export default function UploadFile() {
   };
 
   const handleCancel = () => {
+    clearVariables()
+  };
+
+  const clearVariables = () => {
     setFile(undefined);
     setTempBadTransactions(undefined);
     setTempData(undefined);
-  };
+  }
 
   return (
     <>
+      <AlertDialog open={showAlert} onOpenChange={setShowAlert}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Error's detected!</AlertDialogTitle>
+            <AlertDialogDescription>
+              There were{" "}
+              <span className="text-red-500 font-semibold">
+                {tempBadTransactions?.length}
+              </span>{" "}
+              bad records found in the file. Do you wish to continue?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleUpload}>
+              Continue
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       <Dialog open={showPreview} onOpenChange={setShowPreview}>
         <DialogContent
           onInteractOutside={(e) => e.preventDefault()}
@@ -108,11 +169,19 @@ export default function UploadFile() {
         >
           <DialogTitle>
             <div className="flex items-center">
-                Previewing <span className="underline">{file?.name}</span>
-                <Sheet className="h-4 w-4 ml-2" />
+              Previewing <span className="underline">{file?.name}</span>
+              <Sheet className="h-4 w-4 ml-2" />
             </div>
           </DialogTitle>
-          <div className="max-h-[720px] overflow-y-auto"></div>
+          <div className="max-h-[720px] overflow-y-auto">
+            {tempData && (
+              <DataTable
+                data={tempData}
+                columns={columns}
+                showRecordSize={false}
+              />
+            )}
+          </div>
         </DialogContent>
       </Dialog>
 
@@ -173,7 +242,7 @@ export default function UploadFile() {
                   <>{tempBadTransactions?.length} bad records detected!</>
                 )}
               </div>
-              <Button onClick={handleClick}>
+              <Button onClick={handleUploadClick}>
                 Upload <Upload className="ml-2 w-4 h-4" />
               </Button>
               <Button
