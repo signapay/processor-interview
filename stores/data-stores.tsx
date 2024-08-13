@@ -1,6 +1,7 @@
 import { init } from "next/dist/compiled/webpack/webpack";
 import { create } from "zustand";
-import { persist, createJSONStorage } from "zustand/middleware";
+import { persist, createJSONStorage, StateStorage } from "zustand/middleware";
+import { get, set, del } from "idb-keyval";
 
 interface DataStore {
   data: any[] | undefined;
@@ -17,11 +18,23 @@ interface DataStore {
 }
 
 const initialState = {
-    data: undefined,
-    badTransactionsData: undefined,
-    collectionsData: undefined,
-    statsData: undefined,
-}
+  data: undefined,
+  badTransactionsData: undefined,
+  collectionsData: undefined,
+  statsData: undefined,
+};
+
+const storage: StateStorage = {
+  getItem: async (name: string): Promise<string | null> => {
+    return (await get(name)) || null;
+  },
+  setItem: async (name: string, value: string): Promise<void> => {
+    await set(name, value);
+  },
+  removeItem: async (name: string): Promise<void> => {
+    await del(name);
+  },
+};
 
 export const useDataStore = create<DataStore>()(
   persist(
@@ -40,13 +53,15 @@ export const useDataStore = create<DataStore>()(
       },
       updateData: (temp) => {
         set((state) => {
-          let distinctAccounts: string[] = [
-            ...new Set(temp?.map((data: any) => data.accountName)),
-          ];
+          let tmp = temp;
+          if (state.data) tmp = tmp.concat(state.data);
 
+          let distinctAccounts: string[] = [
+            ...new Set(tmp?.map((data: any) => data.accountName)),
+          ];
           //using the distinct accounts we have lets start grouping data..
           const stats = distinctAccounts.map((name) => {
-            const transList = temp?.filter((f: any) => f.accountName == name);
+            const transList = tmp?.filter((f: any) => f.accountName == name);
             const totalTrans = transList?.length;
             const totalNegRecords = transList?.filter(
               (f: any) => f.amount < 0.0
@@ -66,11 +81,11 @@ export const useDataStore = create<DataStore>()(
           state.statsData = stats;
           state.collectionsData = stats.filter((f) => f.totalAmount < 0.0); //anyone with a -neg total should be marked for collections
 
-          return { data: temp };
+          return { data: tmp };
         });
       },
-      reset: () => set(initialState)      
+      reset: () => set(initialState),
     }),
-    { name: "data-store", storage: createJSONStorage(() => localStorage) }
+    { name: "data-store", storage: createJSONStorage(() => storage) }
   )
 );

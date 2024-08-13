@@ -109,15 +109,24 @@ export default function UploadFile() {
   };
 
   const handleUpload = () => {
-    if(!tempData) return alert("unable to upload file. please try again..")
-    updateData(tempData);
-    updateBadData(tempBadTransactions);
-    toast({
-        title: "Success",
-        description: "File uploaded successfully!",
-      })
-    setShowUpload(false);
-    clearVariables()
+    if(!tempData) return;
+    try {
+        if(tempData)
+            updateData(tempData);
+        if(tempBadTransactions)
+            updateBadData(tempBadTransactions);
+        
+        toast({
+            title: "Success",
+            description: "File uploaded successfully!",
+          })
+        setShowUpload(false);
+        clearVariables()
+    }
+    catch(error) {
+        console.log(error)
+    }
+    
     
 
   };
