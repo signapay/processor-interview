@@ -1,10 +1,15 @@
 import { Container } from "@/components/ui/container";
+import UploadFile from "@/components/upload-file";
 import Image from "next/image";
 
 export default function Home() {
   return (
     <Container>
-      <div>Content</div>
+      <main className="py-4">
+        <div className="flex justify-end">
+          <UploadFile />
+        </div>
+      </main>
     </Container>
   );
 }
