@@ -1,17 +1,13 @@
 
-from flask import Flask, request, jsonify
-import json
-from flask_cors import CORS
 import pandas as pd
-import os
 import numpy as np
+import json
+from flask import Flask, request, jsonify
+from flask_cors import CORS
+import os
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
-
-@app.route('/')
-def hello():
-    return "Hello, Flask!"
 
 @app.route('/view', methods=["POST", "OPTIONS"])
 def view():
@@ -24,7 +20,6 @@ def view():
     if not files:
         return jsonify({"error": "No files uploaded"}), 400
 
-    # Get the file with key 'myfile'
     file = files.get('myfile')
     
     if not file:
@@ -32,7 +27,6 @@ def view():
 
     print(f"Received file: {file.filename}")
 
-    # Save the file to the 'uploads' directory
     upload_folder = 'uploads'
     if not os.path.exists(upload_folder):
         os.makedirs(upload_folder)
@@ -45,17 +39,14 @@ def view():
     except Exception as e:
         return jsonify({"error": f"Failed to save file: {str(e)}"}), 500
     
-    # Define columns
     columns = ['Account Name', 'Card Number', 'Transaction Amount', 'Transaction Type', 'Description', 'Target Card Number']
     
-    # Load the CSV file without headers
     try:
         df = pd.read_csv(file_path, header=None, names=columns)
         print(f"DataFrame loaded with shape: {df.shape}")
     except Exception as e:
         return jsonify({"error": f"Failed to read CSV file: {str(e)}"}), 500
     
-    # Process DataFrame
     df['Card Number'] = df['Card Number'].apply(lambda x: str(x).lstrip("'"))
     df['Target Card Number'] = df['Target Card Number'].apply(lambda x: str(x).lstrip("'"))
     
@@ -66,16 +57,17 @@ def view():
     df['Target Card Number'] = pd.to_numeric(df['Target Card Number'], errors='coerce')
     df['Transaction Amount'] = pd.to_numeric(df['Transaction Amount'], errors='coerce')
     
-    # Initialize an empty DataFrame for errors
-    df_errors = pd.DataFrame()
-    df['Error Message'] = ''
+    # Start with an empty DataFrame for errors
+    df_errors = pd.DataFrame(columns=df.columns.tolist() + ['Error Message'])
+    
+    # Initialize a boolean series for errors
     mask_errors = pd.Series([False] * len(df))
     
-    # Data validation logic
+    # Define and apply error checks
     null_mask = df.isnull().any(axis=1)
     if null_mask.any():
         mask_errors |= null_mask
-    
+
     data_type_errors = pd.Series([False] * len(df))
     data_type_errors |= ~df['Account Name'].apply(lambda x: isinstance(x, str))
     data_type_errors |= ~df['Card Number'].apply(lambda x: pd.api.types.is_numeric_dtype(type(x)))
@@ -114,7 +106,6 @@ def view():
     if duplicate_errors.any():
         mask_errors |= duplicate_errors
     
-    # Error messages
     def get_error_message(row):
         messages = []
         if pd.isnull(row).any():
@@ -143,32 +134,40 @@ def view():
             messages.append("Duplicate transactions")
         return ', '.join(messages)
     
-    df_errors = df[mask_errors]
-    df_errors['Error Message'] = df_errors.apply(get_error_message, axis=1)
+    # Apply error messages
+    df_errors = df.copy()
+    df_errors.loc[mask_errors, 'Error Message'] = df_errors.loc[mask_errors].apply(get_error_message, axis=1)
+    df_errors = df_errors[mask_errors]
+    
+    # Generate chart of accounts grouped by 'Card Number'
     df_clean = df[~mask_errors]
+    chart_of_accounts = df_clean.groupby('Card Number').agg(
+        Account_Names=('Account Name', lambda x: ', '.join(x.unique())),
+        Final_Balance=('Transaction Amount', 'sum')
+    ).reset_index()
     
-    # Generate additional reports
-    chart_of_accounts = df.groupby('Account Name').apply(lambda x: x[['Card Number', 'Transaction Amount']].to_dict(orient='records')).reset_index()
-    chart_of_accounts.columns = ['Account Name', 'Cards']
-    chart_of_accounts = json.loads(chart_of_accounts.to_json(orient='records'))
+    # Convert chart_of_accounts DataFrame to JSON
+    chart_of_accounts_json = json.loads(chart_of_accounts.to_json(orient='records'))
     
-    collections_list = df[df['Transaction Amount'] < 0][['Account Name', 'Card Number', 'Transaction Amount']].to_json(orient='records')
-    collections_list = json.loads(collections_list)
+    # Generate collections list based on chart_of_accounts
+    # Filter to include only cards with negative balances
+    negative_balance_cards = chart_of_accounts[chart_of_accounts['Final_Balance'] < 0]
     
-
-
+    # Create collections_list by including all account names and negative balances
+    collections_list = negative_balance_cards[['Card Number', 'Account_Names', 'Final_Balance']]
+    collections_list = collections_list.sort_values(by='Card Number')  # Sort by card number
+    
+    # Convert sorted collections_list DataFrame to JSON
+    collections_list_json = json.loads(collections_list.to_json(orient='records'))
+    
     def nan_to_none(value):
         return None if isinstance(value, float) and np.isnan(value) else value 
     
-
     response['error_data'] = json.loads(df_errors.to_json(orient='records'))
-    response['chart_of_accounts'] = chart_of_accounts  
-    response['collections_list'] = collections_list 
+    response['chart_of_accounts'] = chart_of_accounts_json  
+    response['collections_list'] = collections_list_json 
 
     return jsonify(response)
 
 if __name__ == '__main__':
     app.run(debug=True)
-
-
-

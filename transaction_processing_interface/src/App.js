@@ -1,6 +1,8 @@
 
+
 import axios from "axios";
 import React, { Component } from "react";
+import './App.css';
 
 class App extends Component {
     state = {
@@ -9,6 +11,10 @@ class App extends Component {
         chartOfAccounts: [], // Initialize as empty array
         collectionsList: [], // Initialize as empty array
         uploadStatus: "", // To show status messages
+        currentPageErrorData: 0, // Pagination for errorData
+        currentPageChartOfAccounts: 0, // Pagination for chartOfAccounts
+        currentPageCollectionsList: 0, // Pagination for collectionsList
+        rowsPerPage: 20, // Number of rows per page
     };
 
     onFileChange = (event) => {
@@ -31,7 +37,7 @@ class App extends Component {
             this.state.selectedFile.name
         );
 
-        axios.post("http://127.0.0.1:5000/view", formData)
+        axios.post("http://127.0.0.1:8000/view", formData)
             .then(response => {
                 console.log("API Response:", response); // Log the API response
 
@@ -58,7 +64,6 @@ class App extends Component {
                         return item;
                     });
                 };
- 
 
                 if (Array.isArray(errorData)
                      && Array.isArray(chartOfAccounts)
@@ -68,6 +73,9 @@ class App extends Component {
                         chartOfAccounts: sanitizeData(chartOfAccounts),
                         collectionsList: sanitizeData(collectionsList),
                         uploadStatus: "Upload successful!",
+                        currentPageErrorData: 0, // Reset page to 0 on new upload
+                        currentPageChartOfAccounts: 0, // Reset page to 0 on new upload
+                        currentPageCollectionsList: 0, // Reset page to 0 on new upload
                     });
                 } else {
                     console.error("Invalid data format from API. Expected arrays for all data types.");
@@ -84,36 +92,86 @@ class App extends Component {
             });
     };
 
-    renderTable = (data, title) => {
+    // Helper function to get paginated data
+    getPaginatedData = (data, page) => {
+        const { rowsPerPage } = this.state;
+        const startIndex = page * rowsPerPage;
+        const endIndex = startIndex + rowsPerPage;
+        return data.slice(startIndex, endIndex);
+    };
+
+    // Handle page change
+    handlePageChange = (type, direction) => {
+        this.setState(prevState => {
+            let newPage = prevState[`currentPage${type}`];
+            if (direction === 'next') {
+                newPage = newPage + 1;
+            } else if (direction === 'prev') {
+                newPage = newPage - 1;
+            }
+            return {
+                [`currentPage${type}`]: newPage
+            };
+        });
+    };
+
+    renderTable = (data, title, type) => {
         if (data.length === 0) {
             return <></>;
         }
 
         const headers = Object.keys(data[0]);
+        const paginatedData = this.getPaginatedData(data, this.state[`currentPage${type}`]);
+        const totalPages = Math.ceil(data.length / this.state.rowsPerPage);
+        const currentPage = this.state[`currentPage${type}`];
 
         return (
-            <table>
-                <thead>
-                    <tr>
-                        {headers.map((header, index) => (
-                            <th key={index}>{header}</th>
-                        ))}
-                    </tr>
-                </thead>
-                <tbody>
-                    {data.map((row, rowIndex) => (
-                        <tr key={rowIndex}>
-                            {headers.map((header, colIndex) => (
-                                <td key={colIndex}>
-                                    {typeof row[header] === 'object'
-                                        ? JSON.stringify(row[header])
-                                        : row[header] || "N/A"}
-                                </td>
+            <>
+                <h2>{title}</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            {headers.map((header, index) => (
+                                <th key={index}>{header}</th>
                             ))}
                         </tr>
-                    ))}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {paginatedData.map((row, rowIndex) => (
+                            <tr key={rowIndex}>
+                                {headers.map((header, colIndex) => (
+                                    <td key={colIndex}>
+                                        {typeof row[header] === 'object'
+                                            ? JSON.stringify(row[header])
+                                            : row[header] || "N/A"}
+                                    </td>
+                                ))}
+                            </tr>
+                        ))}
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colSpan={headers.length}>
+                                <div className="pagination-controls">
+                                    <button
+                                        onClick={() => this.handlePageChange(type, 'prev')}
+                                        disabled={currentPage === 0}
+                                    >
+                                        Previous
+                                    </button>
+                                    <span> Page {currentPage + 1} of {totalPages} </span>
+                                    <button
+                                        onClick={() => this.handlePageChange(type, 'next')}
+                                        disabled={currentPage >= totalPages - 1}
+                                    >
+                                        Next
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </>
         );
     };
 
@@ -124,16 +182,12 @@ class App extends Component {
                 <input type="file" onChange={this.onFileChange} />
                 <button onClick={this.onFileUpload}>Upload!</button>
                 <p>{this.state.uploadStatus}</p>
-                {this.state.errorData.length !== 0 && <h2>Error Data</h2>}
-                {this.renderTable(this.state.errorData, "Error Data")}
-                {this.state.chartOfAccounts.length !== 0 && <h2>Chart of Accounts</h2>}
-                {this.renderTable(this.state.chartOfAccounts, "Chart of Accounts")}
-                {this.state.collectionsList.length !== 0 && <h2>Accounts Needing Collections</h2>}
-                {this.renderTable(this.state.collectionsList, "Accounts Needing Collections")}
+                {this.state.errorData.length !== 0 && this.renderTable(this.state.errorData, "Bad Transactions", "ErrorData")}
+                {this.state.collectionsList.length !== 0 && this.renderTable(this.state.collectionsList, "Accounts Needing Collections", "CollectionsList")}
+                {this.state.chartOfAccounts.length !== 0 && this.renderTable(this.state.chartOfAccounts, "Chart of Accounts", "ChartOfAccounts")}
             </div>
         );
     }
 }
 
 export default App;
-
