@@ -1,3 +1,107 @@
+# Transaction Processing Interface
+# Overview
+This project consists of a React frontend and a Flask backend. The React frontend provides an interface for uploading CSV files and viewing processed data, while the Flask backend handles file uploads, processes the data, and returns JSON responses.
+
+## Prerequisites
+Before you begin, ensure you have the following software installed:
+
+Node.js: JavaScript runtime for running the React frontend.
+Python 3.11: Required for running the Flask backend.
+Poetry: Python dependency management tool.
+
+
+
+### Forking and Cloning the Repository
+#### Fork the repository:
+
+Go to the repository page on GitHub.
+Click on the "Fork" button at the top right of the page. This will create a copy of the repository under your GitHub account.
+Clone your forked repository:
+
+After forking, clone your forked repository to your local machine using the following command in your terminal
+
+git clone https://github.com/your-username/your-forked-repo-name.git
+
+Replace your-username and your-forked-repo-name with your GitHub username and the name of your forked repository.
+If you are on your gthubaccount and accessing this file the url should already be 
+" https://github.com/your-username/your-forked-repo-name " 
+jsut add .git to the end and press enter.
+
+
+
+### Navigate to the project directory:
+
+in the terminal first navigate to the processor_interview folder.
+in terminal type :
+
+cd processor_interview
+
+### Installation
+### Backend (Flask)
+##### Navigate to the flask_server directory:
+
+in terminal type : 
+" cd flask_server " (without the quote marks )
+
+now once your are inside the flask_server, install dependencies using Poetry:
+
+In terminal type :
+" poetry install "
+
+once it runs, activate the virtual environment:
+in terminal type : 
+
+poetry shell
+
+
+#### Frontend (React)
+Navigate to the transaction_interview_processor directory:
+
+in terminal type : 
+
+cd transaction_interview_processor
+
+##### Install dependencies using npm:
+
+npm install
+
+
+### Running the Application
+
+### Running the Backend
+
+Ensure the virtual environment is activated:
+
+in terminal type : 
+
+poetry shell
+
+##### Run the Flask application:
+
+in terminal type : 
+
+gunicorn -w 4 -b 0.0.0.0:8000 wsgi:app
+
+
+
+#### Running the Frontend
+Navigate to the transaction_interview_processor directory:
+
+in terminal type : 
+
+cd processor_interview/transaction_interview_processor
+
+##### Start the React development server:
+
+
+npm start
+
+The React app will be available at http://localhost:3000. The development server will automatically reload when you make changes to your code.
+
+
+By following these steps, your code should also run.
+
+
 # Transaction Processor
 
 ## Context
