@@ -30,7 +30,7 @@ export default function Home() {
             </div>
           )}
           {data && data.length > 0 && (
-            <Tabs defaultValue="account">
+            <Tabs defaultValue="accounts">
               <TabsList>
                 <TabsTrigger value="accounts">Accounts</TabsTrigger>
                 <TabsTrigger value="badtransactions">
@@ -38,7 +38,7 @@ export default function Home() {
                 </TabsTrigger>
                 <TabsTrigger value="collections">Collections</TabsTrigger>
               </TabsList>
-              <TabsContent value="account">
+              <TabsContent value="accounts">
                 <Accounts />
               </TabsContent>
               <TabsContent value="badtransactions">
