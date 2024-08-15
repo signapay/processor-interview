@@ -11,10 +11,12 @@ class App extends Component {
         chartOfAccounts: [], // Initialize as empty array
         collectionsList: [], // Initialize as empty array
         uploadStatus: "", // To show status messages
-        currentPageErrorData: 0, // Pagination for errorData
-        currentPageChartOfAccounts: 0, // Pagination for chartOfAccounts
-        currentPageCollectionsList: 0, // Pagination for collectionsList
-        rowsPerPage: 20, // Number of rows per page
+        
+        //pagination
+        currentPageErrorData: 0, 
+        currentPageChartOfAccounts: 0, 
+        currentPageCollectionsList: 0, 
+        rowsPerPage: 20, 
     };
 
     onFileChange = (event) => {
@@ -39,16 +41,12 @@ class App extends Component {
 
         axios.post("http://127.0.0.1:8000/view", formData)
             .then(response => {
-                console.log("API Response:", response); // Log the API response
+
 
                 // Extract data from the response
                 const errorData = response.data.error_data;
                 const chartOfAccounts = response.data.chart_of_accounts;
                 const collectionsList = response.data.collections_list;
-
-                console.log("Error Data from API:", errorData);
-                console.log("Chart of Accounts from API:", chartOfAccounts);
-                console.log("Collections List from API:", collectionsList);
 
                 // Sanitize data to handle potential NaN values
                 const sanitizeData = (data) => {

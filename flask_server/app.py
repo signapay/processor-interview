@@ -168,10 +168,10 @@ def view():
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
     
     finally:
-        # Ensure the file is deleted after processing
+        # Ensure the file is deleted after processing.
         if os.path.exists(file_path):
             os.remove(file_path)
             print(f"Deleted file: {file_path}")
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)
