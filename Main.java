@@ -15,7 +15,7 @@ public class Main
 
             File file = new File(filePath);
 
-            while(!(file.exists())) // prompt user until a valid file is provided
+            while(!(file.exists())) // prompt user until a valid file is provided:
             {   
                 System.out.print("File not found, please provide a valid file address:");
                 readFile = new Scanner(System.in);
