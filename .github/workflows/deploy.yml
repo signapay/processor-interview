@@ -1,0 +1,48 @@
+name: Deploy Remix Project
+
+on:
+  push:
+    branches:
+      - main
+
+  workflow_dispatch:
+
+  permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build Remix Application
+        run: npm run build
+
+      - name: Deploy to Server
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }} # Define your SSH key in GitHub secrets
+          HOST: ${{ secrets.HOST }} # The IP address of your server
+          USER: ${{ secrets.USER }} # Username to SSH into the server
+          APP_DIRECTORY: ${{ secrets.APP_DIRECTORY }} # Directory to deploy the app on the server
+        run: |
+          echo "Deploying to $HOST"
+          ssh -o StrictHostKeyChecking=no $USER@$HOST << 'EOF'
+            cd $APP_DIRECTORY
+            git pull origin main
+            npm install
+            npm run build
+            pm2 restart all
+          EOF
