@@ -1,3 +1,23 @@
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+.main-container {
+  height: 100vh;
+}
+
+.col-left {
+  height: 100vh;
+  overflow: hidden;
+}
+
 .righ-window {
-  overflow-y: scroll;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.tab-content {
+  padding-bottom: 20px;
 }

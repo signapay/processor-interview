@@ -2,9 +2,10 @@ export interface Transaction {
   accountName: string;
   cardNumber: string;
   amount: string;
-  type?: "Credit" | "Debit" | "Transfer";
+  type?: "Credit" | "Debit" | "Transfer" | undefined;
   description?: string;
   targetCardNumber?: string;
+  accountId: string;
 }
 
 export type Account = {
@@ -12,6 +13,7 @@ export type Account = {
   cards: { [cardNumber: string]: number };
   amount?: number;
   balance?: any;
+  accountId: string;
 };
 
 export interface BadTransaction {
@@ -22,6 +24,8 @@ export interface BadTransaction {
   accountName?: string;
   description?: string;
   amount?: number;
+  accountId: string;
+  type?: string;
 }
 
 export interface ReportData {

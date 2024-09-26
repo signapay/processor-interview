@@ -23,6 +23,7 @@ switch (env) {
 export const config = {
   DATABASE_URL: process.env.DATABASE_URL,
   REDIS_URL: process.env.REDIS_URL,
+  SESSION_SECRET: process.env.SESSION_SECRET,
   NODE_ENV: env,
 };
 

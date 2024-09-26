@@ -110,11 +110,13 @@ export default function UploadPage() {
 
           {loading && <p>Uploading and processing file...</p>}
 
-          {reportData && (
+          {reportData ? (
             <div className="mt-4 mb-5 px-4">
               {/* <Tabs activeTab={activeTab} onTabChange={setActiveTab} /> */}
               <div className="tab-content mt-3">{tabContentMap[activeTab]}</div>
             </div>
+          ) : (
+            "No Transactions"
           )}
         </div>
       </div>

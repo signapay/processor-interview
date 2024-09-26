@@ -1,10 +1,11 @@
 import { Links, Meta, Outlet, Scripts, ScrollRestoration } from "@remix-run/react";
 import type { LinksFunction } from "@remix-run/node";
 import bootstrapStyles from "../public/css/bootstrap.min.css";
-import "../public/css/main.css";
+import styles from "../public/css/main.css";
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: bootstrapStyles },
+  { rel: "stylesheet", href: styles },
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
   {
     rel: "preconnect",
