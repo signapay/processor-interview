@@ -154,18 +154,14 @@ app.get("/accounts/:accountId", async (req, res) => {
 app.get("/accounts/:accountId/transactions", async (req, res) => {
   const { accountId } = req.params;
 
-  // Log accountId to ensure it's correct
   console.log(`Fetching transactions for account: ${accountId}`);
 
-  // Check if Redis key for transactions exists for this accountId
   const redisKey = `transactions:${accountId}`;
-  const transactions = await redisClient.lrange(redisKey, 0, -1); // Fetch all transactions
+  const transactions = await redisClient.lrange(redisKey, 0, -1); // fetch all transactions
 
-  // Log fetched transactions to verify data
   console.log("Fetched transactions:", transactions);
 
   if (transactions && transactions.length > 0) {
-    // Parse and return transactions
     const parsedTransactions = transactions.map((tx) => JSON.parse(tx));
     res.json(parsedTransactions);
   } else {
