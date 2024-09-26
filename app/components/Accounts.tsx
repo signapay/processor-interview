@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo, Suspense } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { Account, Transaction } from "../../types/types";
 import PersonalAccount from "./PersonalAccount";
 import { CSSTransition } from "react-transition-group";
@@ -12,22 +12,32 @@ export const Accounts: React.FC<AccountsProps> = ({ accounts }) => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
-  // memoize the accounts list to avoid unnecessary re-rendering
+  // Pagination logic
+  const itemsPerPage = 10; // Number of accounts to display per page
+  const [currentPage, setCurrentPage] = useState(1);
+  const totalPages = Math.ceil(accounts.length / itemsPerPage); // Total number of pages
+
+  // Get the accounts for the current page
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentAccounts = accounts.slice(indexOfFirstItem, indexOfLastItem);
+
+  // Memoize the accounts list for the current page to avoid unnecessary re-renders
   const accountList = useMemo(
     () =>
-      accounts.map((account: Account, index: number) => (
-        <div className="col" key={account.accountId}>
+      currentAccounts.map((account: Account, index: number) => (
+        <div className="col-sm-6 col-md-4" key={account.accountId}>
           <div className="card h-100 clickable-card" onClick={() => handleCardClick(account)} style={{ cursor: "pointer" }}>
             <div className="card-body">
               <h5 className="card-title">
-                {index + 1}. {account.accountName}
+                {index + 1 + (currentPage - 1) * itemsPerPage}. {account.accountName}
               </h5>
               <p className="card-text">Total Balance: ${parseFloat(account.balance).toFixed(2)}</p>
             </div>
           </div>
         </div>
       )),
-    [accounts]
+    [currentAccounts, currentPage]
   );
 
   const handleCardClick = useCallback(async (account: Account) => {
@@ -35,30 +45,24 @@ export const Accounts: React.FC<AccountsProps> = ({ accounts }) => {
     setSelectedAccount(account);
     setTransactions([]);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500)); // simulate delay for loading
-
       const response = await fetch(`http://localhost:4000/accounts/${encodeURIComponent(account.accountId)}/transactions`);
       const data = await response.json();
-      console.log("Transaction data " + JSON.stringify(data));
       setTransactions(data || []);
     } catch (error) {
       console.error("Error fetching transactions:", error);
-      setTransactions([]);
     } finally {
       setLoading(false);
     }
   }, []);
 
-  const handleBackClick = useCallback(async () => {
-    setLoading(true);
+  const handleBackClick = useCallback(() => {
     setSelectedAccount(null);
-    setTransactions([]); // clear transactions
-
-    // simulate a delay for loading the account list
-    await new Promise((resolve) => setTimeout(resolve, 500));
-
-    setLoading(false);
+    setTransactions([]);
   }, []);
+
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+  };
 
   return (
     <div>
@@ -67,9 +71,24 @@ export const Accounts: React.FC<AccountsProps> = ({ accounts }) => {
       {loading ? (
         <p>Loading...</p>
       ) : !selectedAccount ? (
-        <div className="row row-cols-1 row-cols-md-1 g-4">
-          {accountList} {/* memoized list of accounts */}
-        </div>
+        <>
+          <div className="row row-cols-1 row-cols-md-1 g-4">
+            {accountList} {/* memoized list of accounts for the current page */}
+          </div>
+
+          {/* Pagination Controls */}
+          <div className="pagination mt-4">
+            <button className="btn btn-secondary" onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>
+              Previous
+            </button>
+            <span className="mx-3">
+              Page {currentPage} of {totalPages}
+            </span>
+            <button className="btn btn-secondary" onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages}>
+              Next
+            </button>
+          </div>
+        </>
       ) : (
         <CSSTransition in={!!selectedAccount} timeout={300} classNames="slide" unmountOnExit>
           <div className="col">
@@ -77,15 +96,7 @@ export const Accounts: React.FC<AccountsProps> = ({ accounts }) => {
               Back to Accounts
             </button>
             <div className="card">
-              <div className="card-body">
-                {loading ? (
-                  <p>Loading transactions...</p>
-                ) : (
-                  <Suspense fallback={<p>Loading details...</p>}>
-                    <PersonalAccount account={selectedAccount} transactions={transactions} />
-                  </Suspense>
-                )}
-              </div>
+              <div className="card-body">{loading ? <p>Loading transactions...</p> : <PersonalAccount account={selectedAccount} transactions={transactions} />}</div>
             </div>
           </div>
         </CSSTransition>
@@ -93,3 +104,5 @@ export const Accounts: React.FC<AccountsProps> = ({ accounts }) => {
     </div>
   );
 };
+
+export default Accounts;

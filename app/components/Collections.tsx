@@ -5,6 +5,7 @@ type CollectionsProps = {
 };
 
 export const Collections: React.FC<CollectionsProps> = ({ collections }) => {
+  console.log("Collections " + JSON.stringify(collections));
   return (
     <div>
       <h3>Collections</h3>
@@ -23,6 +24,7 @@ export const Collections: React.FC<CollectionsProps> = ({ collections }) => {
                   {Object.entries(account.cards).map(([cardNumber, balance]: [string, number], cardIndex: number) => (
                     <li className="list-group-item" key={cardIndex}>
                       <strong>Card {cardIndex + 1}:</strong> **** {String(cardNumber).slice(-4)} - Balance: ${balance.toFixed(2)}
+                      <p></p>
                     </li>
                   ))}
                 </ul>

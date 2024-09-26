@@ -7,7 +7,7 @@ type PersonalAccountProps = {
 };
 
 const PersonalAccount: React.FC<PersonalAccountProps> = React.memo(({ account, transactions }) => {
-  // Group transactions by card number
+  // group transactions by card number
   const groupedTransactions = transactions.reduce((acc: { [key: string]: Transaction[] }, txn) => {
     const normalizedCardNumber = String(txn.cardNumber).trim(); // Normalize cardNumber
     if (!acc[normalizedCardNumber]) {
@@ -25,7 +25,7 @@ const PersonalAccount: React.FC<PersonalAccountProps> = React.memo(({ account, t
       <p>Total Balance: ${parseFloat(account.balance).toFixed(2)}</p>
 
       {Object.entries(account.cards).map(([cardNumber, balance], cardIndex) => {
-        const formattedCardNumber = String(cardNumber).trim(); // Normalize for lookup
+        const formattedCardNumber = String(cardNumber).trim(); // normalize for lookup
         console.log("Formatted Card Number:", formattedCardNumber);
         console.log("Grouped Transaction Keys:", Object.keys(groupedTransactions));
 
@@ -56,7 +56,6 @@ const PersonalAccount: React.FC<PersonalAccountProps> = React.memo(({ account, t
         );
       })}
 
-      {/* Display all transactions */}
       <div className="card mt-4">
         <div className="card-header">
           <h5>All Transactions</h5>
