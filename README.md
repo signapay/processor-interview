@@ -45,6 +45,8 @@ Before starting, ensure you have the following installed on your local machine:
    Create a `.env` file in the root of your project to define the environment variables needed for running the application:
 
    ```bash
+   //Check config/config.json for env vars
+
    NODE_ENV=development
    PORT=4000
    REDIS_URL=redis://localhost:6379
