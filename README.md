@@ -55,6 +55,7 @@ Before starting, ensure you have the following installed on your local machine:
    You may modify the port, Redis URL, or other settings according to your setup.
 
 ## Additional Information
+
 ```bash
 - Find the .env values inside the config/config.json directory.
 - npm run dev will concurrently start the node and remix servers.
@@ -73,5 +74,6 @@ There are two main modes for running this project: development and production.
 To run the project in development mode, use the following command:
 
 ```bash
+** This one command concurrently runs remix and node/express
 npm run dev
 ```
