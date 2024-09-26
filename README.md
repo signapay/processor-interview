@@ -52,9 +52,14 @@ Before starting, ensure you have the following installed on your local machine:
 
    You may modify the port, Redis URL, or other settings according to your setup.
 
-## Additional Instructions
-
-Find the .env values inside the config/configjs directory.
+## Additional Information
+```bash
+- Find the .env values inside the config/config.json directory.
+- npm run dev will concurrently start the node and remix servers.
+- redis keys are stored in two different formats for optimization.
+- remove any "debugger" if present.
+- Both vite and remix.config are configured for build
+```
 
 ## Running the Project
 
