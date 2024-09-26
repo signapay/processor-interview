@@ -61,6 +61,7 @@ Before starting, ensure you have the following installed on your local machine:
 - redis keys are stored in two different formats for optimization.
 - remove any "debugger" if present.
 - Both vite and remix.config are configured for build
+- Prisma ORM configured to handle CRUD operations, but optional and not used.
 ```
 
 ## Running the Project
