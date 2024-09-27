@@ -33,7 +33,7 @@ const transactionSchema = Joi.object({
   accountName: Joi.string().required().label("Account Name"),
   cardNumber: Joi.string().required().label("Card Number"),
   amount: Joi.string().required().label("Amount"),
-  type: Joi.string().valid("Credit", "Debit", "Transfer").required().label("Transaction Type"),
+  type: Joi.string().valid("Credit", "Debit", "Transfer").insensitive().default("Unknown").label("Transaction Type"),
   description: Joi.string().optional().label("Description"),
   targetCardNumber: Joi.string().optional().label("Target Card Number"),
   accountId: Joi.string().optional().label("Account ID"),
@@ -47,98 +47,83 @@ app.post("/upload", async (req, res) => {
   const file = req.files.file as fileUpload.UploadedFile;
   const filePath = path.join(__dirname, "uploads", file.name);
 
-  // save file temporarily for parsing
   await fs.promises.writeFile(filePath, file.data);
 
   const csvContent = await fs.promises.readFile(filePath, "utf-8");
 
-  // parse CSV without headers
   const parsedData = Papa.parse<string[]>(csvContent, {
     header: false,
     skipEmptyLines: true,
   }).data;
 
-  // fetch existing accounts and bad transactions from Redis
   const existingAccountsData = await redisClient.get("accounts");
   const existingBadTransactionsData = await redisClient.get("badTransactions");
 
-  // initialize or parse  existing data from Redis
   const accounts: Account[] = existingAccountsData ? JSON.parse(existingAccountsData) : [];
   const badTransactions: BadTransaction[] = existingBadTransactionsData ? JSON.parse(existingBadTransactionsData) : [];
 
-  // map the CSV rows
-  const mappedTransactions: Transaction[] = parsedData.map((transaction: string[]): Transaction => {
-    const [accountName, cardNumber, amount, type, description, targetCardNumber] = transaction;
+  parsedData.forEach((transaction: string[], index) => {
+    let [accountName, cardNumber, amount, type, description, targetCardNumber] = transaction;
     const accountId = `${accountName.replace(/\s+/g, "_")}_${cardNumber.trim()}`;
+    const typeVals = ["Credit", "Debit", "Transfer"];
+    if (!typeVals.includes(type)) {
+      type = "Unknown";
+    }
 
-    return {
+    const transactionObject: Transaction = {
       accountName,
       accountId,
       cardNumber,
       amount,
-      type: type as "Credit" | "Debit" | "Transfer" | undefined,
+      type,
       description,
       targetCardNumber: targetCardNumber ? String(targetCardNumber) : undefined,
     };
-  });
 
-  // process each mapped transaction
-  mappedTransactions.forEach((transaction, index) => {
-    const { error, value } = transactionSchema.validate(transaction, { abortEarly: false });
+    const { error, value } = transactionSchema.validate(transactionObject, { abortEarly: false });
 
     if (error) {
-      console.log(`Invalid transaction at row ${index + 1}: ${error.message}`);
       badTransactions.push({
         error: error.details.map((detail) => detail.message).join(", "),
-        rawData: transaction,
-        transactionAmount: transaction.amount || "0",
-        cardNumber: transaction.cardNumber || "Unknown",
-        accountName: transaction.accountName || "Unknown",
-        description: transaction.description || "No Description",
-        accountId: transaction.accountId || "No ID",
-        type: transaction.type || "No Card Type",
+        rawData: transactionObject,
+        transactionAmount: transactionObject.amount || "0",
+        cardNumber: transactionObject.cardNumber || "Unknown",
+        accountName: transactionObject.accountName || "Unknown",
+        description: transactionObject.description || "No Description",
+        accountId: transactionObject.accountId || "No ID",
+        type: transactionObject.type || "Unknown",
       });
-    } else {
-      let account = accounts.find((acc) => acc.accountId === transaction.accountId);
-      if (!account) {
-        account = {
-          accountName: transaction.accountName,
-          accountId: transaction.accountId,
-          cards: {},
-          balance: 0,
-        };
-        accounts.push(account);
-      }
+      console.log(`Invalid transaction at row ${index + 1}: ${error.message}, got ${type}`);
 
-      const numericAmount = parseFloat(transaction.amount);
-      account.cards[transaction.cardNumber] = (account.cards[transaction.cardNumber] || 0) + numericAmount;
-      account.balance += numericAmount;
+      return;
     }
-    redisClient.rpush(
-      `transactions:${transaction.accountId}`,
-      JSON.stringify({
-        accountName: transaction.accountName,
-        accountId: transaction.accountId,
-        cardNumber: transaction.cardNumber,
-        amount: transaction.amount,
-        type: transaction.type,
-        description: transaction.description,
-        targetCardNumber: transaction.targetCardNumber,
-      })
-    );
+
+    let account = accounts.find((acc) => acc.accountId === transactionObject.accountId);
+    if (!account) {
+      account = {
+        accountName: transactionObject.accountName,
+        accountId: transactionObject.accountId,
+        cards: {},
+        balance: 0,
+      };
+      accounts.push(account);
+    }
+
+    const numericAmount = parseFloat(transactionObject.amount);
+    account.cards[transactionObject.cardNumber] = (account.cards[transactionObject.cardNumber] || 0) + numericAmount;
+    account.balance += numericAmount;
+
+    redisClient.rpush(`transactions:${transactionObject.accountId}`, JSON.stringify(transactionObject));
   });
 
-  // save updated accounts and bad transactions in Redis
   await redisClient.set("accounts", JSON.stringify(accounts));
   await redisClient.set("badTransactions", JSON.stringify(badTransactions));
 
   res.send({ message: "File uploaded and transactions processed.", accounts, badTransactions });
 });
-
 app.get("/accounts/:accountId", async (req, res) => {
   const { accountId } = req.params;
 
-  // Check if the account exists in Redis
   const accountData = await redisClient.get(`accounts`);
   const accounts = accountData ? JSON.parse(accountData) : [];
 

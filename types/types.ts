@@ -2,7 +2,7 @@ export interface Transaction {
   accountName: string;
   cardNumber: string;
   amount: string;
-  type?: "Credit" | "Debit" | "Transfer" | undefined;
+  type: string;
   description?: string;
   targetCardNumber?: string;
   accountId: string;

@@ -9,7 +9,7 @@ type PersonalAccountProps = {
 const PersonalAccount: React.FC<PersonalAccountProps> = React.memo(({ account, transactions }) => {
   // group transactions by card number
   const groupedTransactions = transactions.reduce((acc: { [key: string]: Transaction[] }, txn) => {
-    const normalizedCardNumber = String(txn.cardNumber).trim(); // Normalize cardNumber
+    const normalizedCardNumber = String(txn.cardNumber).trim(); // normalize cardNumber
     if (!acc[normalizedCardNumber]) {
       acc[normalizedCardNumber] = [];
     }

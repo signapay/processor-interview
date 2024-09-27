@@ -16,24 +16,28 @@ export const loader = async () => {
 export const action = async ({ request }: { request: Request }) => {
   const formData = await request.formData();
   const file = formData.get("file");
+  try {
+    if (!file) {
+      return json({ error: "No file uploaded" }, { status: 400 });
+    }
 
-  if (!file) {
-    return json({ error: "No file uploaded" }, { status: 400 });
+    const uploadResponse = await fetch("http://localhost:4000/upload", {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!uploadResponse.ok) {
+      throw new Error("File upload failed.");
+    }
+
+    const reportResponse = await fetch("http://localhost:4000/report");
+    const updatedReportData = await reportResponse.json();
+
+    return updatedReportData;
+  } catch (err) {
+    console.error("Error processing the file:", err);
+    return json({ error: "Something went wrong while processing the file." }, { status: 500 });
   }
-
-  const uploadResponse = await fetch("http://localhost:4000/upload", {
-    method: "POST",
-    body: formData,
-  });
-
-  if (!uploadResponse.ok) {
-    throw new Error("File upload failed.");
-  }
-
-  const reportResponse = await fetch("http://localhost:4000/report");
-  const updatedReportData = await reportResponse.json();
-
-  return updatedReportData;
 };
 
 export default function UploadPage() {
@@ -44,7 +48,7 @@ export default function UploadPage() {
   const [activeTab, setActiveTab] = useState<Tab>("accounts");
   const [loading, setLoading] = useState(false);
 
-  const fetcher = useFetcher(); // For handling reset without reloading the page
+  const fetcher = useFetcher(); // handling reset without reloading the page
 
   useEffect(() => {
     if (updatedReport && updatedReport !== null) {
