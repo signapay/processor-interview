@@ -1,6 +1,6 @@
 # Transaction Processor
 
-This application has been created as my submission for the code challenge outlined in [Code-Challenge-Instructions.md](Code-Challenge-Instructions.md).
+This application has been created as my submission for the code challenge outlined in [Code Challenge Instructions](/instructions/README.md)
 
 ## Standing up the project
 
