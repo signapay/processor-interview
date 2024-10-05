@@ -26,25 +26,25 @@ Let's outline the functional requirements (and wishes!) for this project using t
 
 ### Must Have
 
-[ ] File Pool -> Management: CSV transaction files can be uploaded to or removed from the file pool to populate the transactions being reported on.
+- [ ] File Pool -> Management: CSV transaction files can be uploaded to or removed from the file pool to populate the transactions being reported on.
 
-[ ] Transaction Summary -> Cards by Account with Balance report.
+- [ ] Transaction Summary -> Cards by Account with Balance report.
 
-[ ] Transaction Summary -> Accounts for Collections report.
+- [ ] Transaction Summary -> Accounts for Collections report.
 
-[ ] Transaction Summary -> Bad transactions report.
+- [ ] Transaction Summary -> Bad transactions report.
 
 
 ### Should Have
 
-[ ] File Pool -> Bad Transactions: Invalid transactions are surfaced for any files that have transactions that cannot be parsed.
+- [ ] File Pool -> Bad Transactions: Invalid transactions are surfaced for any files that have transactions that cannot be parsed.
 
-[ ] Transaction Summary -> Accounts for Collections download to CSV. 
+- [ ] Transaction Summary -> Accounts for Collections download to CSV. 
 
 ### Could Have
 
-[ ] File Pool: Drag & Drop file upload
+- [ ] File Pool: Drag & Drop file upload
 
 ### Won't Have
 
-[ ] Session Saving
+- [ ] Session Saving
