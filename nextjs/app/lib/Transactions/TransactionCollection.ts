@@ -13,12 +13,16 @@ export class TransactionCollection {
     // Add one transaction to the collection
     addTransaction(transaction: Transaction): void {
         this.transactions.push(transaction);
+        
+        // TODO: Too repeaty
         this.accountManager.updateAccounts([transaction]);
     }
 
     // Add multiple transactions to the collection
     addTransactions(transactions: Transaction[]): void {
         this.transactions.push(...transactions);
+
+        // TODO: Too repeaty
         this.accountManager.updateAccounts(transactions);
     }
 
@@ -26,11 +30,13 @@ export class TransactionCollection {
         return this.transactions;
     }
 
+    // TODO: Reevaluate pass-throughs to AccountManager?
     getAccountSummary(): Account[] {
         return this.accountManager.getAccountSummary();
     }
 
-    getAccountByName(name: string): Account | undefined {
-        return this.accountManager.getAccountByName(name);
+    getCollectionsSummary(): { accountName: string; cardNumber: string; balance: number }[] {
+        return this.accountManager.getCollectionsSummary();
     }
+
 }

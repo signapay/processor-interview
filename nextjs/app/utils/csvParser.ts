@@ -10,6 +10,12 @@ const CSV_COLUMNS = {
   TargetCardNumber: 5
 };
 
+export interface ParseError {
+  row: number;
+  message: string;
+  input: string;
+}
+
 interface PapaParseResult {
   data: string[][];
   errors: Papa.ParseError[];
@@ -20,7 +26,7 @@ export function parseCSVString(csvString: string): Promise<string[][]> {
   return new Promise((resolve, reject) => {
     Papa.parse<string[]>(csvString, {
       header: false,
-      dynamicTyping: false,
+      dynamicTyping: false, // Let's treat as strings so no surprises 
       skipEmptyLines: true,
       complete: (results: PapaParseResult) => {
         resolve(results.data);
@@ -32,6 +38,7 @@ export function parseCSVString(csvString: string): Promise<string[][]> {
   });
 }
 
+// Test for parsed amount string to be a valid number with or without a decimal
 function isValidAmount(value: string): boolean {
   return /^-?\d+(\.\d+)?$/.test(value);
 }
@@ -72,6 +79,8 @@ interface ParseResult {
   errors: { lineNumber: number; input: string; message: string }[];
 }
 
+
+// Function to parse out Transaction types from CSV input.
 export async function processTransactionsFromCSV(csvString: string): Promise<ParseResult> {
   const result: ParseResult = { data: [], errors: [] };
 
@@ -81,6 +90,7 @@ export async function processTransactionsFromCSV(csvString: string): Promise<Par
     parsedData.forEach((row: string[], index) => {
       const validation = validateCSVInput(row);
 
+      // If the row is invalid, log it so we can report on it and carry on
       if (!validation.isValid) {
         result.errors.push({
           lineNumber: index + 1,
@@ -98,6 +108,8 @@ export async function processTransactionsFromCSV(csvString: string): Promise<Par
         amount: parseFloat(row[CSV_COLUMNS.TransactionAmount]),
         description: row[CSV_COLUMNS.Description],
       };
+
+      // Deal with different shapes due to the different transaction types
 
       let transactionData: TransactionData;
 
@@ -117,6 +129,7 @@ export async function processTransactionsFromCSV(csvString: string): Promise<Par
       result.data.push(new Transaction(transactionData));
     });
   } catch (error) {
+    // TODO: Better output here.
     console.error('Error processing CSV:', error);
     throw error;
   }

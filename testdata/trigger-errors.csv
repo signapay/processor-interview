@@ -1,0 +1,6 @@
+John Doe,1234,100,Debito,Trigger invalid transacton type,
+John Doe,1234,100,Credito,Trigger invalid transacton type,
+John Doe,1234,x,Debit,Trigger invalid amount
+John Doe,1234,100,Transfer,Trigger invalid Transfer
+John Doe,1234,100,Transfer,Trigger invalid Transfer,X
+1,1234,100,Transfer,Trigger invalid Transfer,X

@@ -58,7 +58,7 @@ export class AccountManager {
             // Credit targetCardNumber
             this.updateAccount(new Transaction({
                 name: transaction.name,
-                cardNumber: transaction.targetCardNumber,
+                cardNumber: transaction.targetCardNumber || 0, // TODO: Fix this hack
                 amount: transaction.amount,
                 type: 'Credit',
                 description: 'Transfer reconciliation',
@@ -85,7 +85,18 @@ export class AccountManager {
         return Array.from(this.accounts.values());
     }
 
-    getAccountByName(name: string): Account | undefined {
-        return this.accounts.get(name);
+    // TODO: Possibly refactor, this was hasty
+    getCollectionsSummary(): { accountName: string; cardNumber: string; balance: number }[] {
+        return Array.from(this.accounts.values())
+            .filter(account => account.cards.some(card => card.balance < 0))
+            .flatMap(account => account.cards
+                .filter(card => card.balance < 0)
+                .map(card => ({
+                    accountName: account.name,
+                    cardNumber: card.cardNumber.toString(),
+                    balance: card.balance
+                }))
+            );
     }
+
 }
