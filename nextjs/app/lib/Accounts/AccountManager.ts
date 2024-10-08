@@ -10,13 +10,47 @@ export class AccountManager {
         }
     }
 
+    /**
+     * Per Josh & I's discusson on Mon Oct 7, 2024 concerning duplicate Card Numbers across accounts,
+     * 
+     * Transfers should be made in the following way:
+     * 
+     * (1. Local) - If the Target Card Number already exists in the account that is performing the transfer, transfer to that Account.Card Number
+     * (2. External, Alphabetically) - If not local, find the first existence of that Card Number in all Accounts *alphabetically*, transfer to that if found
+     * (3. Local Fallback) - (Assumed) if we don't have an external just fall back to creating a new card in the local account.
+     * 
+     * This logic can be adjusted to fit priority changes.
+     * 
+     */
+    private determineTransferAccount(fromAccount: Account, toCardNumber: number): string {
+
+        // Check if card is already in the local account
+        const cardExistsLocally = fromAccount.cards.find(c => c.cardNumber === toCardNumber);
+
+        if (cardExistsLocally) {
+            return fromAccount.name;
+        }
+
+        // If not, check if the card exists in any other account alphabetically
+        const sortedAccounts = Array.from(this.accounts.values()).sort((a, b) => a.name.localeCompare(b.name));
+        const externalAccountWithCard = sortedAccounts.find(a => a.cards.find(c => c.cardNumber === toCardNumber));
+
+        if (externalAccountWithCard) {
+            return externalAccountWithCard.name;
+        }
+
+        // Fallback to local account
+        return fromAccount.name;
+
+    }
+
     private updateAccount(transaction: Transaction): void {
 
         // Try to fetch an existing account from our map by name
         let account = this.accounts.get(transaction.name);
 
         // If we don't have an account, create one
-        if (!account) { 
+        if (!account) {
             account = { name: transaction.name, cards: [] };
             this.accounts.set(transaction.name, account);
         }
@@ -30,23 +64,17 @@ export class AccountManager {
             account.cards.push(card);
         }
 
-        // Process the actual transaction
+        // Process the transaction
 
         if (transaction.type === 'Transfer') {
-            /**
-             * Per Josh & I's discusson on Mon Oct 7, 2024 concerning duplicate Card Numbers across accounts,
-             * Transfers should work in the following way:
-             * 
-             * - If the Target Card Number already exists in the account that is performing the transfer, transfer to that Account.Card Number
-             * - If not, find the first existence of that Card Number in all Accounts *alphabetically*, transfer to that one
-             * - (Assumed) if it doesn't exist, consider the operation an Invalid Transaction
-             * 
-             * The current code below simply silos transfers to the account they are being made from by splitting them into a Credit / Debit against the same account.
-             */
 
-            // TODO: Implement the updated Transfer logic ^^^
+            // This SHOULD be taken care of during parsing, but...
+            if (! transaction.targetCardNumber) {
+                throw new Error('Transfer transaction must specify a targetCardNumber');
+            }
 
-            // Debit cardNumber
+            // Debit the transferring account
+            // TODO: Implement this in a way to roll back if the credit fails
             this.updateAccount(new Transaction({
                 name: transaction.name,
                 cardNumber: transaction.cardNumber,
@@ -55,10 +83,14 @@ export class AccountManager {
                 description: 'Transfer reconciliation',
             }));
 
+            // Next, locate the target Account and Card Number
+
+            const creditAccountName = this.determineTransferAccount(account, transaction.targetCardNumber);
+
             // Credit targetCardNumber
             this.updateAccount(new Transaction({
-                name: transaction.name,
-                cardNumber: transaction.targetCardNumber || 0, // TODO: Fix this hack
+                name: creditAccountName,
+                cardNumber: transaction.targetCardNumber,
                 amount: transaction.amount,
                 type: 'Credit',
                 description: 'Transfer reconciliation',
