@@ -12,6 +12,16 @@ npm install
 npm run dev
 ```
 
+## Tests
+
+Some tests have been provided to examine Transfer logic and some general tests to establish the testing framework. To run them after standing up the project:
+
+```
+cd nextjs
+npm test
+```
+
+
 ## Packages of note
 
 Beyond the standard Next/Tailwind setup and dependencies this project also implements the following:
@@ -26,25 +36,25 @@ Let's outline the functional requirements (and wishes!) for this project using t
 
 ### Must Have
 
-- [ ] File Pool -> Management: CSV transaction files can be uploaded to or removed from the file pool to populate the transactions being reported on.
-
-- [ ] Transaction Summary -> Cards by Account with Balance report.
-
-- [ ] Transaction Summary -> Accounts for Collections report.
-
-- [ ] Transaction Summary -> Bad transactions report.
+- [x] Transaction Summary -> Cards by Account with Balance report.
+- [x] Transaction Summary -> Accounts for Collections report.
+- [x] File Pool: Transaction parsing issues will be surfaced.
+- [x] File Pool: CSV Files with transactions can be uploaded to populate Transaction Collection      
+- [x] File Pool: File Pool can be reset, clearing out files and Transaction Collection
 
 
 ### Should Have
 
-- [ ] File Pool -> Bad Transactions: Invalid transactions are surfaced for any files that have transactions that cannot be parsed.
+***moved to won't have to represent state at pull request***
 
-- [ ] Transaction Summary -> Accounts for Collections download to CSV. 
 
 ### Could Have
 
-- [ ] File Pool: Drag & Drop file upload
+***moved to won't have to represent state at pull request***
 
 ### Won't Have
 
+- [ ] File Pool -> Management: CSV transaction files can be managed **on an individual basis** (added and removed) to populate the transactions being reported on.
+- [ ] File Pool: Drag & Drop file upload
 - [ ] Session Saving
+- [ ] Transaction Summary -> Accounts for Collections download to CSV. 
