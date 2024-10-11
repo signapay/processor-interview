@@ -1,3 +1,26 @@
+# Transaction Processor
+## SignaPay Exercise
+
+### to install
+cd transaction-processor
+npm install
+
+### to run
+cd transaction-processor
+npm start from /transaction-processor
+
+<!-- TO DO -->
+
+<!-- create frontend with file upload form -->
+<!-- -- add landing page -- -->
+<!-- -- create form poc -- -->
+<!-- -- create tables -- -->
+
+<!-- allow csvs and other file formats -->
+<!-- parse that data -->
+<!-- display parsed data in table -->
+
+<!-- style -->
 ========================================================================================================================
 
 # //ORIGINAL README:
