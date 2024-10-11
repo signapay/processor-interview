@@ -9,6 +9,10 @@ npm install
 cd transaction-processor
 npm start from /transaction-processor
 
+references:
+https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/file
+https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/accept#unique_file_type_specifiers
+
 <!-- TO DO -->
 
 <!-- create frontend with file upload form -->
