@@ -52,35 +52,25 @@ export default function Home() {
           onChange={handleFileUpload}
         />
       </form>
-      {/* breakout these into components */}
       {csvData.length > 0 && (
-        <table className='min-h-[200px] max-h-[200px] overflow-hidden rounded-2xl text-left text-gray-500 text-sm w-[80%] dark:text-gray-400'>
-          {/* add pagination */}
-          <thead className='bg-gray-50 text-gray-700 text-xs uppercase dark:bg-gray-700 dark:text-gray-300'>
-            <tr>
-              {tableHeaders}
-            </tr>
-          </thead>
-          <tbody className='px-6 py-3 border-b-2 border-gray-200 text-left text-xs font-medium text-gray-300 tracking-wider'>
-            {tableBody}
-          </tbody>
-        </table>
-      )
-      }
+        <div className='border-2 border-pink-400 max-h-[600px] min-h-[500px] overflow-y-auto rounded-2xl w-[70%]'>
+          <table className='table-fixed w-full text-left text-gray-500 text-sm dark:text-gray-400'>
+            <thead className='bg-gray-50 text-gray-700 text-xs uppercase dark:bg-gray-700 dark:text-gray-300'>
+              <tr className="sticky top-0 bg-gray-50 dark:bg-gray-700">
+                {tableHeaders}
+              </tr>
+            </thead>
+            <tbody className='px-6 py-3 border-b-2 border-gray-200 text-left text-sm font-medium text-gray-300 tracking-wider'>
+              {tableBody}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div >
   );
 }
 
 // FIRST ITERATION BELOW. SOME USEFUL STUFF IN THERE:
-
-// export default function Home() {
-//   const headers = ["Account Name", "Card Number", "Transaction Amount", "Transaction Type", "Description", "Target Card Number"];
-
-//   const tableHeaders = headers.map(header => (
-//     <th key={header} className="px-6 py-3 border-b-2 border-gray-200 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-//       {header}
-//     </th>
-//   ));
 
 //   return (
 //     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
