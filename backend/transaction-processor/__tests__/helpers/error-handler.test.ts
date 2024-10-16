@@ -23,7 +23,7 @@ describe("error-handler", () => {
         const transactions: Transaction[] = [
             {
                 accountName: "John Doe",
-                cardNumber: 1234567890123456, // Changed to a number
+                cardNumber: 1234_5678_9012_3456,
                 transactionAmount: 100,
                 transactionType: "Credit",
                 description: "Test transaction",
