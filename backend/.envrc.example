@@ -1,0 +1,3 @@
+export PORT=4000
+export NODE_ENV=development
+export AUTH_TOKEN=valid-token

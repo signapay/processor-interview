@@ -1,83 +1,144 @@
 # Transaction Processor
 
-## Context
+This project consists of a frontend and a backend for processing transactions. The frontend is built with React, while the backend is built with Node.js and Express, written in TypeScript.
 
-Thank you for taking a the time to complete our interview code project. We realize that there are many ways to conduct the "technical part" of the interview process from L33T code tests to whiteboards, and each has its own respective pros / cons. We intentionally chose the take-home project approach because we believe it gives you the best chance to demonstrate your skills and knowledge in a "normal environment" - i.e. your computer, keyboard, and IDE.
+## Frontend
 
-Our expectation is that this project should take between 3-5 hours of effort. We realize that you have a life outside of this interview process so we do not specify a timeframe in which you need to complete the project. That said, we are generally actively recruiting, so a long delay may result in the opening having already been filled.
+### Overview
 
-You are free to use whatever tech stack you prefer to complete the project. Once your project is complete, the next step in the process is a conversation about why you made the choices you did and a review of your solution. We believe that this conversation is as important as the code itself and provides an opportunity for feedback both ways.
+The frontend application provides a user interface for uploading transaction files, viewing transaction lists, and visualizing transaction data through charts.
 
-We encourage you to have fun with the project, while producing a solution that you believe accurately represents how you would bring your skillset to the team.
+### Features
 
-We have attempted to make this repo as clear as possible, but if you have any questions, we encourage you to reach out.
+- Upload CSV files to process transactions
+- Filter transactions by account name, type, and date range
+- View transaction details in a paginated list
+- Visualize transaction data with interactive charts
 
-## Project
+### Prerequisites
 
-We would like you to build a transaction processor. In this scenario, the user of your software is an internal account manager, who has been provided a transaction file from one or more of our transaction providers.
+- Node.js (version 20.10.0 or later)
+- npm (comes with Node.js)
 
-We will provide your software with a list of transactions. It needs to process the transactions and provide some reporting information back to the user. We will detail the content of the file and required reporting below.
+### Installation
 
-Beyond these basic requirements, the implementation is up to you.
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/processor-interview/transaction-processor.git
+   cd transaction-processor/frontend
+   ```
 
-### Transaction Details
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-These transactions will contain the following information:
+3. Set up environment variables:
+   ```bash
+   cp .envrc.example .envrc
+   ```
 
-| Field              | Type   | Description                                                       |
-| ------------------ | ------ | ----------------------------------------------------------------- |
-| Account Name       | Text   | The name of the account                                           |
-| Card Number        | Number | The card number used for the transaction, 1:M with account names  |
-| Transaction Amount | Number | The amount of the transaction, can be positive or negative        |
-| Transaction Type   | Text   | The type of transaction, values can be Credit, Debit, or Transfer |
-| Description        | Text   | A brief description of the transaction                            |
-| Target Card Number | Number | only provided if the transaction type is a transfer               |
+### Available Scripts
 
-### Functional Requirements
+- **`npm start`**: Runs the app in development mode. Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+- **`npm test`**: Launches the test runner in interactive watch mode.
+- **`npm run build`**: Builds the app for production to the `build` folder.
+- **`npm run eject`**: Removes the single build dependency from your project.
 
-Your solutions needs to provide a system with the following functionality:
+### Project Structure
 
-- **UI**
-  - Accepts a file containing the transactions to process
-    - Each file submitted should continue "in continuation of" previous submissions
-  - An ability to reset the system to blank (new)
-- **Logic** that correctly processes the file
-- **Reporting**
-  - A chart of accounts that list the account name, its cards, and the amount on each card
-  - A list of accounts that we need to give to collections (any cards with a < 0.00 balance)
-  - A list of "bad transactions" that someone needs to go look at (any transactions that you were unable to parse)
-- **Persistence**
-  - Persistence during a "run" of the software is required
-    - for example, if you choose to build a nextjs or remix site, we expect that you, at minimum, use an in memory cache that maintains state as long as the process is running
-    - Long term persistence such as a database is allowed, but not required.
-      - If implemented, be sure that initialization is easy / documented for our review
+- `src/`: Main source directory
+  - `components/`: React components
+  - `types/`: TypeScript type definitions
+  - `lib/`: API and utility functions
+  - `styles/`: CSS and styling files
 
-### Data Files
+### Technologies Used
 
-In this repo, you will find the following csv files:
+- React
+- TypeScript
+- Chart.js (for data visualization)
+- Zod (for schema validation)
 
-| File     | Description                                                                                                                                               |
-| -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| test.csv | a smaller file that has a few sample transactions - the intent is to use this file for development. like most development resources, this file is "clean" |
-| data.csv | a larger file that has a number of transactions - like the real world, you should not assume that this file is not without its "issues"                   |
+## Backend
 
-## Submission
+### Overview
 
-You should fork this repo to your own account and then submit a PR when you are ready for your solution to be evaluated. This workflow closely follows our daily practice of feature branching > PR and following it is required for your submission to be considered "complete".
+The backend is a robust transaction processing system for internal account managers. It provides a CLI interface for file-based processing and a REST API for transaction processing and file uploads.
 
-## Final Thoughts and Hints
+### Features
 
-- In this scenario, you are the initial architect creating the first pass at this project. You can consider our review the same as a Senior level engineer coming on to the project. Make sure that when we "pick up" the repo, it is clear how to stand up the project, run the solution, and potentially contribute code
-- Since you are tackling this specific project, our expectation is that you are at a senior engineer level. While we 100% want your code to represent your preferred style, there are some things we consider "basic" that should be in your submission. These include ideas like the following list. This list is not exhaustive, it is meant to point in a direction:
-  - Clear, consistent, readable code
-  - Proper use of your selected stack
-    - for example, if you choose C#, we would expect to see IOC/DI appropriately implemented
-  - DRY
-  - Low cyclomatic complexity
-  - Low Coupling / High Cohesion
-  - Clear thought and patterns for maintainability and expansion
-    - This scenario is obviously simplified from reality, that said you should consider future requests like other transaction types, different file formats, etc. - this will at minimum, be a topic in the conversation
-- While it should be obvious, this scenario involves "money". This means numerical accuracy is required and at least minimal security should be considered in your submission (we aren't going to "hack your solution", but there shouldn't be open API endpoints either).
-- We do NOT expect you to be a designer, we do expect you to consider your user and make the experience intuitive and easy to use
+- Process transactions from CSV and JSON files
+- Generate detailed transaction reports
+- CLI interface for file-based processing
+- REST API for transaction processing and file uploads
+- Robust error handling and input validation
 
-As we said above, if you have any questions, please reach out.
+### Prerequisites
+
+- Node.js (version 20.10.0 or later)
+- npm (comes with Node.js)
+
+### Installation
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/processor-interview/transaction-processor.git
+   cd transaction-processor/backend
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Set up environment variables:
+   ```bash
+   cp .envrc.example .envrc
+   ```
+
+4. Give execute permission to the transaction processor script:
+   ```bash
+   chmod +x .bin/run
+   ```
+
+### Usage
+
+#### CLI Mode
+
+Process transactions from a file:
+
+```bash
+npm run start:cli -- process <file-path>
+```
+
+#### REST API Mode
+
+Start the server:
+
+```bash
+npm run start:server
+```
+
+### API Endpoints
+
+- `POST /api/process`: Process transactions sent in the request body
+- `POST /api/process-transactions`: Process transactions from an uploaded CSV file
+
+### Project Structure
+
+- `transaction-processor/`: Main source directory
+  - `features/`: Core processing logic
+  - `interfaces/`: CLI and REST API implementations
+  - `helpers/`: Utility and Validation functions
+  - `types/`: TypeScript type definitions
+  - `__tests__/`: Test files
+
+### Technologies Used
+
+- TypeScript
+- Express.js
+- Zod (for schema validation)
+- Jest (for testing)
+- csv-parser (for CSV file processing)
+- yargs (for CLI argument parsing)

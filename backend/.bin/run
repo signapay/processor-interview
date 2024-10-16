@@ -1,0 +1,44 @@
+#!/bin/bash
+
+promptForMode() {
+  echo "Select mode:"
+  echo "1. CLI (Process transactions from a file)"
+  echo "2. Server (Start the REST API server)"
+  read -p "Enter your choice (1 or 2): " choice
+
+  case "$choice" in
+    1)
+      runCLI
+      ;;
+    2)
+      runServer
+      ;;
+    *)
+      echo "Invalid choice. Please select 1 or 2."
+      promptForMode
+      ;;
+  esac
+}
+
+runCLI() {
+  read -p "Enter the file path: " filePath
+  npm run start:cli -- process "$filePath"
+}
+
+runServer() {
+  npm run start:server
+}
+
+if [ $# -eq 0 ]; then
+  promptForMode
+elif [ "$1" = "--cli" ]; then
+  runCLI
+elif [ "$1" = "--server" ]; then
+  runServer
+else
+  echo "Usage: transaction-processor [--cli | --server]"
+  echo "  --cli     Run in CLI mode (process transactions from a file)"
+  echo "  --server  Run in Server mode (start the REST API server)"
+  echo "If no option is provided, you will be prompted to choose a mode."
+  exit 1
+fi
