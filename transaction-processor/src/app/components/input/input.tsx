@@ -1,12 +1,9 @@
 interface InputProps {
   label: string | undefined;
+  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-export default function Input({ label }: InputProps) {
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log('test test', event);
-  }
-
+export default function Input({ label, onChange }: InputProps) {
   return (
     <div>
       {label &&
@@ -16,7 +13,7 @@ export default function Input({ label }: InputProps) {
         type="file"
         id="fileInput"
         accept=".csv"
-        onChange={handleFileUpload}
+        onChange={onChange}
         className="border-4 border-blue-400"
       />
     </div >

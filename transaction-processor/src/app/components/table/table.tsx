@@ -1,17 +1,14 @@
-'use client';
-
 import { useTransactionContext } from "@/app/context/context";
-import { useState } from "react";
 
 export default function Table() {
-  const { transactions } = useTransactionContext();
+  const { transactions } = useTransactionContext();  // Fetch the transactions from context
 
   const headers = ["Account Name", "Card Number", "Transaction Amount", "Transaction Type", "Description", "Target Card Number"];
 
-  const tableHeaders = headers.map(header => (
-    <th key={header} className="px-6 py-3" >
+  const tableHeaders = headers.map((header) => (
+    <th key={header} className="px-6 py-3">
       {header}
-    </th >
+    </th>
   ));
 
   const tableBody =
@@ -21,10 +18,10 @@ export default function Table() {
           <td key={idx} className='px-6 py-4'>{String(value)}</td>
         ))}
       </tr>
-    ))
+    ));
+
   return (
     <div>
-      <div>TRANSACTION: {transactions}</div>
       {
         transactions.length > 0 && (
           <div className='border-4 border-pink-300 max-h-[600px] min-h-[500px] overflow-y-auto rounded-2xl w-[70%]'>
@@ -42,6 +39,5 @@ export default function Table() {
         )
       }
     </div>
-  )
+  );
 }
-
