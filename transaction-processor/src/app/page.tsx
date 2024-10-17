@@ -3,14 +3,20 @@
 // TO DO
 // break up components into separate files
 // paginate table
+// favicon
 // Each file submitted should continue "in continuation of" previous submissions
 // An ability to reset the system to blank (new)
 // A chart of accounts that list the account name, its cards, and the amount on each card
 // A list of accounts that we need to give to collections (any cards with a < 0.00 balance)
 // A list of "bad transactions" that someone needs to go look at (any transactions that you were unable to parse)
+// context to handle form state and data
+// reusable button component with button text and action for submit and reset
+// validation for file type
+
 
 import { SetStateAction, useState } from 'react';
 import Papa from 'papaparse';
+import Form from './components/form/form';
 
 export default function Home() {
   const [csvData, setCsvData] = useState<any[]>([]);
@@ -46,19 +52,15 @@ export default function Home() {
 
 
   return (
-    <div className='flex flex-col items-center gap-y-[16px]'>
-      <h1>Upload CSV</h1>
-      <form>
-        <label htmlFor="fileInput">Data</label>
-        <input
-          type="file"
-          id="fileInput"
-          accept=".csv"
-          onChange={handleFileUpload}
-        />
-      </form>
+    <div className='border-4 border-orange-400 flex flex-col items-center gap-y-[16px] h-screen py-[24px]'>
+      <h1 className='text-[48px]'>Upload Transaction Data</h1>
+      <div className='border-2 border-white flex flex-col'>
+        <h2>acceptable file types:</h2>
+        <p>.csv</p>
+      </div>
+      <Form />
       {csvData.length > 0 && (
-        <div className='border-2 border-pink-400 max-h-[600px] min-h-[500px] overflow-y-auto rounded-2xl w-[70%]'>
+        <div className='border-4 border-pink-300 max-h-[600px] min-h-[500px] overflow-y-auto rounded-2xl w-[70%]'>
           <table className='table-fixed w-full text-left text-gray-500 text-sm dark:text-gray-400'>
             <thead className='bg-gray-50 text-gray-700 text-xs uppercase dark:bg-gray-700 dark:text-gray-300'>
               <tr className="sticky top-0 bg-gray-50 dark:bg-gray-700">
@@ -74,24 +76,3 @@ export default function Home() {
     </div >
   );
 }
-
-// FIRST ITERATION BELOW. SOME USEFUL STUFF IN THERE:
-
-//   return (
-//     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-//       <h1>Upload your transaction</h1>
-//       <form className="border-4 border-yellow-400">
-//         <div className="border-2 border-white flex flex-col">
-//           <label htmlFor="">Upload a file:</label>
-//           <input type="file" id="avatar" name="avatar" accept=".csv" />
-//         </div>
-//         <button>Submit</button>
-//       </form>
-//       <table className="border-4 border-pink-300">
-//         <tr>
-//           {tableHeaders}
-//         </tr>
-//       </table>
-//     </div>
-//   );
-// }
