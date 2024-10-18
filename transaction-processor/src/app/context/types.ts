@@ -1,8 +1,21 @@
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch } from 'react';
 
 export interface TransactionContextType {
-  transactions: any[]; // Adjust this any
-  setTransactions: Dispatch<SetStateAction<any[]>>
-  parsedData: any[]; // Adjust this any
-  setParsedData: Dispatch<SetStateAction<any[]>>
+  state: {
+    transactions: any[];
+    parsedData: any[];
+    currentPage: string;  // Include current page in state
+  };
+  dispatch: Dispatch<Action>;
 }
+
+export interface TransactionState {
+  transactions: any[];
+  parsedData: any[];
+  currentPage: string;
+}
+
+export type Action =
+  | { type: 'SET_TRANSACTIONS'; payload: any[] }
+  | { type: 'SET_PARSED_DATA'; payload: any[] }
+  | { type: 'SET_PAGE'; payload: string };

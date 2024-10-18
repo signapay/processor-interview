@@ -4,13 +4,14 @@ import Input from "../input/input";
 import Papa from "papaparse";
 
 export default function Form() {
-  const { setTransactions, parsedData, setParsedData } = useTransactionContext();
+  const { dispatch, state } = useTransactionContext();
+
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       Papa.parse(file, {
         complete: (results) => {
-          setParsedData(results.data);
+          dispatch({ type: 'SET_PARSED_DATA', payload: results.data });
         },
         header: true,
       });
@@ -19,13 +20,14 @@ export default function Form() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setTransactions(parsedData);
+    dispatch({ type: 'SET_TRANSACTIONS', payload: state.parsedData });
+    dispatch({ type: 'SET_PAGE', payload: 'All Transactions' });
     console.log('submit form');
   };
 
   const handleReset = () => {
-    setTransactions([]);
-    setParsedData([]);
+    dispatch({ type: 'SET_TRANSACTIONS', payload: [] });
+    dispatch({ type: 'SET_PARSED_DATA', payload: [] });
     console.log('reset form');
   };
 

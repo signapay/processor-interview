@@ -1,5 +1,6 @@
-import { createContext, useState, useContext, ReactNode } from 'react';
-import { TransactionContextType } from './types';
+import { createContext, useReducer, useContext, ReactNode } from 'react';
+import { TransactionContextType, TransactionState } from './types';
+import { transactionReducer } from './reducer';
 
 const TransactionContext = createContext<TransactionContextType | undefined>(undefined);
 
@@ -12,12 +13,16 @@ export const useTransactionContext = () => {
 };
 
 export const TransactionProvider = ({ children }: { children: ReactNode }) => {
-  const [transactions, setTransactions] = useState<any[]>([]);
-  const [parsedData, setParsedData] = useState<any[]>([]);
+  const initialState: TransactionState = {
+    transactions: [],
+    parsedData: [],
+    currentPage: 'All Transactions',
+  };
+
+  const [state, dispatch] = useReducer(transactionReducer, initialState);
 
   return (
-    <TransactionContext.Provider value={{ transactions, setTransactions, parsedData, setParsedData }
-    }>
+    <TransactionContext.Provider value={{ state, dispatch }}>
       {children}
     </TransactionContext.Provider>
   );
