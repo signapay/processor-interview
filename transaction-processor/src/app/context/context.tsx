@@ -13,11 +13,10 @@ export const useTransactionContext = () => {
 
 export const TransactionProvider = ({ children }: { children: ReactNode }) => {
   const [transactions, setTransactions] = useState<any[]>([]);
-  console.log('transactions', transactions);
-
+  const [parsedData, setParsedData] = useState<any[]>([]);
 
   return (
-    <TransactionContext.Provider value={{ transactions, setTransactions }
+    <TransactionContext.Provider value={{ transactions, setTransactions, parsedData, setParsedData }
     }>
       {children}
     </TransactionContext.Provider>
