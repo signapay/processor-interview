@@ -1,14 +1,17 @@
 import { useTransactionContext } from "@/app/context/context";
 import { Key } from "react";
 
-export default function Table() {
+interface TableProps {
+  headers: string[];
+  data: any[];
+}
+
+export default function Table({ headers, data }: TableProps) {
   const { state } = useTransactionContext();
 
   if (state.transactions.length === 0) {
     return null;
   }
-
-  const headers = ["Account Name", "Card Number", "Transaction Amount", "Transaction Type", "Description", "Target Card Number"];
 
   const tableHeaders = headers.map((header) => (
     <th key={header} className="px-6 py-3">
@@ -17,7 +20,7 @@ export default function Table() {
   ));
 
   const tableBody =
-    state.transactions.map((row: { [s: string]: unknown; } | ArrayLike<unknown>, index: Key | null | undefined) => (
+    data.map((row: { [s: string]: unknown; } | ArrayLike<unknown>, index: Key | null | undefined) => (
       <tr key={index} className='bg-white border-b dark:bg-gray-800 dark:border-gray-700'>
         {Object.values(row).map((value, idx) => (
           <td key={idx} className='px-6 py-4'>{String(value)}</td>
