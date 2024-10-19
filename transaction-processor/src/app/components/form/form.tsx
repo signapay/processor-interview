@@ -2,20 +2,16 @@ import { useTransactionContext } from "@/app/context/context";
 import Button from "../button/button";
 import Input from "../input/input";
 import Papa from "papaparse";
+import { headers } from "@/app/constants";
 
 export default function Form() {
   const { dispatch, state } = useTransactionContext();
-
-  console.log('state', state.parsedData);
-
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       Papa.parse(file, {
         complete: (results) => {
-          const headers = ["Account Name", "Card Number", "Transaction Amount", "Transaction Type", "Description", "Target Card Number"];
-
           const mappedData = (results.data as string[][]).map((row: string[]) => {
             if (row.length === headers.length) {
               return headers.reduce((acc, header, index) => {
@@ -25,14 +21,15 @@ export default function Form() {
             }
             return null;
           }).filter(Boolean);
-
           dispatch({ type: 'SET_PARSED_DATA', payload: mappedData });
+        },
+        error: (error) => {
+          console.error('Parsing error', error);
         },
         header: false,
       });
     }
   };
-
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

@@ -1,6 +1,7 @@
 
 import { useTransactionContext } from "@/app/context/context";
 import Table from "../../table/table";
+import { headers } from "@/app/constants";
 
 export default function AllTransactions() {
   const { state } = useTransactionContext();
@@ -8,8 +9,6 @@ export default function AllTransactions() {
   if (state.transactions.length === 0) {
     return null;
   }
-
-  const headers = ["Account Name", "Card Number", "Transaction Amount", "Transaction Type", "Description", "Target Card Number"];
 
   return (
     <div className="flex flex-col gap-y-[16px]">

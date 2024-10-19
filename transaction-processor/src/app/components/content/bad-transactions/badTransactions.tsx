@@ -1,28 +1,33 @@
+import { headers } from "@/app/constants";
+import Table from "../../table/table";
+import { useTransactionContext } from "@/app/context/context";
+
 export default function BadTransactions() {
+  const { state } = useTransactionContext();
+
+  if (state.transactions.length === 0) {
+    return (
+      <h1>Upload file to begin.</h1>
+    )
+  }
+
+  const filterNegativeTransactions = (data: { [key: string]: string }[]) => {
+    // return data
+    // filter items that can't be parsed
+    return data
+      .filter(row => parseFloat(row["Transaction Amount"]) < 0)
+      .map(row => ({
+        "Account Name": row["Account Name"],
+        "Card Number": row["Card Number"],
+        "Transaction Amount": row["Transaction Amount"],
+      }));
+  };
+
   return (
-    <div className="divide-y flex flex-col gap-y-[16px]">
+    <div className="flex flex-col gap-y-[16px]">
       <h1 className="text-[40px]">Bad Transactions</h1>
+      <Table headers={headers} data={filterNegativeTransactions(state.transactions)} />
     </div>
   );
 }
 
-
-// import { useTransactionContext } from "@/app/context/context";
-// import Table from "../../table/table";
-
-// export default function AllTransactions() {
-//   const { state } = useTransactionContext();
-
-//   if (state.transactions.length === 0) {
-//     return null;
-//   }
-
-//   const headers = ["Account Name", "Card Number", "Transaction Amount", "Transaction Type", "Description", "Target Card Number"];
-
-//   return (
-//     <div className="flex flex-col gap-y-[16px]">
-//       <h1 className="text-[40px]">All Transactions</h1>
-//       <Table headers={headers} data={state.transactions} />
-//     </div>
-//   );
-// }
