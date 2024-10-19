@@ -21,6 +21,20 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
 
   const [state, dispatch] = useReducer(transactionReducer, initialState);
 
+  // const transactionsForCollections = state.parsedData.map((transaction) => {
+  //   return {
+  //     accountName: transaction.accountName,
+  //     cardNumber: transaction.cardNumber,
+  //     transactionAmount: transaction.transactionAmount,
+  //     transactionType: transaction.transactionType,
+  //     description: transaction.description,
+  //     targetCardNumber: transaction.targetCardNumber,
+  //   };
+  // });
+
+  // console.log('transactionsForCollections', transactionsForCollections);
+
+
   return (
     <TransactionContext.Provider value={{ state, dispatch }}>
       {children}

@@ -11,9 +11,13 @@ export default function Content() {
   return (
     <div className="mt-[24px]">
       {state.transactions.length === 0 && (
-        <h1 className="text-[32px]">
-          Upload a file to view transactions
-        </h1>
+        <div>
+          <h1 className="text-[32px]">
+            Upload a file to view transactions
+          </h1>
+          <h2>1. Click "Choose File" to select a file from your device</h2>
+          <h2>2. Click "Submit File" to upload and view the file</h2>
+        </div>
       )}
       <div className='flex flex-col gap-y-[16px] h-screen'>
         {state.currentPage === 'All Transactions' && <AllTransactions />}

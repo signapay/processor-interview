@@ -6,17 +6,33 @@ import Papa from "papaparse";
 export default function Form() {
   const { dispatch, state } = useTransactionContext();
 
+  console.log('state', state.parsedData);
+
+
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       Papa.parse(file, {
         complete: (results) => {
-          dispatch({ type: 'SET_PARSED_DATA', payload: results.data });
+          const headers = ["Account Name", "Card Number", "Transaction Amount", "Transaction Type", "Description", "Target Card Number"];
+
+          const mappedData = (results.data as string[][]).map((row: string[]) => {
+            if (row.length === headers.length) {
+              return headers.reduce((acc, header, index) => {
+                acc[header] = row[index];
+                return acc;
+              }, {} as { [key: string]: string });
+            }
+            return null;
+          }).filter(Boolean);
+
+          dispatch({ type: 'SET_PARSED_DATA', payload: mappedData });
         },
-        header: true,
+        header: false,
       });
     }
   };
+
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

@@ -21,7 +21,6 @@ export default function Navbar() {
             <Button label="All Transactions" onClick={() => handlePageChange('All Transactions')} />
             {/* // A chart of accounts that list the account name, its cards, and the amount on each card */}
             <Button label="Accounts" onClick={() => handlePageChange('Accounts')} />
-            {/* // A list of accounts that we need to give to collections (any cards with a < 000 balance) */}
             <Button label="Collections" onClick={() => handlePageChange('Collections')} />
             {/* // A list of "bad transactions" that someone needs to go look at (any transactions that you were unable to parse) */}
             <Button label="Bad Transactions" onClick={() => handlePageChange('Bad Transactions')} />

@@ -1,4 +1,3 @@
-import { useTransactionContext } from "@/app/context/context";
 import { Key } from "react";
 
 interface TableProps {
@@ -7,12 +6,6 @@ interface TableProps {
 }
 
 export default function Table({ headers, data }: TableProps) {
-  const { state } = useTransactionContext();
-
-  if (state.transactions.length === 0) {
-    return null;
-  }
-
   const tableHeaders = headers.map((header) => (
     <th key={header} className="px-6 py-3">
       {header}
@@ -29,7 +22,7 @@ export default function Table({ headers, data }: TableProps) {
     ));
 
   return (
-    <div className='border-4 border-pink-300 max-h-[600px] min-h-[500px] overflow-y-auto rounded-2xl'>
+    <div className='border-4 border-pink-300 max-h-[600px] overflow-y-auto rounded-2xl'>
       <table className='table-fixed w-full text-left text-gray-500 text-sm dark:text-gray-400'>
         <thead className='bg-gray-50 text-gray-700 text-xs uppercase dark:bg-gray-700 dark:text-gray-300'>
           <tr className="sticky top-0 bg-gray-50 dark:bg-gray-700">

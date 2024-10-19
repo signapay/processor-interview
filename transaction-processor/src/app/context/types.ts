@@ -4,7 +4,7 @@ export interface TransactionContextType {
   state: {
     transactions: any[];
     parsedData: any[];
-    currentPage: string;  // Include current page in state
+    currentPage: string;
   };
   dispatch: Dispatch<Action>;
 }
