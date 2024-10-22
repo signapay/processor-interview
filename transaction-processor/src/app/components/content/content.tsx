@@ -9,7 +9,7 @@ export default function Content() {
   const { state } = useTransactionContext()
 
   return (
-    <div className="mt-[24px]">
+    <div className="mt-[24px] pl-[24px]">
       {state.transactions.length === 0 && (
         <div>
           <h1 className="text-[32px]">
