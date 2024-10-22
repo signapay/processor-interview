@@ -17,7 +17,7 @@ export default function Button({ label, type, variant, onClick }: ButtonProps) {
   } else if (variant === "link") {
     return (
       <button onClick={onClick} className="bg-transparent min-h-[40px] w-full hover:bg-indigo-900 hover:border-2 hover:border-white" type={type}>
-        <p className="font-semibold px-[16px] text-[16px] text-left text-pink-300">
+        <p className="font-normal px-[16px] text-[16px] text-left text-white">
           {label}
         </p>
       </button>
