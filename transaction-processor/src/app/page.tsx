@@ -24,6 +24,7 @@
 // persistence during a "run" of the software is required
 // - for example, if you choose to build a nextjs or remix site, we expect that you, at minimum, use an in memory cache that maintains state as long as the process is running
 // fix overlap of collapsed table cells
+// format all instances of USD
 
 import { TransactionProvider } from './context/context';
 import WidthContainer from './components/width-container/widthContainer';

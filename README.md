@@ -9,22 +9,13 @@ npm install
 cd transaction-processor
 npm start from /transaction-processor
 
+### concerns
+Some requirements imply that I have access to some field keeping track of the account balance. However, the only field relating to a dollar amount is in reference to "Transaction Amount", which is a different concept than an account balance. But for the sake of this exercise, I did the reporting for "Collections" based on negative transaction amounts.
+
 references:
 https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/file
 https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/accept#unique_file_type_specifiers
 
-<!-- TO DO -->
-
-<!-- create frontend with file upload form -->
-<!-- -- add landing page -- -->
-<!-- -- create form poc -- -->
-<!-- -- create tables -- -->
-
-<!-- allow csvs and other file formats -->
-<!-- parse that data -->
-<!-- display parsed data in table -->
-
-<!-- style -->
 ========================================================================================================================
 
 # //ORIGINAL README:

@@ -41,15 +41,15 @@ export default function Accounts() {
     <div className="flex flex-col gap-y-[16px]">
       <h1 className="mb-[24px] text-[40px]">Accounts</h1>
       <div className="flex flex-row">
-        <div className="basis-1/5 flex flex-col max-w-[240px] min-h-[600px] my-[32px]">
-          <h3 className="font-semibold">Account Holders:</h3>
+        <div className="border-2 border-white basis-1/5 flex flex-col max-w-[240px] min-h-[600px] my-[56px] p-2 rounded-xl">
+          <h3 className="font-semibold">Account Names:</h3>
           {uniqueAccountNames.map((name) => {
             return (
               <Button label={name} variant={"link"} onClick={() => setSelectedAccountName(name)} />
             );
           })}
         </div>
-        {!selectedAccountName && <p className="text-[24px]">* Select an Account Name from the list on the left to view associated accounts</p>}
+        {!selectedAccountName && <p className="mt-[52px] mx-2 text-[18px] text-yellow-500">* Select an Account Name from the list on the left to view associated accounts</p>}
         {selectedAccountName && <AccountsByName accountName={selectedAccountName} data={aggregateTableData(selectedAccountName)} />}
       </div>
     </div>
