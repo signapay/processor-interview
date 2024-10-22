@@ -19,10 +19,8 @@ export default function Navbar() {
         state.transactions.length > 0 && (
           <div className='flex flex-col gap-y-[16px]'>
             <Button label="All Transactions" onClick={() => handlePageChange('All Transactions')} />
-            {/* // A chart of accounts that list the account name, its cards, and the amount on each card */}
             <Button label="Accounts" onClick={() => handlePageChange('Accounts')} />
             <Button label="Collections" onClick={() => handlePageChange('Collections')} />
-            {/* // A list of "bad transactions" that someone needs to go look at (any transactions that you were unable to parse) */}
             <Button label="Bad Transactions" onClick={() => handlePageChange('Bad Transactions')} />
           </div>
         )

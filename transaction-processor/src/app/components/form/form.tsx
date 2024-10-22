@@ -2,7 +2,8 @@ import { useTransactionContext } from "@/app/context/context";
 import Button from "../button/button";
 import Input from "../input/input";
 import Papa from "papaparse";
-import { headers } from "@/app/constants";
+import { headerKeyMap, headers } from "@/app/constants";
+import { Transaction } from "@/app/context/types";
 
 export default function Form() {
   const { dispatch, state } = useTransactionContext();
@@ -12,15 +13,23 @@ export default function Form() {
     if (file) {
       Papa.parse(file, {
         complete: (results) => {
-          const mappedData = (results.data as string[][]).map((row: string[]) => {
-            if (row.length === headers.length) {
-              return headers.reduce((acc, header, index) => {
-                acc[header] = row[index];
-                return acc;
-              }, {} as { [key: string]: string });
-            }
-            return null;
-          }).filter(Boolean);
+          const mappedData = (results.data as string[][])
+            .map((row) => {
+              if (row.length === headers.length) {
+                const transaction = headers.reduce((acc, header, index) => {
+                  const key = headerKeyMap[header] as keyof Transaction;
+                  if (key === 'transactionAmount') {
+                    acc[key] = parseFloat(row[index]);
+                  } else {
+                    acc[key] = row[index];
+                  }
+                  return acc;
+                }, {} as Transaction);
+                return transaction;
+              }
+              return null;
+            })
+            .filter(Boolean) as Transaction[];
           dispatch({ type: 'SET_PARSED_DATA', payload: mappedData });
         },
         error: (error) => {
