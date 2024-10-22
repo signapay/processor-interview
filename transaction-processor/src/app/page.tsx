@@ -1,10 +1,6 @@
 'use client'
 
 // TO DO
-// A chart of accounts that list the account name, its cards, and the amount on each card
-// technically, I can't see the card's balance. I can only see transaction amount. need to bring this up in readme or interview.
-// A list of accounts that we need to give to collections (any cards with a < 0.00 balance)
-
 // A list of "bad transactions" that someone needs to go look at (any transactions that you were unable to parse)
 // NOT SURE HOW TO QUALIFY "BAD TRANS". break data.
 
@@ -27,6 +23,7 @@
 
 // persistence during a "run" of the software is required
 // - for example, if you choose to build a nextjs or remix site, we expect that you, at minimum, use an in memory cache that maintains state as long as the process is running
+// fix overlap of collapsed table cells
 
 import { TransactionProvider } from './context/context';
 import WidthContainer from './components/width-container/widthContainer';

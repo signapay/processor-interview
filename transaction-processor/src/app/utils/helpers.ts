@@ -1,26 +1,25 @@
-// export const getAccountBalance = (transactions: Transaction[]): AccountBalance[] => {
-//   const accountBalance: AccountBalance[] = [];
-
-//   transactions.forEach((transaction) => {
-//     const { cardNumber, amount } = transaction;
-//     const existingAccount = accountBalance.find((account) => account.cardNumber === cardNumber);
-
-//     if (existingAccount) {
-//       existingAccount.balance += amount;
-//     } else {
-//       accountBalance.push({ cardNumber, balance: amount });
-//     }
-//   });
-
-//   return accountBalance;
-// }
-
 export const getAccountBalance = (transactions: any, cardNumber: string): number => {
   return transactions
     .filter((row) => row["Card Number"] === cardNumber)
     .reduce((acc, row) => {
       return acc + parseFloat(row["Transaction Amount"]);
     }, 0).toFixed(2);
+}
+
+export const getNegativeAccountBalances = (transactions: any): any[] => {
+  return transactions
+    .filter((row) => parseFloat(row["Transaction Amount"]) < 0)
+    .map((row) => {
+      return {
+        "Account Name": row["Account Name"],
+        "Card Number": row["Card Number"],
+        "Transaction Amount": row["Transaction Amount"],
+      };
+    });
+};
+
+export const getUniqueAccountNumbers = (transactions: any): string[] => {
+  return Array.from(new Set(transactions.map((row) => row["Card Number"])));
 }
 
 export const formatUSD = (amount: number): string => {
