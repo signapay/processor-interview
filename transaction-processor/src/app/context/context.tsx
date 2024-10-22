@@ -16,6 +16,7 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
   const initialState: TransactionState = {
     transactions: [],
     parsedData: [],
+    brokenData: [],
     currentPage: 'All Transactions',
   };
 

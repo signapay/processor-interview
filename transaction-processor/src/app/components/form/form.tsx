@@ -13,8 +13,10 @@ export default function Form() {
     if (file) {
       Papa.parse(file, {
         complete: (results) => {
-          const mappedData = (results.data as string[][])
-            .map((row) => {
+          const parsedRows = (results.data as string[][]);
+
+          const [validTransactions, brokenRows] = parsedRows.reduce<[Transaction[], string[][]]>(
+            ([valid, broken], row) => {
               if (row.length === headers.length) {
                 const transaction = headers.reduce((acc, header, index) => {
                   const key = headerKeyMap[header] as keyof Transaction;
@@ -25,12 +27,28 @@ export default function Form() {
                   }
                   return acc;
                 }, {} as Transaction);
-                return transaction;
+
+                const isBroken = !transaction.accountName ||
+                  !transaction.cardNumber ||
+                  transaction.transactionAmount === undefined ||
+                  !transaction.transactionType ||
+                  !transaction.description;
+
+                if (isBroken) {
+                  broken.push(row);
+                } else {
+                  valid.push(transaction);
+                }
+              } else {
+                broken.push(row);
               }
-              return null;
-            })
-            .filter(Boolean) as Transaction[];
-          dispatch({ type: 'SET_PARSED_DATA', payload: mappedData });
+              return [valid, broken];
+            },
+            [[], []]
+          );
+
+          dispatch({ type: 'SET_PARSED_DATA', payload: validTransactions });
+          dispatch({ type: 'SET_BROKEN_DATA', payload: brokenRows });
         },
         error: (error) => {
           console.error('Parsing error', error);
@@ -39,6 +57,8 @@ export default function Form() {
       });
     }
   };
+
+
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
