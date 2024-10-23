@@ -1,4 +1,4 @@
-import { Transaction } from "@/app/context/types";
+import { Transaction } from "@/app/types/types";
 
 export const getAccountBalance = (transactions: Transaction[], cardNumber: string): number => {
   return transactions

@@ -3,7 +3,7 @@ import Button from "../button/button";
 import Input from "../input/input";
 import Papa from "papaparse";
 import { headerKeyMap, headers } from "@/app/constants";
-import { Transaction } from "@/app/context/types";
+import { Transaction } from "@/app/types/types";
 
 export default function Form() {
   const { dispatch, state } = useTransactionContext();
@@ -13,9 +13,9 @@ export default function Form() {
     if (file) {
       Papa.parse(file, {
         complete: (results) => {
-          const parsedRows = (results.data as string[][]);
+          const parsedRows = results.data as string[][];
 
-          const [validTransactions, brokenRows] = parsedRows.reduce<[Transaction[], string[][]]>(
+          const [newTransactions, newBrokenRows] = parsedRows.reduce<[Transaction[], string[][]]>(
             ([valid, broken], row) => {
               if (row.length === headers.length) {
                 const transaction = headers.reduce((acc, header, index) => {
@@ -47,8 +47,8 @@ export default function Form() {
             [[], []]
           );
 
-          dispatch({ type: 'SET_PARSED_DATA', payload: validTransactions });
-          dispatch({ type: 'SET_BROKEN_DATA', payload: brokenRows });
+          dispatch({ type: 'SET_PARSED_DATA', payload: newTransactions });
+          dispatch({ type: 'SET_BROKEN_DATA', payload: newBrokenRows });
         },
         error: (error) => {
           console.error('Parsing error', error);
@@ -58,19 +58,15 @@ export default function Form() {
     }
   };
 
-
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     dispatch({ type: 'SET_TRANSACTIONS', payload: state.parsedData });
     dispatch({ type: 'SET_PAGE', payload: 'All Transactions' });
-    console.log('submit form');
   };
 
   const handleReset = () => {
     dispatch({ type: 'SET_TRANSACTIONS', payload: [] });
     dispatch({ type: 'SET_PARSED_DATA', payload: [] });
-    console.log('reset form');
   };
 
   return (

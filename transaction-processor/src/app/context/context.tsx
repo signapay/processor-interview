@@ -1,5 +1,5 @@
 import { createContext, useReducer, useContext, ReactNode } from 'react';
-import { TransactionContextType, TransactionState } from './types';
+import { TransactionContextType, TransactionState } from '../types/types';
 import { transactionReducer } from './reducer';
 
 const TransactionContext = createContext<TransactionContextType | undefined>(undefined);

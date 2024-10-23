@@ -1,7 +1,7 @@
 import { useTransactionContext } from "@/app/context/context";
 import Table from "../../table/table";
 import { getAccountBalance, getUniqueAccountNumbers } from "@/app/utils/helpers";
-import { Transaction } from "@/app/context/types";
+import { Transaction } from "@/app/types/types";
 import { collectionsKeyMap } from "@/app/constants";
 
 export default function Collections() {

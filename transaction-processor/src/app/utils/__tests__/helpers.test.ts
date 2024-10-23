@@ -1,4 +1,4 @@
-import { Transaction } from "@/app/context/types";
+import { Transaction } from "@/app/types/types";
 import { formatUSD, getAccountBalance, getUniqueAccountNumbers } from "../helpers";
 
 const transactions: Transaction[] = [
