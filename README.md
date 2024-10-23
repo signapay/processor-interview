@@ -11,23 +11,27 @@ The product is in essence a form that allows a user to upload a .csv file contai
 - Multiple .csv's can be uploaded in one session, and their data will display *after* already uploaded data.
 - Note - *user must click "Submit"* for .csv's to be processed.
 
-### To install
-`npm install` within the `/transaction-processor` directory
-
-### To run
-`npm run build` and `npm run start` within `/transaction-processor`
-
+A production version of the app is deployed to Vercel for users to demo.
 ### [Product Demo](https://processor-interview-w5vn.vercel.app/)
 
+The following is a short video demo of the application.
 ### Video Demo
 https://github.com/user-attachments/assets/93e5283a-2cdb-431f-b3a0-109ef5116a00
+
+
+## To install
+`npm install` within `/transaction-processor` directory
+
+## To run
+`npm run build` and `npm run start` within `/transaction-processor` directory
 
 ### Note:
   This is a bit counter intuitive to me, so I noted the following in the `helpers.ts` file to further clarify my understanding of the business logic. The function used to calculate *Account Balance* assumes the *Account Balance* starts at zero. Then each transaction is subtracted from the balance. Meaning, if a *Transaction Amount* value is positive, it will `decrease` the total *Account Balance*. Conversely, *Transaction Amount* values that are negative, will `increase` the total balance.
 
-=================================================================================================================================
+= = = = = = = = = =
 
-# *ORIGINAL README:*
+# *ORIGINAL README BELOW:*
+
 # Transaction Processor
 
 ## Context
