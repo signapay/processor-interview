@@ -5,7 +5,7 @@
 `npm install` within the `/transaction-processor` directory
 
 ### to run
-npm start from /transaction-processor
+`npm run build` and `npm run start` within `/transaction-processor`
 
 ### [Product Demo](https://processor-interview-w5vn.vercel.app/)
 
@@ -13,10 +13,11 @@ npm start from /transaction-processor
 https://github.com/user-attachments/assets/93e5283a-2cdb-431f-b3a0-109ef5116a00
 
 ### concerns
+  This is a bit counter intuitive to me, so I noted the following in the `helpers.ts` file to further clarify my understanding of the business logic. The function used to calculate *Account Balance* assumes the *Account Balance* starts at zero. Then each transaction is subtracted from the balance. Meaning, if a *Transaction Amount* value is positive, it will `decrease` the total *Account Balance*. Conversely, *Transaction Amount* values that are negative, will `increase` the total balance.
 
-========================================================================================================================
+=================================================================================================================================
 
-# //ORIGINAL README:
+# *ORIGINAL README:*
 # Transaction Processor
 
 ## Context
