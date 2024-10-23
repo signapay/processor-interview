@@ -1,10 +1,20 @@
 # Transaction Processor
-## SignaPay Exercise
+## SignaPay take home coding exercise
+This project is the Transaction Processor take home coding exercise for SignaPay's Senior Software Engineer position.
+It is a Next.js app with Typescript.
+The product is in essence a form that allows a user to upload a .csv file containing transaction data (data shape is specified below), and several sections displaying the data based on certain criteria:
+- *All Transactions* shows a table of all uploaded transaction data.
+- *Accounts* displays a list of names associated with accounts. Users can click a name and then a table is displayed containing Card Numbers and Account Balances.
+- *Collections* is a table listing Card Numbers and Account Balances for cards with a negative balance.
+- *Bad Transactions* is a table containing rows of raw data uploaded from the .csv that were unable to be parsed.
+- *Reset Form* allows users to clear uploaded files and use the app from a blank state.
+- Multiple .csv's can be uploaded in one session, and their data will display *after* already uploaded data.
+- Note - *user must click "Submit"* for .csv's to be processed.
 
-### to install
+### To install
 `npm install` within the `/transaction-processor` directory
 
-### to run
+### To run
 `npm run build` and `npm run start` within `/transaction-processor`
 
 ### [Product Demo](https://processor-interview-w5vn.vercel.app/)
@@ -12,7 +22,7 @@
 ### Video Demo
 https://github.com/user-attachments/assets/93e5283a-2cdb-431f-b3a0-109ef5116a00
 
-### concerns
+### Note:
   This is a bit counter intuitive to me, so I noted the following in the `helpers.ts` file to further clarify my understanding of the business logic. The function used to calculate *Account Balance* assumes the *Account Balance* starts at zero. Then each transaction is subtracted from the balance. Meaning, if a *Transaction Amount* value is positive, it will `decrease` the total *Account Balance*. Conversely, *Transaction Amount* values that are negative, will `increase` the total balance.
 
 =================================================================================================================================
