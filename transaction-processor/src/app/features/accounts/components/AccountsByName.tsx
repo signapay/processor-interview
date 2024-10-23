@@ -1,5 +1,5 @@
+import { Table } from "@/app/components/Table";
 import { CardBalance } from "@/app/types/types";
-import Table from "../../table/table";
 
 interface AccountsByNameProps {
   accountName: string;

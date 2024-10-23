@@ -1,6 +1,6 @@
 import { useTransactionContext } from '@/app/context/context';
-import Button from '../button/button';
-import Form from '../form/form';
+import { Button } from '@/app/components/Button';
+import { Form } from '@/app/features/form';
 
 export default function Navbar() {
   const { dispatch, state } = useTransactionContext();

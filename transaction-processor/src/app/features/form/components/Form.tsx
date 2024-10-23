@@ -1,10 +1,10 @@
 import { useTransactionContext } from "@/app/context/context";
-import Button from "../button/button";
-import Input from "../input/input";
 import Papa from "papaparse";
 import { useRef, useState } from "react";
 import { headerKeyMap, headers } from "@/app/constants";
 import { Transaction } from "@/app/types/types";
+import { Button } from "@/app/components/Button";
+import { Input } from "@/app/components/Input";
 
 export default function Form() {
   const { dispatch, state } = useTransactionContext();

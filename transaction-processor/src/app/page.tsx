@@ -4,11 +4,7 @@
 // write readme
 
 // FINAL QA
-// check file naming conventions align with next js standards
-// make sure numbers don't float
-// format all instances of USD
 // remove comments and console logs
-// manually fact check the math
 
 // NICE TO HAVE
 // paginate table OR at least lazy load data
@@ -18,9 +14,9 @@
 // conditionally render button text based on if file has been uploaded or not
 
 import { TransactionProvider } from './context/context';
-import WidthContainer from './components/width-container/widthContainer';
-import Navbar from './components/navbar/navbar';
-import Content from './components/content/content';
+import { Content } from './components/Content';
+import { WidthContainer } from './components/WidthContainer';
+import { Navbar } from './features/Navbar';
 
 export default function Home() {
   return (

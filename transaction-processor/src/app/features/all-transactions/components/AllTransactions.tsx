@@ -1,6 +1,6 @@
 import { useTransactionContext } from "@/app/context/context";
-import Table from "../../table/table";
 import { allTransactionsKeyMap, headers } from "@/app/constants";
+import { Table } from "@/app/components/Table";
 
 export default function AllTransactions() {
   const { state } = useTransactionContext();

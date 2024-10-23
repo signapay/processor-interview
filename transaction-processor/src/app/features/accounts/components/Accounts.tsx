@@ -1,8 +1,8 @@
 import { useTransactionContext } from "@/app/context/context";
-import Button from "../../button/button";
 import { useState } from "react";
-import AccountsByName from "./accountsByName";
 import { aggregateAccountsData } from "@/app/utils/helpers";
+import { Button } from "@/app/components/Button";
+import { AccountsByName } from "..";
 
 export default function Accounts() {
   const [selectedAccountName, setSelectedAccountName] = useState<string | null>(null);

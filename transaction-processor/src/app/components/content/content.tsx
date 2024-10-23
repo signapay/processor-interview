@@ -1,9 +1,8 @@
 import { useTransactionContext } from "@/app/context/context";
-import BadTransactions from "./bad-transactions/badTransactions";
-import Accounts from "./accounts/accounts";
-import Collections from "./collections/collections";
-import AllTransactions from "./all-transactions/allTransactions";
-
+import { Accounts } from "@/app/features/accounts";
+import { AllTransactions } from "@/app/features/all-transactions";
+import { BadTransactions } from "@/app/features/bad-transactions";
+import { Collections } from "@/app/features/collections";
 
 export default function Content() {
   const { state } = useTransactionContext()

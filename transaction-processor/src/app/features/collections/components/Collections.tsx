@@ -1,7 +1,7 @@
 import { useTransactionContext } from "@/app/context/context";
-import Table from "../../table/table";
 import { getNegativeBalanceAccounts, } from "@/app/utils/helpers";
 import { collectionsKeyMap } from "@/app/constants";
+import { Table } from "@/app/components/Table";
 
 export default function Collections() {
   const { state } = useTransactionContext();

@@ -1,5 +1,5 @@
+import { Table } from "@/app/components/Table";
 import { useTransactionContext } from "@/app/context/context";
-import Table from "../../table/table";
 
 export default function BadTransactions() {
   const { state } = useTransactionContext();
