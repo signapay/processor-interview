@@ -4,7 +4,7 @@ interface TableProps<T> {
   keyMap?: { [key: string]: keyof T };
 }
 
-export default function Table<T extends object>({ data, headers, keyMap }: TableProps<T>) {
+export default function Table<T extends object>({ data, headers }: TableProps<T>) {
   return (
     <div className="border-4 border-pink-300 max-h-[600px] overflow-y-auto rounded-2xl">
       <table className="table-fixed w-full text-left text-gray-500 text-sm dark:text-gray-400">
