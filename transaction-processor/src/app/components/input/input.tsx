@@ -1,28 +1,30 @@
+import React, { forwardRef, ChangeEvent } from "react";
+
 interface InputProps {
-  label?: string;
-  helpText?: string;
-  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  label: string;
+  helpText: string;
+  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  multiple?: boolean;
 }
 
-export default function Input({ label, helpText, onChange }: InputProps) {
-  return (
-    <div className="flex flex-col">
-      {label &&
-        <label htmlFor="fileInput">{label}</label>
-      }
-      <input
-        type="file"
-        id="fileInput"
-        accept=".csv"
-        onChange={onChange}
-        className="border border-blue-400"
-      />
-      {
-        helpText &&
-        <div className='flex flex-row'>
-          <h2 className="text-[12px]">{helpText}</h2>
-        </div>
-      }
-    </div >
-  )
-}
+const Input = forwardRef<HTMLInputElement, InputProps>(
+  ({ label, helpText, onChange, multiple = false }, ref) => {
+    return (
+      <div className="flex flex-col gap-y-2">
+        <label className="font-medium">{label}</label>
+        <input
+          type="file"
+          onChange={onChange}
+          ref={ref}
+          multiple={multiple}
+          className="border px-4 py-2 rounded"
+        />
+        <p className="text-sm text-gray-500">{helpText}</p>
+      </div>
+    );
+  }
+);
+
+Input.displayName = "Input";
+
+export default Input;

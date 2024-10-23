@@ -35,4 +35,5 @@ export type Action =
   | { type: 'SET_TRANSACTIONS'; payload: Transaction[] }
   | { type: 'SET_PARSED_DATA'; payload: Transaction[] }
   | { type: 'SET_BROKEN_DATA'; payload: string[][] }
-  | { type: 'SET_PAGE'; payload: string };
+  | { type: 'SET_PAGE'; payload: string }
+  | { type: 'RESET_APP' };
