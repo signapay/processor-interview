@@ -9,13 +9,10 @@ npm start from /transaction-processor
 
 ### [Product Demo](https://processor-interview-w5vn.vercel.app/)
 
+### Video Demo
+https://github.com/user-attachments/assets/93e5283a-2cdb-431f-b3a0-109ef5116a00
 
 ### concerns
-Some requirements imply that I have access to some field keeping track of the account balance. However, the only field relating to a dollar amount is in reference to "Transaction Amount", which is a different concept than an account balance. But for the sake of this exercise, I did the reporting for "Collections" based on negative transaction amounts.
-
-references:
-https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/file
-https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/accept#unique_file_type_specifiers
 
 ========================================================================================================================
 
