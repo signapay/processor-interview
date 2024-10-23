@@ -37,7 +37,7 @@ export const aggregateAccountsData = (
 ): CardBalance[] => {
   return getUniqueAccountNumbersByName(transactions, accountName).map((cardNumber) => ({
     cardNumber,
-    accountBalance: formatUSD(getAccountBalance(transactions, cardNumber)),
+    accountBalance: getAccountBalance(transactions, cardNumber),
   }));
 };
 

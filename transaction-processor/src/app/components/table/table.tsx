@@ -1,3 +1,5 @@
+import { formatUSD } from "@/app/utils/helpers";
+
 interface TableProps<T> {
   data: T[];
   headers?: string[];
@@ -22,9 +24,11 @@ export default function Table<T extends object>({ data, headers }: TableProps<T>
         <tbody className="px-6 py-3 border-b-2 border-gray-200 text-left text-sm font-medium text-gray-300 tracking-wider">
           {data.map((row, rowIndex) => (
             <tr key={rowIndex} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-              {Object.values(row).map((value, cellIndex) => (
+              {Object.entries(row).map(([key, value], cellIndex) => (
                 <td key={cellIndex} className="px-6 py-4">
-                  {String(value)}
+                  {key === "transactionAmount" || key === "accountBalance"
+                    ? formatUSD(Number(value))
+                    : String(value)}
                 </td>
               ))}
             </tr>

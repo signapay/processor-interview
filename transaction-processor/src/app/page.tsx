@@ -1,16 +1,16 @@
 'use client'
 
 // TO DO
+// fix reset
 // write readme
 // allow csvs and other file formats
-// fix dollar formatting
-// fix reset
 
 // FINAL QA
 // check file naming conventions align with next js standards
 // make sure numbers don't float
 // format all instances of USD
 // remove comments and console logs
+// manually fact check the math
 
 // NICE TO HAVE
 // paginate table OR at least lazy load data
