@@ -2,11 +2,9 @@
 ## SignaPay Exercise
 
 ### to install
-cd transaction-processor
-npm install
+`npm install` within the `/transaction-processor` directory
 
 ### to run
-cd transaction-processor
 npm start from /transaction-processor
 
 ### [Product Demo](https://processor-interview-w5vn.vercel.app/)

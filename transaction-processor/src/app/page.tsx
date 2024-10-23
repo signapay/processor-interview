@@ -16,7 +16,7 @@
 import { TransactionProvider } from './context/context';
 import { Content } from './components/Content';
 import { WidthContainer } from './components/WidthContainer';
-import { Navbar } from './features/Navbar';
+import { Navbar } from './features/navbar';
 
 export default function Home() {
   return (
