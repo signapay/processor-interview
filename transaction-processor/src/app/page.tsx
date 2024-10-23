@@ -2,7 +2,6 @@
 
 // TO DO
 // write readme
-// allow csvs and other file formats
 
 // FINAL QA
 // check file naming conventions align with next js standards
@@ -21,7 +20,6 @@
 import { TransactionProvider } from './context/context';
 import WidthContainer from './components/width-container/widthContainer';
 import Navbar from './components/navbar/navbar';
-import Footer from './components/footer/footer';
 import Content from './components/content/content';
 
 export default function Home() {
@@ -33,7 +31,6 @@ export default function Home() {
           <Content />
         </WidthContainer>
       </div>
-      <Footer />
     </TransactionProvider>
   );
 }
