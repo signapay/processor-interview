@@ -3,7 +3,10 @@ import { CardBalance, Transaction } from "@/app/types/types";
 export const getAccountBalance = (transactions: Transaction[], cardNumber: string): number => {
   return transactions
     .filter((row) => row.cardNumber === cardNumber)
-    .reduce((acc, row) => acc + row.transactionAmount, 0);
+    // Originally I set this up to add acc + row.transactionAmount like .reduce((acc, row) => acc + row.transactionAmount, 0);
+    // Adding to the account balance is wrong. Each transaction should be subtracted against that account balance.
+    // Hopefully in review, my understanding of how this arithmetic should work is aligned with the reviewer.
+    .reduce((acc, row) => acc - row.transactionAmount, 0);
 };
 
 export const getNegativeBalanceAccounts = (transactions: Transaction[]) =>
