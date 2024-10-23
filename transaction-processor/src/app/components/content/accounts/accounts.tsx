@@ -2,12 +2,7 @@ import { useTransactionContext } from "@/app/context/context";
 import Button from "../../button/button";
 import { useState } from "react";
 import AccountsByName from "./accountsByName";
-import { formatUSD, getAccountBalance } from "@/app/utils/helpers";
-
-interface AccountData {
-  cardNumber: string;
-  accountBalance: string;
-}
+import { aggregateAccountsData } from "@/app/utils/helpers";
 
 export default function Accounts() {
   const [selectedAccountName, setSelectedAccountName] = useState<string | null>(null);
@@ -20,23 +15,6 @@ export default function Accounts() {
   const uniqueAccountNames = Array.from(
     new Set(state.transactions.map((row) => row.accountName))
   );
-
-  const uniqueAccountNumbersByName = (accountName: string | null): string[] => {
-    return Array.from(
-      new Set(
-        state.transactions
-          .filter((row) => row.accountName === accountName)
-          .map((row) => row.cardNumber)
-      )
-    );
-  };
-
-  const aggregateTableData = (accountName: string): AccountData[] => {
-    return uniqueAccountNumbersByName(accountName).map((cardNumber) => ({
-      cardNumber,
-      accountBalance: formatUSD(getAccountBalance(state.transactions, cardNumber)),
-    }));
-  };
 
   return (
     <div className="flex flex-col gap-y-[16px]">
@@ -56,7 +34,7 @@ export default function Accounts() {
         {selectedAccountName && (
           <AccountsByName
             accountName={selectedAccountName}
-            data={aggregateTableData(selectedAccountName)}
+            data={aggregateAccountsData(state.transactions, selectedAccountName)}
           />
         )}
       </div>

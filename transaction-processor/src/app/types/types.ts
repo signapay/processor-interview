@@ -11,7 +11,7 @@ export interface Transaction {
 
 export interface CardBalance {
   cardNumber: string;
-  accountBalance: number;
+  accountBalance: number | string;
 }
 
 export interface TransactionContextType {

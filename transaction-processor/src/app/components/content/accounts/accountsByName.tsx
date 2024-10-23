@@ -1,13 +1,9 @@
+import { CardBalance } from "@/app/types/types";
 import Table from "../../table/table";
-
-interface AccountData {
-  cardNumber: string;
-  accountBalance: string;
-}
 
 interface AccountsByNameProps {
   accountName: string;
-  data: AccountData[];
+  data: CardBalance[];
 }
 
 export default function AccountsByName({ accountName, data }: AccountsByNameProps) {
