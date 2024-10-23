@@ -31,7 +31,12 @@ https://github.com/user-attachments/assets/93e5283a-2cdb-431f-b3a0-109ef5116a00
 `npm run build` and `npm run start` within `/transaction-processor` directory
 
 ### Note:
-  This is a bit counter intuitive to me, so I noted the following in the `helpers.ts` file to further clarify my understanding of the business logic. The function used to calculate *Account Balance* assumes the *Account Balance* starts at zero. Then each transaction is subtracted from the balance. Meaning, if a *Transaction Amount* value is positive, it will `decrease` the total *Account Balance*. Conversely, *Transaction Amount* values that are negative, will `increase` the total balance.
+  - This is a bit counter intuitive to me, so I noted the following in the `helpers.ts` file to further clarify my understanding of the business logic. The function used to calculate *Account Balance* assumes the *Account Balance* starts at zero. Then each transaction is subtracted from the balance. Meaning, if a *Transaction Amount* value is positive, it will `decrease` the total *Account Balance*. Conversely, *Transaction Amount* values that are negative, will `increase` the total balance.
+  
+### Potential Improvements:
+  - If I were to spend more time improving this app, I would paginate table and/or lazy load data.
+  - Fix overlapping table cells when screen real estate is small.
+  - Tweak Button's active and selected styles to highlight which feature the user is currently using.
 
 = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
