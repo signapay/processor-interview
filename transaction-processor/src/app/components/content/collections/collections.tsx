@@ -15,6 +15,9 @@ export default function Collections() {
   return (
     <div className="flex flex-col gap-y-[16px]">
       <h1 className="text-[40px]">Collections</h1>
+      <p className="mt-[52px] mx-2 text-[18px] text-yellow-500">
+        * The following accounts have a negative balance.
+      </p>
       <Table headers={headers} data={getNegativeBalanceAccounts(state.transactions)} keyMap={collectionsKeyMap} />
     </div>
   );

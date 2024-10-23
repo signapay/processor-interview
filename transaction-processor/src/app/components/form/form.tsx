@@ -9,8 +9,8 @@ import { Transaction } from "@/app/types/types";
 export default function Form() {
   const { dispatch, state } = useTransactionContext();
   const fileInputRef = useRef<HTMLInputElement>(null);
-
   const [newTransactions, setNewTransactions] = useState<Transaction[]>([]);
+  const [newBrokenRows, setNewBrokenRows] = useState<string[][]>([]);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -53,6 +53,7 @@ export default function Form() {
           );
 
           setNewTransactions(validTransactions);
+          setNewBrokenRows(brokenRows);
         },
         error: (error) => {
           console.error("Parsing error", error);
@@ -66,11 +67,14 @@ export default function Form() {
     e.preventDefault();
 
     const updatedTransactions = [...state.transactions, ...newTransactions];
+    const updatedBrokenRows = [...state.brokenData, ...newBrokenRows];
 
     dispatch({ type: "SET_TRANSACTIONS", payload: updatedTransactions });
+    dispatch({ type: "SET_BROKEN_DATA", payload: updatedBrokenRows });
     dispatch({ type: "SET_PAGE", payload: "All Transactions" });
 
     setNewTransactions([]);
+    setNewBrokenRows([]);
 
     if (fileInputRef.current) {
       fileInputRef.current.value = "";

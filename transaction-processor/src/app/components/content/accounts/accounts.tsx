@@ -28,7 +28,7 @@ export default function Accounts() {
         </div>
         {!selectedAccountName && (
           <p className="mt-[52px] mx-2 text-[18px] text-yellow-500">
-            * Select an Account Name from the list on the left to view associated accounts
+            * Select an Account Name from the list on the left to view associated cards and balances.
           </p>
         )}
         {selectedAccountName && (

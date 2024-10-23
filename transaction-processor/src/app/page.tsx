@@ -1,7 +1,6 @@
 'use client'
 
 // TO DO
-// fix reset
 // write readme
 // allow csvs and other file formats
 
