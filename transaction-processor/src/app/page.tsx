@@ -2,8 +2,9 @@
 
 // TO DO
 // write readme
-// write tests
 // allow csvs and other file formats
+// fix dollar formatting
+// fix reset
 
 // FINAL QA
 // check file naming conventions align with next js standards
