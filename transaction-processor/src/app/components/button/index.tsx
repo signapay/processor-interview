@@ -1,3 +1,3 @@
-import Button from "@/app/components/Button/Button";
+import Button from '@/app/components/Button/Button';
 
 export { Button };
