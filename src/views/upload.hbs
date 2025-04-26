@@ -1,0 +1,26 @@
+{{> base}}
+<body>
+    <h1>Upload a File</h1>
+    <a class="button" href="/">Home</a>
+    <button class="button" disabled>Upload Transactions</button>
+    <a class="button" href="/transactions">View Transactions</a>
+    <a class="button" href="/errors">View Errors</a>
+    <a class="button" href="/aggregates">View Aggregates</a>
+    <button class="button" id="clearData">Clear All Data</button><br/><br/><br/>
+    <h3>Requirements</h3>
+    <ul>
+        <li>File size limit: 2MB</li>
+        <li>Allowed file types: .csv</li>
+        <li>File name must not contain special characters</li>
+        <li>File name must not be empty</li>
+        <li>File name must only be uploaded once, subsequent upload will be rejected</li>
+    </ul>
+
+    <form action="/upload" method="POST" enctype="multipart/form-data">
+        <label for="file">Choose a file:</label>
+        <input type="file" id="file" name="file" required>
+        <button type="submit">Upload</button>
+    </form>
+<h2>{{error}}</h2>
+</body>
+</html>

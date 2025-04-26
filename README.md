@@ -102,3 +102,160 @@ Bonus points (not required) for:
   - How to run your code
   - Any decisions or tradeoffs you made
   - Any assumptions or known limitations
+
+# SignaPay Transaction Application by Jeff I
+
+This project is a simple Node.js application using Express that allows users to upload transaction files for processing.
+
+## Functional Requirements
+
+   * The input files will be either a csv,xml or json file
+      + no larger than 2MB
+      + file name has no special characters (only alphanumeric, dash, underscore and period are accepted)
+      + file (with same name) can only be uploaded once (otherwise it will be rejected)
+      + the datatypes in the input files are:
+         + card_number - string
+         + timstamp - timestamp
+         + amount - float
+      * amount must be a float
+      * amount must not be 0
+      * card_number must be 16 characters
+      * card_number must match card vendors specifications
+   *  The csv files will have a header, (cardNumber,timestamp,amount), with comma (,) as the delimiter and quote (") as the escape character.
+      + example:
+      ```
+      cardNumber,timestamp,amount
+      3589249568754350,2025-01-20T21:06:45.771911,-503.57
+      3171948530096903,2025-03-01T13:30:25.771911,619.51
+      ```
+   *  The json files will be an array of json object where each json elememet will the required fields cardNumber,timestamp,amount(for example):
+      ```
+         [
+            {
+               "cardNumber": "3589249568754350",
+               "timestamp": "2025-01-20T21:06:45.771911",
+               "amount": -503.57
+            },
+            ...
+         ]
+      ```
+   *  The xml files will be an formatted as such:
+      + root element is transactions
+      + transactions has one to many transaction child nodes
+      + the transaction child node will have elements cardNumber,timestamp and amount
+      + For example
+      ```
+      <?xml version="1.0" ?>
+      <transactions>
+         <transaction>
+            <cardNumber>3589249568754350</cardNumber>
+            <timestamp>2025-01-20T21:06:45.771911</timestamp>
+            <amount>-503.57</amount>
+         </transaction>
+         ...
+         ...
+      </transactions>
+      ```     
+
+
+
+
+
+## Project Structure
+
+```
+signapay
+├── src
+│   ├── app.js                      # Entry point of the application
+│   ├── controllers
+│   │   └── transacionController.js # Handles file upload logic
+│   │   └── adminController.js      # Useful global queries/use cases
+│   ├── model
+│   │   └── abstractModel.js        # Base class for model classes
+│   │   └── transactionModel.js     # CRUD for transactions
+│   │   └── bootstrapModel.js       # Init of tables in case docker init issue
+│   │   └── errorModel.js           # CRUD for errors
+│   │   └── fileModel.js            # CRUD for files
+│   ├── domain
+│   │   └── dbResponse.js           # Model response of an insert/delete
+│   │   └── util.js                 # Common static functions
+│   │   └── uploadProcessStats.js   # Encapsulating upload counts
+│   │   └── cards
+│   │       └── abstractCards.js    # Base class for credit cards
+│   │       └── amexCard.js         # Amex card handling
+│   │       └── discoverCard.js     # Discover card handling
+│   │       └── visaCard.js         # Visa card handling
+│   │       └── masterCard.js       # Master card handling
+│   ├── views
+│   │   ├── index.hbs               # Main page handlebars file
+│   │   └── upload.hbs              # Upload handlebars file
+│   │   └── data.hbs                # Transactions handlebars file
+│   │   └── errors.hbs              # Errors handlebars file
+│   │   └── aggregates.hbs          # Simple reporting file
+│   │   └── partials
+│   │       └── base.hbs            # Common Header
+│   └── public
+│       └── styles.css              # CSS styles for the 
+│       └── util.js                 # js utility functions
+├── test
+│   ├── test.csv                    # Provided input file
+│   └── test.xml                    # Provided input file
+│   └── test.json                   # Provided input file
+├── package.json                    # npm configuration file
+├── .env                            # Environment variables
+├── .gitignore                      # gitignore file
+└── README.md                       # Project documentation
+```
+
+## Installation
+
+1. Clone the repository:
+   ```
+   git clone https://github.com/jeffisenhart/processor-interview.git
+   cd to the processor-interview dir
+   ```
+
+2. Install the dependencies:
+   ```
+   npm install
+   ```
+
+
+## DB creation
+   Based on this: https://levelup.gitconnected.com/creating-and-filling-a-postgres-db-with-docker-compose-e1607f6f882f
+
+1. Navigate to the docker directory and run:
+   ```
+   //This will create the db and the needed tables
+   //to run in background
+   docker compose up -d
+   //otherwise
+   docker compose up
+
+   //note, to tear down db environment
+   docker compose down
+   ```
+
+
+## Usage
+
+1. Start the DB
+   ```
+   docker compose up -d
+   ```
+2. Start the application:
+   ```
+   npm start
+   ```
+   or in VS Code, 
+   ```
+   debug -> Run Script: dev
+   ```
+
+2. Open your browser and navigate to http://localhost:3000 to access the main page.
+
+3. This will bring up the Transaction Portal
+   * Upload Transaction - brings up the page to upload the CSV data file
+   * View Transactions - brings up the page to see successfully uploaded transaction by the given upload file
+   * View Errors - brings up the page to see data that did not create a transaction as there were errors
+   * Clear All Data - A confirmation button to clear all the database data

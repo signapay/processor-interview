@@ -1,0 +1,20 @@
+node_modules
+.tmp
+.idea/
+.sass-cache
+.idea
+client/bower_components
+dist
+target
+npm-debug.log
+# ignore mac files
+.DS_Store
+# ignore eclipse files
+.project
+.jsdtscope
+.jshintrc
+### Gradle ###
+.gradle
+/build/
+.settings
+uploads

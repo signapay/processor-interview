@@ -1,0 +1,116 @@
+{{> base}}
+<body>
+    <h1>Transaction Data</h1>
+    <a class="button" href="/">Home</a>
+    <a class="button" href="/upload">Upload Transactions</a>
+    <button class="button" disabled>View Transactions</button>
+    <a class="button" href="/errors">View Errors</a>
+    <a class="button" href="/aggregates">View Aggregates</a>
+    <button class="button" id="clearData">Clear All Data</button><br/><br/><br/>
+    <p class="message">{{message}}</p>
+    <label for="files">Current File:</label>
+    <select id="files">
+    </select>
+
+    <br/>
+    <h3>File Stats</h3>
+    <div id="fileData">No Data</div>
+    <br/>
+    <h3>Transactions</h3>
+    <div id="tableData">No Data</div>
+    <br/>
+    <br/>
+    <br/>
+ 
+</body>
+<script>
+    let offset = 0;
+    let limit = 10;
+    let currentFile = '{{currentFile}}';
+    
+    $(document).ready(function() {
+             var selectedFile = $('#files').val();
+             $.ajax({
+                url: '/api/fileNames',
+                type: 'get',
+                 data: { fileName: selectedFile}, // Query parameters
+                success: function(response) {
+                    if( response.data.length > 0) {
+                        response.data.forEach(function(file) {
+                            $('#files').append('<option value="' + file.file_name + '">' + file.file_name + '</option>');
+                        });
+                        $('#fecthData').prop('disabled', false); // Enable the button
+                        if( currentFile != null && currentFile != undefined && currentFile != "") {
+                            $('#files').val(currentFile);
+                        }
+                        fetchFile();
+                        fetchData();
+                    } else {
+                        $('#files').append('<option value="">No files available</option>');
+                    }
+                    $('#message').html(response);
+                },
+                error: function(xhr, status, error) {
+                    $('#message').html('Error fetching data: ' + error);
+                }
+            });
+    });
+
+    $('#files').change(function() {
+        $('#tableData').empty()
+        offset = 0;
+        limit = 10;
+        fetchFile();
+        fetchData();
+    });
+
+    function fetchFile(){
+         $('#fileData').html("");
+         var selectedFile = $('#files').val();
+            $.ajax({
+                url: '/api/file',
+                type: 'get',
+                data: { fileName: selectedFile }, // Query parameters
+                success: function(response) {
+                    if (response.data.length > 0) {
+                        $('#fileData').html(getTableHtml(response.data));
+                    } else {
+                        $('#fileData').append('<option value="">No files available</option>');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    $('#message').html('Error fetching data: ' + error);
+                }
+            });
+    }
+
+    function fetchData(){
+        var selectedFile = $('#files').val();
+        $.ajax({
+            url: '/api/transactionData',
+            type: 'get',
+            data: { fileName: selectedFile, offset: offset, limit: limit }, // Query parameters
+            success: function(response) {
+                if (response.data.length > 0) {
+                    
+                    $('#tableData').html(getTableHtml(response.data)); 
+                    $('#tableData').append(getPagination('changePage',response.nextOffset)); 
+                } else {
+                    $('#tableData').append('No data available for the selected file.');
+                }
+            },
+            error: function(xhr, status, error) {
+                $('#tableData').html('Error fetching data: ' + error);
+            }
+        });
+    }
+
+
+
+    function changePage(direction) {
+        offset += direction * limit;
+        offset = Math.max(0, offset); // Ensure offset doesn't go negative
+        fetchData();
+    }
+</script>
+</html>

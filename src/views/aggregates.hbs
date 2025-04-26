@@ -1,0 +1,209 @@
+{{> base}}
+<body>
+    <h1>Transaction Data</h1>
+    <a class="button" href="/">Home</a>
+    <a class="button" href="/upload">Upload Transactions</a>
+    <a class="button" href="/transactions">View Transactions</a>
+    <a class="button" href="/errors">View Errors</a>
+    <button class="button" disabled>View Aggregates</button>
+    <button class="button" id="clearData">Clear All Data</button><br/><br/><br/>
+
+    <fieldset>
+        <legend>Filters:</legend>
+        <p>Start Date: <input type="text" id="startDatePicker"></p>
+        <p>End Date: <input type="text" id="endDatePicker"></p>
+
+
+        <div>
+            <input type="radio" id="byCardType" name="reportFilter" value="byCardType" checked/>
+            <label for="cardType">Filter By Card Type</label>
+            <select id="cardType"></select>
+        </div>
+
+        <div>
+            <input type="radio" id="byCard" name="reportFilter" value="byCard" />
+            <label for="cardNumber">Filter By Card Number</label>
+            <input type="text" id="cardNumber" placeholder="Enter Card Number..">
+        </div>      
+
+       
+     
+    </fieldset><br/>
+    <button id="filter">Get Data</button>
+
+    <br/>
+    <h3 class="message" id="message">{{message}}</h3>
+
+    <br/>
+    <h3>Transactions</h3>
+    <div id="tableData">No Data</div>
+    <br/>
+    <br/>
+    <br/>
+ 
+</body>
+<script>
+    let offset = 0;
+    let limit = 10;
+    let currentFile = '{{currentFile}}';
+
+    $(document).ready(function() {
+        $(function () {
+            $("#startDatePicker").datepicker();
+            
+            $("#endDatePicker").datepicker();
+                   
+        });
+        getCardTypes();
+    });
+    function getCardTypes(){
+        $.ajax({
+            url: '/api/cardTypes',
+            type: 'get',
+            data: {}, // Query parameters
+            success: function(response) {
+                if( response.data.length > 0) {
+                        $('#cardType').append('<option value="*">All Card Types</option>');
+                    response.data.forEach(function(type) {
+                        $('#cardType').append('<option value="' + type.type + '">' + type.type + '</option>');
+                    });
+                    
+                } else {
+                    $('#cardType').append('<option value="">No files available</option>');
+                }
+                $('#message').html(response);
+            },
+            error: function(xhr, status, error) {
+                $('#message').html('Error fetching data: ' + error);
+            }
+        });
+    }
+
+    function getFileNames(){
+        $.ajax({
+            url: '/api/fileNames',
+            type: 'get',
+            data: {}, // Query parameters
+            success: function(response) {
+                if( response.data.length > 0) {
+                        $('#files').append('<option value="*">All Files</option>');
+                    response.data.forEach(function(file) {
+                        $('#files').append('<option value="' + file.file_name + '">' + file.file_name + '</option>');
+                    });
+                    
+                } else {
+                    $('#files').append('<option value="">No files available</option>');
+                }
+            },
+            error: function(xhr, status, error) {
+                alert('Error fetching filename data: ' + error);
+            }
+        });
+    }
+    $('#filter').click(function() {
+        var s = $('#startDatePicker').datepicker('getDate');
+        var e = $('#endDatePicker').datepicker('getDate');
+        if( e != undefined && s != undefined ){
+             $('#tableData').empty()
+            offset = 0;
+            limit = 10;
+            fetchData();
+        }else{
+            $('#message').html('Please select start and end dates');
+        }
+        
+    });
+
+    function fetchData(){
+        let reportFilter = $('input[name="reportFilter"]:checked').val();
+        if( reportFilter === 'byCardType' ){
+            getCardTypeReport();
+        }else{
+            getCardNumberReport()
+        }
+        //{{!-- console.log(reportFilter); --}}
+    }
+
+    function getCardNumberReport(){
+        var startdate = $('#startDatePicker').datepicker('getDate');
+        const startYear = startdate.getFullYear();
+        const startMonth = String(startdate.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+        const startDay = String(startdate.getDate()).padStart(2, '0');
+
+        var enddate = $('#endDatePicker').datepicker('getDate');
+        const endYear = enddate.getFullYear();
+        const endMonth = String(enddate.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+        const endDay = String(enddate.getDate()).padStart(2, '0');
+        let cardNumber = $('#cardNumber').val();
+        if( !cardNumber || cardNumber.trim().length < 3 ){
+            alert('Please enter at least 3 digits of the card you wish to search');
+        }else{
+            $.ajax({
+            url: '/api/cardStats',
+            type: 'get',
+            data: {
+                startDate:`${startYear}-${startMonth}-${startDay}`,
+                endDate:`${endYear}-${endMonth}-${endDay}`,
+                limit:limit,
+                card: cardNumber,
+                offset:offset}, // Query parameters
+            success: function(response) {
+                if( response.data.length > 0) {
+                    $('#tableData').html(getTableHtml(response.data)); 
+                    $('#tableData').append(getPagination('changePage',response.nextOffset)); 
+                    
+                } else {
+                    $('#tableData').append('<div value="">No data found</div>');
+                }
+            },
+            error: function(xhr, status, error) {
+                alert('Error fetching filename data: ' + error);
+            }
+        });  
+        }
+    }
+
+    function getCardTypeReport(){
+        var startdate = $('#startDatePicker').datepicker('getDate');
+        const startYear = startdate.getFullYear();
+        const startMonth = String(startdate.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+        const startDay = String(startdate.getDate()).padStart(2, '0');
+
+        var enddate = $('#endDatePicker').datepicker('getDate');
+        const endYear = enddate.getFullYear();
+        const endMonth = String(enddate.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+        const endDay = String(enddate.getDate()).padStart(2, '0');
+        var cardType = $('#cardType').val();
+
+        $.ajax({
+            url: '/api/cardTypeStats',
+            type: 'get',
+            data: {
+                startDate:`${startYear}-${startMonth}-${startDay}`,
+                endDate:`${endYear}-${endMonth}-${endDay}`,
+                limit:limit,
+                cardType: cardType,
+                offset:offset}, // Query parameters
+            success: function(response) {
+                if( response.data.length > 0) {
+                    $('#tableData').html(getTableHtml(response.data)); 
+                    $('#tableData').append(getPagination('changePage',response.nextOffset)); 
+                    
+                } else {
+                    $('#tableData').append('<div value="">No data found</div>');
+                }
+            },
+            error: function(xhr, status, error) {
+                alert('Error fetching filename data: ' + error);
+            }
+        });        
+    }
+    
+
+    function changePage(direction) {
+        offset += direction * limit;
+        offset = Math.max(0, offset); // Ensure offset doesn't go negative
+        fetchData();
+    }
+</script>
+</html>
