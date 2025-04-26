@@ -2,6 +2,35 @@
 
 This project is a simple Node.js application using Express that allows users to upload transaction files for processing.
 
+## Retrospective
+
+Fun assignment, been a while since I had to do all the processing in one flow.:)
+
+The language I am most comfortable in is Java, but I wanted to challend myslef in node. Some of my stack was
+   + node.js
+   + express
+   + handlebars
+   + VS Code
+   + docker compose
+   + postgres
+
+I opted for super classes an factory patterns for CreditCard and Parsing implementations. I always try to lean into polymorphism so new parsers/cards can be easily added to the system later.
+
+I used some card validation regex examples I found on stack overflow, I do not know their rules/checksums off the top of my head
+
+I spent quite a bit of time on this, what should still be knocked out is
+   + Unit test
+   + Common contract responses from the controller layer. Currently just have a response with a data field and a nextOffset field, perhaps some opportunity there. Would want the contract to be flexible so it would not matter what the database choice was.
+
+In real life:
+   + The upload would just push to some kind of blob storage like S3
+   + The upload event would get realized and processed.
+      + At the conclusion of the event processing, notifications would be sent
+         + One example would be: Error stakeholders would get notified of invalid transactions so they have an opportunity to reconsile
+   + The file name should probably give more intel (like vendor, data, country, etc)
+   + The aggregate reporting should not be "group by" queries on a main operational transaction table. Periodic jobs or listening to the (aformentioned) events may provide an opportunity to aggregate numbers real time
+
+
 ## Functional Requirements
 
    * The input files will be either a csv,xml or json file
@@ -51,9 +80,6 @@ This project is a simple Node.js application using Express that allows users to 
          ...
       </transactions>
       ```     
-
-
-
 
 
 ## Project Structure
