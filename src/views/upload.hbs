@@ -10,10 +10,10 @@
     <h3>Requirements</h3>
     <ul>
         <li>File size limit: 2MB</li>
-        <li>Allowed file types: .csv</li>
-        <li>File name must not contain special characters</li>
+        <li>Allowed file types: .csv,.xml,.json</li>
+        <li>File name must not contain special characters, only alpha-numerics, dashes, hyphens and periods allowed</li>
         <li>File name must not be empty</li>
-        <li>File name must only be uploaded once, subsequent upload will be rejected</li>
+        <li>File name must only be uploaded once, subsequent upload will be rejected (unless user clear all data)</li>
     </ul>
 
     <form action="/upload" method="POST" enctype="multipart/form-data">

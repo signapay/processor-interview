@@ -19,13 +19,10 @@ const ErrorCodes = require('../domain/errorCodes')
 
 /**
  * Workhorse of the system
- * 1) Processed data uploaded via CSV files
- * 2) Persist file name
- * 3) Persist transaction data - initially marked for balance processing (to be able to restore balances)
- * 4) Persist error data (bogus transactions)
- * 5) Persist (upserts) account card data - for balances
- * 6) Updates transactions blanance processing as 'completed'
- * 7) Update files record with ingestion stats
+ * 1) Processed data uploaded via file upload (CSV/JSON/XML)
+ * 2) Persist transaction data
+ * 3) Persist error data (bogus transactions)
+ * 4) Persist file name record with ingestion stats
  */
 class TransactionController {
 
@@ -120,7 +117,7 @@ class TransactionController {
     validate(transaction) {
         // Logic to validate the transaction
         let errors = [];
-    
+
         if (!transaction.card_number || transaction.card_number.trim().length == 0) {
             errors.push(ErrorCodes.NO_CARD_NUMBER.code);
         }else{
@@ -144,7 +141,6 @@ class TransactionController {
         }
         if( errors.length > 0) {
             transaction.error_codes = errors.join(",");
-            return false;
         }
     }
 
