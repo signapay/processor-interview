@@ -21,3 +21,14 @@ services:
           #- ./postgres-data:/var/lib/postgresql/data
           # copy the sql script to create tables - not 100% sure if this works
           - ./sql/create_tables.sql:/docker-entrypoint-initdb.d/create_tables.sql
+    pgadmin:
+      container_name: container-pgadmin
+      image: dpage/pgadmin4
+      depends_on:
+        - postgres
+      ports:
+        - "5050:80"
+      environment:
+        PGADMIN_DEFAULT_EMAIL: admin@admin.com
+        PGADMIN_DEFAULT_PASSWORD: root
+      restart: unless-stopped          

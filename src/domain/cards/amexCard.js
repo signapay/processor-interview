@@ -34,5 +34,8 @@ class AmexCard extends AbstractCard{
         return validRegex;
     }
 }
-
+// var codes = [];
+// let num = '3324679021275326'
+// new AmexCard().validate(num,codes)
+// console.log(codes)
 module.exports = AmexCard;

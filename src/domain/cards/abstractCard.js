@@ -4,7 +4,7 @@
  * 
  */
 const ErrorCodes = require('../errorCodes')
-const regex = /^\d{16}?$/;
+const regex = /^\d{15,16}?$/;
 class AbstractCard {
     constructor() {
     }
@@ -26,7 +26,7 @@ class AbstractCard {
     }
 
     getCardValidationRegex(){
-        throw new Error("Method '_getCardValidationRegex' must be implemented in subclass.");
+        throw new Error("Method 'getCardValidationRegex' must be implemented in subclass.");
     }
 
     validate(number,errorCodes){
