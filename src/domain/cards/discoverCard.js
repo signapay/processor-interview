@@ -36,8 +36,5 @@ class DiscoverCard extends AbstractCard{
         return validRegex;
     }
 }
-// var codes = [];
-// let num = '6714744990978278'
-// new DiscoverCard().validate(num,codes)
-// console.log(codes)
+
 module.exports = DiscoverCard;

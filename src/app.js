@@ -7,7 +7,7 @@ const Util = require('./domain/util');
 require('dotenv').config();
 const upload = multer({ 
     dest: 'uploads/', 
-    fileFilter: Util.fileFilter,
+    fileFilter: Util.getFileFilter,
     limits: { fileSize: 1024 * 1024 * 2}, // 2MB limit
 });
 const app = express();
