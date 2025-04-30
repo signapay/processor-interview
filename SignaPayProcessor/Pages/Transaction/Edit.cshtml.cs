@@ -8,16 +8,19 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SignaPayProcessor.Data;
 using SignaPayProcessor.Models;
+using SignaPayProcessor.Services;
 
 namespace SignaPayProcessor.Pages_Transaction
 {
     public class EditModel : PageModel
     {
-        private readonly SignaPayProcessor.Data.TransactionContext _context;
+        private readonly TransactionContext _context;
+        private readonly ITransactionService _transactionService;
 
-        public EditModel(SignaPayProcessor.Data.TransactionContext context)
+        public EditModel(TransactionContext context, ITransactionService transactionService)        
         {
-            _context = context;
+             _context = context;
+             _transactionService = transactionService;
         }
 
         [BindProperty]
@@ -35,7 +38,7 @@ namespace SignaPayProcessor.Pages_Transaction
             {
                 return NotFound();
             }
-            Transaction = transaction;
+            Transaction = transaction;            
             return Page();
         }
 
@@ -49,6 +52,7 @@ namespace SignaPayProcessor.Pages_Transaction
             }
 
             _context.Attach(Transaction).State = EntityState.Modified;
+            Transaction.CardType = _transactionService.GetCardType(Transaction);
 
             try
             {
