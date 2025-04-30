@@ -1,19 +1,11 @@
-using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
 using SignaPayProcessor.Data;
 using SignaPayProcessor.Models;
-using System.IO;
-using System.Collections.Generic;
 using CsvHelper;
 using CsvHelper.Configuration;
 using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Xml.Serialization;
 using System.Xml;
-
 
 namespace SignaPayProcessor.Services
 {      

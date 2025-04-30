@@ -1,7 +1,3 @@
-using System.Threading.Tasks;
-using SignaPayProcessor.Models;
-using System.Collections.Generic;
-
 namespace SignaPayProcessor.Services
 {
     public interface IFileService

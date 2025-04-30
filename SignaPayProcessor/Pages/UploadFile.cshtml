@@ -1,0 +1,23 @@
+@page
+@model SignaPayProcessor.Pages.UploadFileModel
+
+@{
+    ViewData["Title"] = "Upload a File";
+}
+
+<h1>Upload a File</h1>
+
+<p>Upload a file of transactions to process.</p>
+<div class="=container">
+    <div class=" mb-3 mt-3">
+        <form method="post" enctype="multipart/form-data" >
+            <div class="=mb-3 mt-3" >
+                <label for="file">Select a file of Transactions to Process:</label>
+                <input type="file" id="file" name="transactionsfile" accept=".csv,.json,.xml" required class="form-control"/>
+            </div>
+            <div class="=mb-3 mt-3">
+                <button type="submit">Upload & Process</button>
+            </div>
+        </form>
+    </div>
+</div>
