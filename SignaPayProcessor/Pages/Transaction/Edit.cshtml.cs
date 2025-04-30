@@ -33,7 +33,11 @@ namespace SignaPayProcessor.Pages_Transaction
                 return NotFound();
             }
 
-            var transaction =  await _context.Transaction.FirstOrDefaultAsync(m => m.TimeStamp == id);
+            var transaction =  await _context.Transaction
+                                    .FirstOrDefaultAsync(m => m.TimeStamp.Date == id.Value.Date 
+                                                            && m.TimeStamp.Hour == id.Value.Hour 
+                                                            && m.TimeStamp.Minute == id.Value.Minute 
+                                                            && m.TimeStamp.Second == id.Value.Second);
             if (transaction == null)
             {
                 return NotFound();
@@ -75,7 +79,10 @@ namespace SignaPayProcessor.Pages_Transaction
 
         private bool TransactionExists(DateTime id)
         {
-            return _context.Transaction.Any(e => e.TimeStamp == id);
+            return _context.Transaction.Any(e => e.TimeStamp.Date == id.Date 
+                                                && e.TimeStamp.Hour == id.Hour 
+                                                && e.TimeStamp.Minute == id.Minute 
+                                                && e.TimeStamp.Second == id.Second);
         }
     }
 }
