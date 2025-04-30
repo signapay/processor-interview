@@ -42,7 +42,7 @@ public class IndexModel(ILogger<IndexModel> logger, IFileService fileService) : 
             _logger.LogError("File upload and or processing ({filepath}) failed: {Error}", filepath, ex.Message);
         }
 
-        return RedirectToPage("./Transactions/Index");
+        return RedirectToPage("./Transaction/Index");
     }
     
     public IActionResult OnPostDelete(string id)

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using SignaPayProcessor.Services;
 
@@ -12,13 +13,13 @@ namespace SignaPayProcessor.Pages;
 
         }
 
-        public async void OnPost(IFormFile transactionsfile)
+        public async Task<IActionResult> OnPost(IFormFile transactionsfile)
         {
             try
             {   if(transactionsfile == null || transactionsfile.Length == 0)
                 {      
                     Console.WriteLine("File is null or empty");                 
-                    return;
+                    return RedirectToPage("./UploadFile");
                 }
                 FilePath = await _fileService.UploadFileAsync(transactionsfile);                
                
@@ -30,7 +31,9 @@ namespace SignaPayProcessor.Pages;
                 // Handle file upload failure   
                 // Log the error or display a message to the user    
                 Console.WriteLine($"File upload failed: {ex.Message}");         
+                return RedirectToPage("./UploadFile");
             }
+            return RedirectToPage("./Transaction/Index");
         }
     }
 
