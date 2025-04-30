@@ -30,15 +30,12 @@ namespace SignaPayProcessor.Pages_Transaction
             }
 
             var transaction = await _context.Transaction.
-                                FirstOrDefaultAsync(m => m.TimeStamp.Date == id.Value.Date 
-                                    && m.TimeStamp.Hour == id.Value.Hour 
-                                    && m.TimeStamp.Minute == id.Value.Minute 
-                                    && m.TimeStamp.Second == id.Value.Second);
+                                FirstOrDefaultAsync(m => EF.Functions.DateDiffMicrosecond(m.TimeStamp, id.Value) == 0);
 
             if (transaction is not null)
             {
                 Transaction = transaction;
-                ViewData["TimeStamp"] = transaction.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss");
+                ViewData["TimeStamp"] = transaction.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss.ffffff");
                 return Page();
             }
 
@@ -52,7 +49,7 @@ namespace SignaPayProcessor.Pages_Transaction
                 return NotFound();
             }
 
-            var transaction = await _context.Transaction.FindAsync(id);
+            var transaction = await _context.Transaction.FirstOrDefaultAsync(m => EF.Functions.DateDiffMicrosecond(m.TimeStamp, id.Value) == 0);
             if (transaction != null)
             {
                 Transaction = transaction;

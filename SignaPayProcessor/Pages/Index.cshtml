@@ -1,10 +1,51 @@
-﻿@page
+﻿@page 
 @model IndexModel
 @{
     ViewData["Title"] = "Home page";
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <h1 class="display-2">Welcome</h1>
+    <h2> Available Files of Transactions </h2>
+    @if (Model.files.Count == 0)
+    {
+        <p>No files available.</p>
+
+         <a asp-page="Files/UploadFile">Upload New File</a>
+    }
+    else
+    {
+        <p>Files available for processing:</p>
+        <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>File Name</th>
+                <th>Process File</th>
+                <th>Delete File</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var file in Model.files)
+            {
+                <tr>
+                    <td>@file.Key</td>
+                    <td>
+                        <form id="process" asp-action="Post" method="post">
+                            <input type="hidden" name="filepath" value="@file.Value" />
+                            <button type="submit" asp-page-handler="Post">Process</button>
+                        </form>
+                    </td>
+                    <td>
+                      <form method="post" asp-page-handler="Delete">
+                            <input type="hidden" name="id" value="@file.Value" />
+                            <button type="submit" onclick="return confirm('Delete this file?')">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    }
 </div>
+
+
