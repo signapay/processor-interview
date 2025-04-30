@@ -1,3 +1,26 @@
+# Instructions for running. 
+This program is built in visual studio code vs 1.99.3 with ASP.Net Core 9 rasor pages.
+The database is Sqlite and is included in the project as a file.
+
+To begin, download the project, then build with dotnet build command in the terminal powershell.
+Then run with the debugger inbuilt to VS code with C# and run the SignaPayProcess project.
+It will have you choose a browser and it will run.
+
+Once it running, files can be uploaded and processed into the db from the Upload file page.
+Existing files can be reprocessed on the home page.
+Transactions can be manually created on the transactions page.
+Tranactions can be also be edited and deleted on the transaction page.
+Files can be deleted as well on the home page.
+Transaction time stamps are the unique identifies in the DB and can be viewed but not edited except on creation of a new record.
+
+The app needs SQL for a production role and url and https cert. None of that is configured. 
+Thus dotnet publish will run, but the DB will throw an error due to the lack of SQL server and configuation.
+
+Please let me know if you have any questions.
+
+The instuctions below were the inspiration for this project.
+
+--
 # Card Processor
 
 Thank you for taking a the time to complete our interview code project. We realize that there are many ways to conduct the "technical part" of the interview process from L33T code tests to whiteboards, and each has its own respective pros / cons. We intentionally chose the take-home project approach because we believe it gives you the best chance to demonstrate your skills and knowledge in a "normal environment" - i.e. your computer, keyboard, and IDE.
