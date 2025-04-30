@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using SignaPayProcessor.Data;
 using SignaPayProcessor.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -10,6 +11,12 @@ builder.Services.AddDbContext<TransactionContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("TransactionContext") ?? throw new InvalidOperationException("Connection string 'TransactionContext' not found.")));
 builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
+
+//Add logging services
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+builder.Logging.AddDebug();
+builder.Logging.AddEventSourceLogger();
 
 var app = builder.Build();
 

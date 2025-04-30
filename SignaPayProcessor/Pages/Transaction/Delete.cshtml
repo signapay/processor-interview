@@ -13,6 +13,12 @@
     <hr />
     <dl class="row">
         <dt class="col-sm-2">
+            <label type="datetime-local" class="control-label">TimeStamp</label>
+        </dt>
+         <dd class="col-sm-10">
+           @ViewData["TimeStamp"]
+        </dd>
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Transaction.Amount)
         </dt>
         <dd class="col-sm-10">

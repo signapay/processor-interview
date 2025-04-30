@@ -28,7 +28,13 @@ namespace SignaPayProcessor.Pages_Transaction
                 return NotFound();
             }
 
-            var transaction = await _context.Transaction.FirstOrDefaultAsync(m => m.TimeStamp == id);
+            var transaction = await _context.Transaction
+                                .FirstOrDefaultAsync(m => m.TimeStamp.Date == id.Value.Date 
+                                    && m.TimeStamp.Hour == id.Value.Hour 
+                                    && m.TimeStamp.Minute == id.Value.Minute 
+                                    && m.TimeStamp.Second == id.Value.Second);
+                                    
+            ViewData["TimeStamp"] = transaction?.TimeStamp.ToString("yyyy-MM-dd HH:mm:ss");                                    
 
             if (transaction is not null)
             {
