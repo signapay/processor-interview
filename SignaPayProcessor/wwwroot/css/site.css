@@ -5,20 +5,30 @@ html {
 @media (min-width: 768px) {
   html {
     font-size: 16px;
-  }
+  }  
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+img{
+  width: 150px;
+  height: auto;   
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus .btn-primary {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem white;
 }
 
 html {
   position: relative;
   min-height: 100%;
 }
+a {  
+  color: black;
+  text-decoration-color: black;
+}
 
 body {
-  margin-bottom: 60px;
+  margin-bottom: 60px;  
+  background-color: #2ea2cc;
 }
 
 .form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
