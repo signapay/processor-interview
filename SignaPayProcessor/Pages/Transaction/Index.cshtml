@@ -10,7 +10,25 @@
 <p>
     <a asp-page="Create">Create New</a>
 </p>
-<table class="table">
+<form method="get">
+    <p>
+        <label for="SearchString">Search by CardNumber:</label>
+        <input type="text" name="SearchString" value="@Model.SearchString" />
+        <label for="CardType">Filter by CardType:</label>
+        <select name="CardType">
+            <option value="">All</option>
+            <option value="Amex">Amex</option>
+            <option value="Visa">Visa</option>
+            <option value="MasterCard">MasterCard</option>
+            <option value="Discover">Discover</option>
+            <option value="Rejected">Rejected</option>
+        </select>
+        <label for="TransactionDate">Transaction Date:</label>
+        <input type="date" name="TransactionDate" value="@Model.TransactionDate?.ToString("yyyy-MM-dd")" />
+        <input type="submit" value="Filter" />
+    </p>
+</form>
+<table class="table table-striped">
     <thead>
         <tr>
             <th>
