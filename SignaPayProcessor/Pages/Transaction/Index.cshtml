@@ -1,0 +1,48 @@
+@page
+@model SignaPayProcessor.Pages_Transaction.IndexModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-page="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Transaction[0].Amount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Transaction[0].CardType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Transaction[0].CardNumber)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.Transaction) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Amount)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CardType)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CardNumber)
+            </td>
+            <td>
+                <a asp-page="./Edit" asp-route-id="@item.TimeStamp">Edit</a> |
+                <a asp-page="./Details" asp-route-id="@item.TimeStamp">Details</a> |
+                <a asp-page="./Delete" asp-route-id="@item.TimeStamp">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

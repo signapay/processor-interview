@@ -1,0 +1,49 @@
+@page
+@model SignaPayProcessor.Pages_Transaction.CreateModel
+
+        @{
+        ViewData["Title"] = "Create";
+        }
+        
+        <h1>Create</h1>
+        
+    <h4>Transaction</h4>
+    <hr />
+    <div class="row">
+    <div class="col-md-4">
+    <form method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Transaction.TimeStamp" class="control-label"></label>
+                <input asp-for="Transaction.TimeStamp" class="form-control" />
+                <span asp-validation-for="Transaction.TimeStamp" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Transaction.Amount" class="control-label"></label>
+                <input asp-for="Transaction.Amount" class="form-control" />
+                <span asp-validation-for="Transaction.Amount" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Transaction.CardType" class="control-label"></label>
+                <input asp-for="Transaction.CardType" class="form-control" />
+                <span asp-validation-for="Transaction.CardType" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Transaction.CardNumber" class="control-label"></label>
+                <input asp-for="Transaction.CardNumber" class="form-control" />
+                <span asp-validation-for="Transaction.CardNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-page="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
