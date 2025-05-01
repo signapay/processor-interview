@@ -10,3 +10,45 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Transaction {
+  id           String     @id @default(cuid())
+  cardLastFour String // Last 4 digits of the card number
+  cardType     String // Amex, Visa, MasterCard, Discover
+  timestamp    DateTime // Store as ISO 8601 DateTime
+  amount       Float
+  processedAt  DateTime   @default(now())
+  fileSource   String // Filename or identifier of the source file
+  importJobId  String? // Reference to the import job
+  importJob    ImportJob? @relation(fields: [importJobId], references: [id])
+}
+
+model RejectedTransaction {
+  id              String     @id @default(cuid())
+  fileSource      String // Filename or identifier of the source file
+  encryptedData   String // Encrypted raw/problematic record data
+  iv              String // Initialization Vector for AES encryption
+  authTag         String // Authentication Tag for AES-GCM
+  rejectionReason String // e.g., "Invalid Card Number Prefix", "Invalid Amount Format", "Parsing Error"
+  processedAt     DateTime   @default(now())
+  importJobId     String? // Reference to the import job
+  importJob       ImportJob? @relation(fields: [importJobId], references: [id])
+}
+
+model ImportJob {
+  id                   String                @id @default(cuid())
+  fileName             String // Original file name
+  fileSize             Int // File size in bytes
+  fileType             String // MIME type
+  status               String // "pending", "processing", "completed", "failed"
+  progress             Float                 @default(0) // Progress percentage (0-100)
+  totalRecords         Int                   @default(0) // Total records in the file
+  processedRecords     Int                   @default(0) // Number of records processed
+  successfulRecords    Int                   @default(0) // Number of records successfully processed
+  failedRecords        Int                   @default(0) // Number of records that failed processing
+  startedAt            DateTime              @default(now())
+  completedAt          DateTime? // When the job was completed
+  error                String? // Error message if the job failed
+  transactions         Transaction[] // Relation to successful transactions
+  rejectedTransactions RejectedTransaction[] // Relation to rejected transactions
+}
