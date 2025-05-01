@@ -1,7 +1,9 @@
 import * as React from "react";
 import { createFileRoute } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+
 import type { Transaction } from "@/shared/types";
-import testData from "../../../../../../test/test.json";
+import { transactionsQueryOptions } from "@/lib/api";
 import DataTable, { ColumnDef } from "@/components/transactions/Transactions";
 
 export const Route = createFileRoute(
@@ -11,13 +13,15 @@ export const Route = createFileRoute(
 });
 
 function TransactionsComponent() {
+  const { isPending, data, error } = useQuery(transactionsQueryOptions);
+  if (isPending) return "loading";
+  if (error) return "error";
+
   return (
     <div>
-      <div className="overflow-x-auto">
-        <DataTable<Transaction>
-          data={testData as Transaction[]}
-          columnDefs={columnDefs}
-        />
+      <div className="overflow-x-auto gap-2">
+        <h1 className="text-2xl font-bold">Transactions</h1>
+        <DataTable<Transaction> data={data} columnDefs={columnDefs} />
       </div>
     </div>
   );
