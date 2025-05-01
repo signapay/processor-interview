@@ -102,3 +102,13 @@ Bonus points (not required) for:
   - How to run your code
   - Any decisions or tradeoffs you made
   - Any assumptions or known limitations
+
+## Running Local Development
+
+1. Start the db by running `docker compose up -d`
+2. run `bun run db:setup` to setup the database
+3. start the server by running `bun run dev`
+4. start the frontend by running `cd frontend && bun run dev`
+
+App should be available on [http://localhost:5173](http://localhost:5173)
+Server should be available on [http://localhost:3000](http://localhost:3000)
