@@ -5,5 +5,6 @@ declare module "bun" {
     KINDE_CLIENT_SECRET: string;
     KINDE_REDIRECT_URI: string;
     KINDE_LOGOUT_REDIRECT_URI: string;
+    ENCRYPTION_KEY: string;
   }
 }
