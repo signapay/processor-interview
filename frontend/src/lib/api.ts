@@ -1,7 +1,13 @@
 import { hc } from "hono/client";
 import { queryOptions, useMutation } from "@tanstack/react-query";
 
-import type { AppType } from "@/shared/types";
+import type {
+  AppType,
+  CardSummary,
+  CardTypeSummary,
+  DaySummary,
+  RejectedTransaction,
+} from "@/shared/types";
 
 const client = hc<AppType>("/");
 export const api = client.api;
@@ -38,14 +44,19 @@ export const transactionsQueryOptions = queryOptions({
 // Function to upload a transaction file
 export async function uploadTransactionFile(file: File) {
   const formData = new FormData();
-  formData.append("file", file);
+  formData.append("file", file, file.name);
 
-  const response = await api.v1.transactions.import.$post({
+  // Use fetch directly instead of Hono client to ensure proper multipart/form-data handling
+  const response = await fetch("/api/v1/transactions/import", {
+    method: "POST",
     body: formData,
+    // Don't set Content-Type header, let the browser set it with the boundary
   });
 
   if (!response.ok) {
-    throw new Error("Failed to upload file");
+    const errorText = await response.text();
+    console.error("Upload error response:", errorText);
+    throw new Error(`Failed to upload file: ${response.status} ${response.statusText}`);
   }
 
   const result = await response.json();
@@ -63,3 +74,63 @@ export function useUploadTransactionFile() {
     mutationFn: uploadTransactionFile,
   });
 }
+
+// Get transaction summary by card
+async function getTransactionSummaryByCard(): Promise<CardSummary[]> {
+  const res = await api.v1.transactions.summary["by-card"].$get();
+  if (!res.ok) {
+    throw new Error("Failed to fetch transaction summary by card");
+  }
+  const { data } = await res.json();
+  return data;
+}
+
+export const transactionSummaryByCardQueryOptions = queryOptions({
+  queryKey: ["get-transaction-summary-by-card"],
+  queryFn: getTransactionSummaryByCard,
+});
+
+// Get transaction summary by card type
+async function getTransactionSummaryByCardType(): Promise<CardTypeSummary[]> {
+  const res = await api.v1.transactions.summary["by-card-type"].$get();
+  if (!res.ok) {
+    throw new Error("Failed to fetch transaction summary by card type");
+  }
+  const { data } = await res.json();
+  return data;
+}
+
+export const transactionSummaryByCardTypeQueryOptions = queryOptions({
+  queryKey: ["get-transaction-summary-by-card-type"],
+  queryFn: getTransactionSummaryByCardType,
+});
+
+// Get transaction summary by day
+async function getTransactionSummaryByDay(): Promise<DaySummary[]> {
+  const res = await api.v1.transactions.summary["by-day"].$get();
+  if (!res.ok) {
+    throw new Error("Failed to fetch transaction summary by day");
+  }
+  const { data } = await res.json();
+  return data;
+}
+
+export const transactionSummaryByDayQueryOptions = queryOptions({
+  queryKey: ["get-transaction-summary-by-day"],
+  queryFn: getTransactionSummaryByDay,
+});
+
+// Get all rejected transactions
+async function getAllRejectedTransactions(): Promise<RejectedTransaction[]> {
+  const res = await api.v1.transactions.rejected.$get();
+  if (!res.ok) {
+    throw new Error("Failed to fetch rejected transactions");
+  }
+  const { data } = await res.json();
+  return data;
+}
+
+export const rejectedTransactionsQueryOptions = queryOptions({
+  queryKey: ["get-all-rejected-transactions"],
+  queryFn: getAllRejectedTransactions,
+});
