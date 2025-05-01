@@ -1,6 +1,6 @@
-import FileList from "@/components/upload/FileList";
-import FileUploader from "@/components/upload/FileUploader";
-import ProcessingStatus from "@/components/upload/ProcessingStatus";
+import FileList from "@/components/upload/file-list";
+import FileUploader from "@/components/upload/file-uploader";
+import ProcessingStatus from "@/components/upload/processing-status";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import {

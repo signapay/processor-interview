@@ -3,9 +3,11 @@ import React from "react";
 
 function NavBar() {
   return (
-    <div className="navbar bg-base-100 shadow-sm">
+    <div className="navbar bg-base-100 shadow-sm sticky top-0 z-50">
       <div className="flex-1">
-        <a className="btn btn-ghost text-xl">Processor Interview</a>
+        <Link to="/" className="text-2xl font-bold">
+          Processor Interview
+        </Link>
       </div>
       <div role="tablist" className="tabs tabs-border">
         <Link
