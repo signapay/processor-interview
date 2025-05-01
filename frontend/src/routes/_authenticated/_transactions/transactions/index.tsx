@@ -1,10 +1,12 @@
 import * as React from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import type { Transaction } from "@/shared/types";
-import testData from "../../../../../test/test.json";
-import DataTable, { ColumnDef } from "@/components/transactions/Transactions";
+import testData from "../../../../../../test/test.json";
+import DataTable, { ColumnDef } from "@/components/transactions/transactions";
 
-export const Route = createFileRoute("/_transactions/transactions/")({
+export const Route = createFileRoute(
+  "/_authenticated/_transactions/transactions/",
+)({
   component: TransactionsComponent,
 });
 

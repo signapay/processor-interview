@@ -12,10 +12,12 @@
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as TransactionsImport } from './routes/_transactions'
-import { Route as IndexImport } from './routes/index'
-import { Route as TransactionsTransactionsIndexImport } from './routes/_transactions/transactions/index'
-import { Route as TransactionsTransactionsReportImport } from './routes/_transactions/transactions/report'
-import { Route as TransactionsTransactionsImportImport } from './routes/_transactions/transactions/import'
+import { Route as AuthenticatedImport } from './routes/_authenticated'
+import { Route as AuthenticatedIndexImport } from './routes/_authenticated/index'
+import { Route as AuthenticatedProfileImport } from './routes/_authenticated/profile'
+import { Route as AuthenticatedTransactionsTransactionsIndexImport } from './routes/_authenticated/_transactions/transactions/index'
+import { Route as AuthenticatedTransactionsTransactionsReportImport } from './routes/_authenticated/_transactions/transactions/report'
+import { Route as AuthenticatedTransactionsTransactionsImportImport } from './routes/_authenticated/_transactions/transactions/import'
 
 // Create/Update Routes
 
@@ -24,42 +26,53 @@ const TransactionsRoute = TransactionsImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const IndexRoute = IndexImport.update({
-  id: '/',
-  path: '/',
+const AuthenticatedRoute = AuthenticatedImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRoute,
 } as any)
 
-const TransactionsTransactionsIndexRoute =
-  TransactionsTransactionsIndexImport.update({
-    id: '/transactions/',
+const AuthenticatedIndexRoute = AuthenticatedIndexImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+
+const AuthenticatedProfileRoute = AuthenticatedProfileImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+
+const AuthenticatedTransactionsTransactionsIndexRoute =
+  AuthenticatedTransactionsTransactionsIndexImport.update({
+    id: '/_transactions/transactions/',
     path: '/transactions/',
-    getParentRoute: () => TransactionsRoute,
+    getParentRoute: () => AuthenticatedRoute,
   } as any)
 
-const TransactionsTransactionsReportRoute =
-  TransactionsTransactionsReportImport.update({
-    id: '/transactions/report',
+const AuthenticatedTransactionsTransactionsReportRoute =
+  AuthenticatedTransactionsTransactionsReportImport.update({
+    id: '/_transactions/transactions/report',
     path: '/transactions/report',
-    getParentRoute: () => TransactionsRoute,
+    getParentRoute: () => AuthenticatedRoute,
   } as any)
 
-const TransactionsTransactionsImportRoute =
-  TransactionsTransactionsImportImport.update({
-    id: '/transactions/import',
+const AuthenticatedTransactionsTransactionsImportRoute =
+  AuthenticatedTransactionsTransactionsImportImport.update({
+    id: '/_transactions/transactions/import',
     path: '/transactions/import',
-    getParentRoute: () => TransactionsRoute,
+    getParentRoute: () => AuthenticatedRoute,
   } as any)
 
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexImport
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof AuthenticatedImport
       parentRoute: typeof rootRoute
     }
     '/_transactions': {
@@ -69,106 +82,135 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TransactionsImport
       parentRoute: typeof rootRoute
     }
-    '/_transactions/transactions/import': {
-      id: '/_transactions/transactions/import'
+    '/_authenticated/profile': {
+      id: '/_authenticated/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof AuthenticatedProfileImport
+      parentRoute: typeof AuthenticatedImport
+    }
+    '/_authenticated/': {
+      id: '/_authenticated/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedIndexImport
+      parentRoute: typeof AuthenticatedImport
+    }
+    '/_authenticated/_transactions/transactions/import': {
+      id: '/_authenticated/_transactions/transactions/import'
       path: '/transactions/import'
       fullPath: '/transactions/import'
-      preLoaderRoute: typeof TransactionsTransactionsImportImport
-      parentRoute: typeof TransactionsImport
+      preLoaderRoute: typeof AuthenticatedTransactionsTransactionsImportImport
+      parentRoute: typeof AuthenticatedImport
     }
-    '/_transactions/transactions/report': {
-      id: '/_transactions/transactions/report'
+    '/_authenticated/_transactions/transactions/report': {
+      id: '/_authenticated/_transactions/transactions/report'
       path: '/transactions/report'
       fullPath: '/transactions/report'
-      preLoaderRoute: typeof TransactionsTransactionsReportImport
-      parentRoute: typeof TransactionsImport
+      preLoaderRoute: typeof AuthenticatedTransactionsTransactionsReportImport
+      parentRoute: typeof AuthenticatedImport
     }
-    '/_transactions/transactions/': {
-      id: '/_transactions/transactions/'
+    '/_authenticated/_transactions/transactions/': {
+      id: '/_authenticated/_transactions/transactions/'
       path: '/transactions'
       fullPath: '/transactions'
-      preLoaderRoute: typeof TransactionsTransactionsIndexImport
-      parentRoute: typeof TransactionsImport
+      preLoaderRoute: typeof AuthenticatedTransactionsTransactionsIndexImport
+      parentRoute: typeof AuthenticatedImport
     }
   }
 }
 
 // Create and export the route tree
 
-interface TransactionsRouteChildren {
-  TransactionsTransactionsImportRoute: typeof TransactionsTransactionsImportRoute
-  TransactionsTransactionsReportRoute: typeof TransactionsTransactionsReportRoute
-  TransactionsTransactionsIndexRoute: typeof TransactionsTransactionsIndexRoute
+interface AuthenticatedRouteChildren {
+  AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
+  AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
+  AuthenticatedTransactionsTransactionsImportRoute: typeof AuthenticatedTransactionsTransactionsImportRoute
+  AuthenticatedTransactionsTransactionsReportRoute: typeof AuthenticatedTransactionsTransactionsReportRoute
+  AuthenticatedTransactionsTransactionsIndexRoute: typeof AuthenticatedTransactionsTransactionsIndexRoute
 }
 
-const TransactionsRouteChildren: TransactionsRouteChildren = {
-  TransactionsTransactionsImportRoute: TransactionsTransactionsImportRoute,
-  TransactionsTransactionsReportRoute: TransactionsTransactionsReportRoute,
-  TransactionsTransactionsIndexRoute: TransactionsTransactionsIndexRoute,
+const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedProfileRoute: AuthenticatedProfileRoute,
+  AuthenticatedIndexRoute: AuthenticatedIndexRoute,
+  AuthenticatedTransactionsTransactionsImportRoute:
+    AuthenticatedTransactionsTransactionsImportRoute,
+  AuthenticatedTransactionsTransactionsReportRoute:
+    AuthenticatedTransactionsTransactionsReportRoute,
+  AuthenticatedTransactionsTransactionsIndexRoute:
+    AuthenticatedTransactionsTransactionsIndexRoute,
 }
 
-const TransactionsRouteWithChildren = TransactionsRoute._addFileChildren(
-  TransactionsRouteChildren,
+const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
+  AuthenticatedRouteChildren,
 )
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '': typeof TransactionsRouteWithChildren
-  '/transactions/import': typeof TransactionsTransactionsImportRoute
-  '/transactions/report': typeof TransactionsTransactionsReportRoute
-  '/transactions': typeof TransactionsTransactionsIndexRoute
+  '': typeof TransactionsRoute
+  '/profile': typeof AuthenticatedProfileRoute
+  '/': typeof AuthenticatedIndexRoute
+  '/transactions/import': typeof AuthenticatedTransactionsTransactionsImportRoute
+  '/transactions/report': typeof AuthenticatedTransactionsTransactionsReportRoute
+  '/transactions': typeof AuthenticatedTransactionsTransactionsIndexRoute
 }
 
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '': typeof TransactionsRouteWithChildren
-  '/transactions/import': typeof TransactionsTransactionsImportRoute
-  '/transactions/report': typeof TransactionsTransactionsReportRoute
-  '/transactions': typeof TransactionsTransactionsIndexRoute
+  '': typeof TransactionsRoute
+  '/profile': typeof AuthenticatedProfileRoute
+  '/': typeof AuthenticatedIndexRoute
+  '/transactions/import': typeof AuthenticatedTransactionsTransactionsImportRoute
+  '/transactions/report': typeof AuthenticatedTransactionsTransactionsReportRoute
+  '/transactions': typeof AuthenticatedTransactionsTransactionsIndexRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
-  '/': typeof IndexRoute
-  '/_transactions': typeof TransactionsRouteWithChildren
-  '/_transactions/transactions/import': typeof TransactionsTransactionsImportRoute
-  '/_transactions/transactions/report': typeof TransactionsTransactionsReportRoute
-  '/_transactions/transactions/': typeof TransactionsTransactionsIndexRoute
+  '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/_transactions': typeof TransactionsRoute
+  '/_authenticated/profile': typeof AuthenticatedProfileRoute
+  '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/_authenticated/_transactions/transactions/import': typeof AuthenticatedTransactionsTransactionsImportRoute
+  '/_authenticated/_transactions/transactions/report': typeof AuthenticatedTransactionsTransactionsReportRoute
+  '/_authenticated/_transactions/transactions/': typeof AuthenticatedTransactionsTransactionsIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | '/'
     | ''
+    | '/profile'
+    | '/'
     | '/transactions/import'
     | '/transactions/report'
     | '/transactions'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/'
     | ''
+    | '/profile'
+    | '/'
     | '/transactions/import'
     | '/transactions/report'
     | '/transactions'
   id:
     | '__root__'
-    | '/'
+    | '/_authenticated'
     | '/_transactions'
-    | '/_transactions/transactions/import'
-    | '/_transactions/transactions/report'
-    | '/_transactions/transactions/'
+    | '/_authenticated/profile'
+    | '/_authenticated/'
+    | '/_authenticated/_transactions/transactions/import'
+    | '/_authenticated/_transactions/transactions/report'
+    | '/_authenticated/_transactions/transactions/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  TransactionsRoute: typeof TransactionsRouteWithChildren
+  AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
+  TransactionsRoute: typeof TransactionsRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  TransactionsRoute: TransactionsRouteWithChildren,
+  AuthenticatedRoute: AuthenticatedRouteWithChildren,
+  TransactionsRoute: TransactionsRoute,
 }
 
 export const routeTree = rootRoute
@@ -181,32 +223,42 @@ export const routeTree = rootRoute
     "__root__": {
       "filePath": "__root.tsx",
       "children": [
-        "/",
+        "/_authenticated",
         "/_transactions"
       ]
     },
-    "/": {
-      "filePath": "index.tsx"
-    },
-    "/_transactions": {
-      "filePath": "_transactions.tsx",
+    "/_authenticated": {
+      "filePath": "_authenticated.tsx",
       "children": [
-        "/_transactions/transactions/import",
-        "/_transactions/transactions/report",
-        "/_transactions/transactions/"
+        "/_authenticated/profile",
+        "/_authenticated/",
+        "/_authenticated/_transactions/transactions/import",
+        "/_authenticated/_transactions/transactions/report",
+        "/_authenticated/_transactions/transactions/"
       ]
     },
-    "/_transactions/transactions/import": {
-      "filePath": "_transactions/transactions/import.tsx",
-      "parent": "/_transactions"
+    "/_transactions": {
+      "filePath": "_transactions.tsx"
     },
-    "/_transactions/transactions/report": {
-      "filePath": "_transactions/transactions/report.tsx",
-      "parent": "/_transactions"
+    "/_authenticated/profile": {
+      "filePath": "_authenticated/profile.tsx",
+      "parent": "/_authenticated"
     },
-    "/_transactions/transactions/": {
-      "filePath": "_transactions/transactions/index.tsx",
-      "parent": "/_transactions"
+    "/_authenticated/": {
+      "filePath": "_authenticated/index.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/_transactions/transactions/import": {
+      "filePath": "_authenticated/_transactions/transactions/import.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/_transactions/transactions/report": {
+      "filePath": "_authenticated/_transactions/transactions/report.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/_transactions/transactions/": {
+      "filePath": "_authenticated/_transactions/transactions/index.tsx",
+      "parent": "/_authenticated"
     }
   }
 }

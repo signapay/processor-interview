@@ -1,10 +1,15 @@
 import * as React from "react";
-import { Outlet, createRootRoute } from "@tanstack/react-router";
+import { Outlet, createRootRouteWithContext } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import NavBar from "@/components/layout/NavBar";
+import NavBar from "@/components/layout/navbar";
+import { QueryClient } from "@tanstack/react-query";
 
-export const Route = createRootRoute({
+interface AppRouteContext {
+  queryClient: QueryClient;
+}
+
+export const Route = createRootRouteWithContext<AppRouteContext>()({
   component: RootComponent,
 });
 

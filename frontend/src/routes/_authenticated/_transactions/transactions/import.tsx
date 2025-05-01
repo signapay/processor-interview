@@ -10,7 +10,7 @@ import {
   XCircle,
 } from "lucide-react";
 
-export const Route = createFileRoute("/_transactions/transactions/import")({
+export const Route = createFileRoute("/_authenticated/_transactions/transactions/import")({
   component: ImportComponent,
 });
 
