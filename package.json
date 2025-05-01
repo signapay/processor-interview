@@ -6,11 +6,19 @@
     "format:check": "prettier . --check",
     "lint:server": "cd server && eslint .",
     "lint:frontend": "cd frontend && eslint .",
-    "start": "bun server/index.ts"
+    "start": "bun server/index.ts",
+    "db:setup": "cd server && bun run scripts/setup-db.ts",
+    "prisma:generate": "cd server && bunx prisma generate",
+    "prisma:migrate": "cd server && bunx prisma migrate dev",
+    "prisma:studio": "cd server && bunx prisma studio"
   },
   "dependencies": {
     "@hono/zod-validator": "^0.5.0",
+    "@kinde-oss/kinde-typescript-sdk": "^2.10.1",
+    "@prisma/adapter-pg": "^6.7.0",
+    "@prisma/client": "^6.7.0",
     "hono": "^4.7.8",
+    "pg": "^8.15.6",
     "zod": "^3.24.3"
   },
   "devDependencies": {
@@ -22,6 +30,7 @@
     "eslint-config-prettier": "^10.1.2",
     "globals": "^16.0.0",
     "prettier": "^3.5.3",
+    "prisma": "^6.7.0",
     "typescript-eslint": "^8.31.1"
   }
 }

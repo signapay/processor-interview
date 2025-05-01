@@ -28,7 +28,6 @@
       "@/shared/*": ["./shared/*"],
       "@/*": ["./server/*"]
     }
-
-    // "jsxImportSource": "hono/jsx"
-  }
+  },
+  "include": ["./server/**/*", "./shared/**/*"]
 }
