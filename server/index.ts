@@ -1,14 +1,15 @@
 import { Hono } from "hono";
-import { logger } from "hono/logger";
-import { cors } from "hono/cors";
 import { serveStatic } from "hono/bun";
-import authRouter from "./routes/auth/auth.routes";
-import transactionsRouter from "./routes/transactions/transactions.routes";
-import { requestId } from "hono/request-id";
+import { cors } from "hono/cors";
+import { logger } from "hono/logger";
 import { prettyJSON } from "hono/pretty-json";
+import { requestId } from "hono/request-id";
+
+import type { Env } from "./context";
 import { onErrorMiddleware } from "./middlewares/on-error.middleware";
 import { prismaMiddleware } from "./middlewares/prisma-middleware";
-import type { Env } from "./context";
+import authRouter from "./routes/auth/auth.routes";
+import transactionsRouter from "./routes/transactions/transactions.routes";
 
 const app = new Hono<Env>().basePath("/api/v1");
 

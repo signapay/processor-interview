@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 
 import type { Env } from "@/context";
+import { authMiddleware } from "@/kinde";
 
 import {
   getAllImportJobs,
@@ -8,14 +9,15 @@ import {
   getImportJobStatus,
   getRejectedTransactions,
   getTransactions,
+  getTransactionsSummary,
   getTransactionSummaryByCard,
   getTransactionSummaryByCardType,
   getTransactionSummaryByDay,
-  getTransactionsSummary,
   importTransactions,
 } from "./transactions.controller";
 
 const transactionsRoutes = new Hono<Env>()
+  .use(authMiddleware)
   .get("/", getTransactions)
   .post("/import", importTransactions)
   .get("/summary", getTransactionsSummary)
