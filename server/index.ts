@@ -2,59 +2,33 @@ import { Hono } from "hono";
 import { logger } from "hono/logger";
 import { cors } from "hono/cors";
 import { serveStatic } from "hono/bun";
-import authRouter from "./routes/auth";
-import transactionsRouter from "./routes/transactions";
-import { HTTPException } from "hono/http-exception";
-import type { ErrorResponse } from "@/shared/types";
+import authRouter from "./routes/auth/auth.routes";
+import transactionsRouter from "./routes/transactions/transactions.routes";
+import { requestId } from "hono/request-id";
+import { prettyJSON } from "hono/pretty-json";
+import { onErrorMiddleware } from "./middlewares/on-error.middleware";
+import { prismaMiddleware } from "./middlewares/prisma-middleware";
+import type { Env } from "./context";
 
-const app = new Hono();
+const app = new Hono<Env>().basePath("/api/v1");
 
-app.use("*", cors(), logger());
+app.use(requestId());
+app.use(cors());
+app.use(logger());
+app.use(prettyJSON());
+app.use(prismaMiddleware);
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const routes = app
-  .basePath("/api")
-  .route("/auth", authRouter)
-  .route("/transactions", transactionsRouter);
+export const publicRoutes = app.route("/auth", authRouter);
 
-app.onError((err, c) => {
-  if (err instanceof HTTPException) {
-    const errResponse =
-      err.res ??
-      c.json<ErrorResponse>(
-        {
-          success: false,
-          error: err.message,
-          isFormError:
-            err.cause && typeof err.cause == "object" && "form" in err.cause
-              ? err.cause.form === true
-              : false,
-        },
-        err.status,
-      );
+export const privateRoutes = app.route("/transactions", transactionsRouter);
 
-    return errResponse;
-  }
-
-  return c.json<ErrorResponse>(
-    {
-      success: false,
-      error:
-        process.env.NODE_ENV === "production"
-          ? "Internal Server Error"
-          : (err.stack ?? err.message),
-    },
-    500,
-  );
-});
+app.onError(onErrorMiddleware);
 
 app.get("*", serveStatic({ root: "./frontend/dist" }));
 app.get("*", serveStatic({ root: "./frontend/dist/index.html" }));
 
 export default {
   port: process.env["PORT"] ?? 3000,
-  hostname: "0.0.0.0",
+  hostname: "127.0.0.1",
   fetch: app.fetch,
 };
-
-export type ApiRoutes = typeof routes;
