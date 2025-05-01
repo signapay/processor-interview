@@ -14,7 +14,7 @@ const DataTable = <T extends { id: string | number }>({
   columnDefs,
 }: DataTableProps<T>) => {
   return (
-    <table className="table table-zebra">
+    <table className="table table-xs table-zebra">
       <thead>
         <tr>
           {columnDefs.map((column) => (
