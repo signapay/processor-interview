@@ -1,8 +1,7 @@
 import { z } from "zod";
+import type { AppType } from "../server/context";
 
-import type { ApiRoutes } from "../server/index";
-
-export { type ApiRoutes };
+export { type AppType };
 
 export type SuccessResponse<T = void> = {
   success: true;
@@ -14,15 +13,6 @@ export type ErrorResponse = {
   error: string;
   isFormError?: boolean;
 };
-
-export const loginSchema = z.object({
-  username: z
-    .string()
-    .min(3)
-    .max(32)
-    .regex(/^[a-zA-Z0-9]+$/),
-  password: z.string().min(6).max(18),
-});
 
 export const orderSchema = z.enum(["asc", "desc"]);
 
