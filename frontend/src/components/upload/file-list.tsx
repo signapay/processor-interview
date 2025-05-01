@@ -1,7 +1,15 @@
-import React from "react";
-import { File, X, CheckCircle, AlertCircle, Clock } from "lucide-react";
+import React, { useEffect } from "react";
 
-interface UploadedFile {
+import {
+  AlertCircle,
+  CheckCircle,
+  Clock,
+  File,
+  Loader2,
+  X,
+} from "lucide-react";
+
+export interface UploadedFile {
   id: string;
   name: string;
   size: number;
@@ -10,18 +18,91 @@ interface UploadedFile {
   status: "uploading" | "processing" | "completed" | "failed";
   progress: number;
   transactionCount?: number;
+  rejectedCount?: number;
+  totalRecords?: number;
+  jobId?: string; // Import job ID from the server
 }
 
 interface FileListProps {
   files: UploadedFile[];
   onRemoveFile: (id: string) => void;
+  onUpdateFile?: (id: string, updates: Partial<UploadedFile>) => void;
 }
 
-const FileList: React.FC<FileListProps> = ({ files, onRemoveFile }) => {
+const FileList: React.FC<FileListProps> = ({
+  files,
+  onRemoveFile,
+  onUpdateFile,
+}) => {
+  // Poll for job status updates
+  useEffect(() => {
+    // Only poll for files that have a jobId and are in uploading or processing status
+    const filesToPoll = files.filter(
+      (file) =>
+        file.jobId &&
+        (file.status === "uploading" || file.status === "processing"),
+    );
+
+    if (filesToPoll.length === 0) return;
+
+    // Set up polling interval
+    const intervalId = setInterval(async () => {
+      for (const file of filesToPoll) {
+        if (!file.jobId) continue;
+
+        try {
+          // Fetch job status from the server
+          const response = await fetch(
+            `/api/v1/transactions/import/jobs/${file.jobId}`,
+          );
+          const result = await response.json();
+
+          if (result.success && result.data) {
+            const jobData = result.data;
+
+            // Map server status to our status
+            let status: "uploading" | "processing" | "completed" | "failed";
+            switch (jobData.status) {
+              case "pending":
+              case "uploading":
+                status = "uploading";
+                break;
+              case "processing":
+                status = "processing";
+                break;
+              case "completed":
+                status = "completed";
+                break;
+              case "failed":
+                status = "failed";
+                break;
+              default:
+                status = "uploading";
+            }
+
+            // Always update file status to ensure we have the latest data
+            onUpdateFile?.(file.id, {
+              status,
+              progress: jobData.progress,
+              transactionCount: jobData.successfulRecords,
+              rejectedCount: jobData.failedRecords,
+              totalRecords: jobData.totalRecords,
+            });
+          }
+        } catch (error) {
+          console.error("Error polling job status:", error);
+        }
+      }
+    }, 2000); // Poll every 2 seconds
+
+    // Clean up interval on unmount
+    return () => clearInterval(intervalId);
+  }, [files, onUpdateFile]);
+
   const getStatusIcon = (status: string) => {
     switch (status) {
       case "uploading":
-        return <Clock className="text-primary w-4 h-4" />;
+        return <Loader2 className="text-primary w-4 h-4 animate-spin" />;
       case "processing":
         return <Clock className="text-warning w-4 h-4" />;
       case "completed":
@@ -74,7 +155,14 @@ const FileList: React.FC<FileListProps> = ({ files, onRemoveFile }) => {
                     </span>
                     {file.transactionCount !== undefined && (
                       <span className="text-sm text-base-content/60">
-                        • {file.transactionCount} transactions
+                        • {file.transactionCount} successful
+                        {file.rejectedCount !== undefined &&
+                          file.rejectedCount > 0 && (
+                            <span className="text-error">
+                              {" "}
+                              • {file.rejectedCount} rejected
+                            </span>
+                          )}
                       </span>
                     )}
                   </div>
