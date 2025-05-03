@@ -3,6 +3,7 @@ import { Value } from "@sinclair/typebox/value";
 import { parseCsv } from "@/src/parsers/csv";
 import { parseJson } from "@/src/parsers/json";
 import { parseXml } from "@/src/parsers/xml";
+import { broadcast, WSEvents } from "@/src/ws";
 import { TransactionType, Transaction } from "@/src/models/transaction";
 
 abstract class TransactionsService {
@@ -11,6 +12,15 @@ abstract class TransactionsService {
   private static transactionsByCardType: Record<string, number> = {};
   private static transactionsByDay: Record<string, number> = {};
   private static rejectedTransactions: TransactionType[] = [];
+
+  // This is just a method to simulate a delay so the websocket messages make sense
+  // Otherwise the events are sent almost instantly
+  static async applyDelay(): Promise<void> {
+    const delay = parseInt(Bun.env.DELAY_MS || "0", 10);
+    if (delay > 0) {
+      await new Promise((resolve) => setTimeout(resolve, delay));
+    }
+  }
 
   static async parseFile(file: File): Promise<TransactionType[]> {
     const buffer = await file.arrayBuffer();
@@ -60,7 +70,6 @@ abstract class TransactionsService {
   }
 
   private static categorizeTransaction(transaction: TransactionType): void {
-    console.log("Categorizing transaction:", transaction);
     const cardValidation = cardValidator.number(transaction.cardNumber);
 
     if (!cardValidation.card?.type) {
@@ -116,15 +125,20 @@ abstract class TransactionsService {
     }
   }
 
-  static async handleFileProcessing(files: any[]) {
+    static async handleFileProcessing(files: any[]) {
     try {
+      await this.applyDelay();
       await this.processFiles(files);
+      broadcast(WSEvents.TransactionsUploadSuccess, { status: "success" });
     } catch (error) {
+      broadcast(WSEvents.TransactionsUploadFail, { status: "error" });
     }
   }
 
   static async handleTransactionDeletion() {
+    await this.applyDelay();
     this.clearTransactions();
+    broadcast(WSEvents.TransactionsDeleteSuccess, { status: "success" });
   }
 
   static getTransactionsByCard(): Record<string, number> {

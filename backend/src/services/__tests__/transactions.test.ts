@@ -1,5 +1,7 @@
-import { describe, it, expect, beforeEach } from "bun:test";
+import { describe, it, expect, beforeEach, spyOn } from "bun:test";
 import { TransactionsService } from "../transactions";
+
+spyOn(TransactionsService, "applyDelay").mockImplementation(async () => {});
 
 const mockFile = (name: string, type: string, content: string): File => {
   return new File([content], name, { type });

@@ -6,6 +6,7 @@ import {
   useCallback,
 } from "react";
 import { fetchApi } from "@/utils/fetch";
+import { useWebSocket, WSEvents } from "@/hooks/useWebSocket";
 import { useToaster } from "@/hooks/useToaster";
 
 export interface Transaction {
@@ -15,7 +16,7 @@ export interface Transaction {
   rejected?: boolean;
 }
 
-interface TransactionsContextType {
+type TransactionsContextType = {
   uploadFiles: (files: FileList) => Promise<void>;
   fetchTransactions: () => Promise<void>;
   deleteAllTransactions: () => Promise<void>;
@@ -46,7 +47,7 @@ export const TransactionsProvider: React.FC<{ children: React.ReactNode }> = ({
     Transaction[]
   >([]);
 
-  const { showError, showInfo } = useToaster();
+  const { showSuccess, showError, showInfo } = useToaster();
 
   const uploadFiles = async (files: FileList) => {
     const formData = new FormData();
@@ -103,6 +104,13 @@ export const TransactionsProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
+  const clearTransactions = () => {
+    setTransactionsByCard({});
+    setTransactionsByCardType({});
+    setTransactionsByDay({});
+    setRejectedTransactions([]);
+  };
+
   const hasTransactions = useMemo(() => {
     return (
       Object.keys(transactionsByCard).length > 0 ||
@@ -116,6 +124,28 @@ export const TransactionsProvider: React.FC<{ children: React.ReactNode }> = ({
     transactionsByDay,
     rejectedTransactions,
   ]);
+
+  const handleWebSocketMessage = useCallback((event: MessageEvent) => {
+    const data = JSON.parse(event.data);
+    switch (data.event) {
+      case WSEvents.TransactionsUploadSuccess:
+        showSuccess("Transactions processed successfully. Reloading...");
+        fetchTransactions();
+        break;
+      case WSEvents.TransactionsUploadFail:
+        showError("Error uploading transactions. Please try again.");
+        console.error("Error uploading transactions:", data.message);
+        break;
+      case WSEvents.TransactionsDeleteSuccess:
+        showSuccess("Transactions deleted successfully. Reloading...");
+        clearTransactions();
+        break;
+      default:
+        console.warn("Unhandled WebSocket event:", data.event);
+    }
+  }, []);
+
+  useWebSocket(handleWebSocketMessage);
 
   return (
     <TransactionsContext.Provider
