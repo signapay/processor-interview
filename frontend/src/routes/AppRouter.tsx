@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from "react-router";
 import { ROUTES } from "@/routes/routes";
 import Layout from "@/layouts/Layout";
+import TransactionsPage from "@/pages/TransactionsPage";
 
 const AppRouter = () => {
   return (
@@ -9,7 +10,7 @@ const AppRouter = () => {
         <Route
           path={ROUTES.TRANSACTIONS}
           element={
-            'Hello World'
+            <TransactionsPage />
           }
         />
       </Route>
