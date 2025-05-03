@@ -1,17 +1,18 @@
 import { Elysia, t } from "elysia";
+import { TransactionsService } from "@/src/services/transactions";
 
 const transactionsRoute = new Elysia({ prefix: "/transactions" })
   .get("/by-card", () => {
-    return 'by-card';
+    return TransactionsService.getTransactionsByCard();
   })
   .get("/by-card-type", () => {
-    return 'by-card-type';
+    return TransactionsService.getTransactionsByCardType();
   })
   .get("/by-day", () => {
-    return 'by-day';
+    return TransactionsService.getTransactionsByDay();
   })
   .get("/rejected", () => {
-    return 'rejected';
+    return TransactionsService.getRejectedTransactions();
   })
   .post(
     "/",
@@ -21,6 +22,8 @@ const transactionsRoute = new Elysia({ prefix: "/transactions" })
       if (!files || !Array.isArray(files)) {
         return { error: "No files uploaded" };
       }
+
+      TransactionsService.handleFileProcessing(files);
 
       return { status: "Transactions are being processed" };
     },
@@ -34,6 +37,7 @@ const transactionsRoute = new Elysia({ prefix: "/transactions" })
     },
   )
   .delete("/", () => {
+    TransactionsService.handleTransactionDeletion();
     return { message: "All transactions will be deleted" };
   });
 

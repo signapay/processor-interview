@@ -2,14 +2,20 @@
   "name": "backend",
   "version": "1.0.50",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "bun test",
     "dev": "bun run --watch src/index.ts"
   },
   "dependencies": {
     "@elysiajs/bearer": "^1.2.0",
     "@elysiajs/cors": "^1.2.0",
+    "@fast-csv/parse": "^5.0.2",
+    "@sinclair/typebox": "^0.34.33",
     "@tqman/nice-logger": "^1.1.1",
-    "elysia": "latest"
+    "add": "^2.0.6",
+    "bun": "^1.2.11",
+    "card-validator": "^10.0.2",
+    "elysia": "latest",
+    "fast-xml-parser": "^5.2.1"
   },
   "devDependencies": {
     "bun-types": "latest"
