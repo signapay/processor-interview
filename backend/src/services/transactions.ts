@@ -94,8 +94,14 @@ abstract class TransactionsService {
       transaction.amount,
     );
 
-    // Sum by card type
     const cardType = this.getCardType(transaction.cardNumber);
+
+    if (!cardType) {
+      this.rejectedTransactions.push(transaction);
+      return;
+    }
+
+    // Sum by card type
     if (!this.transactionsByCardType[cardType]) {
       this.transactionsByCardType[cardType] = 0;
     }
@@ -129,16 +135,16 @@ abstract class TransactionsService {
     try {
       await this.applyDelay();
       await this.processFiles(files);
-      broadcast(WSEvents.TransactionsUploadSuccess, { status: "success" });
+      this.broadcast(WSEvents.TransactionsUploadSuccess, { status: "success" });
     } catch (error) {
-      broadcast(WSEvents.TransactionsUploadFail, { status: "error" });
+      this.broadcast(WSEvents.TransactionsUploadFail, { status: "error" });
     }
   }
 
   static async handleTransactionDeletion() {
     await this.applyDelay();
     this.clearTransactions();
-    broadcast(WSEvents.TransactionsDeleteSuccess, { status: "success" });
+    this.broadcast(WSEvents.TransactionsDeleteSuccess, { status: "success" });
   }
 
   static getTransactionsByCard(): Record<string, number> {
@@ -155,6 +161,10 @@ abstract class TransactionsService {
 
   static getRejectedTransactions(): TransactionType[] {
     return this.rejectedTransactions;
+  }
+
+  static broadcast(event: WSEvents, data: any): void {
+    broadcast(event, data);
   }
 
   static clearTransactions(): void {

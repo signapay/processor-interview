@@ -38,7 +38,7 @@ describe("TransactionsService", () => {
     expect(transactionsByCard["4111111111111111"]).toBe(200.75);
   });
 
-  it.only("should parse and categorize XML transactions", async () => {
+  it("should parse and categorize XML transactions", async () => {
     const xmlContent = `
       <transactions>
         <transaction>
@@ -64,5 +64,54 @@ describe("TransactionsService", () => {
 
     const rejectedTransactions = TransactionsService.getRejectedTransactions();
     expect(rejectedTransactions.length).toBe(1);
+  });
+
+  it("should clear all transactions and broadcast success event", async () => {
+    const spyBroadcast = spyOn(TransactionsService, "broadcast");
+
+    await TransactionsService.handleTransactionDeletion();
+
+    expect(TransactionsService.getTransactionsByCard()).toEqual({});
+    expect(TransactionsService.getTransactionsByCardType()).toEqual({});
+    expect(TransactionsService.getTransactionsByDay()).toEqual({});
+    expect(TransactionsService.getRejectedTransactions()).toEqual([]);
+    expect(spyBroadcast).toHaveBeenCalledWith("TransactionsDeleteSuccess", { status: "success" });
+  });
+
+  it("should throw an error for unsupported file format", async () => {
+    const spyBroadcast = spyOn(TransactionsService, "broadcast");
+    const unsupportedFile = mockFile("unsupported.txt", "text/plain", "unsupported content");
+
+    await TransactionsService.handleFileProcessing([unsupportedFile]);
+    expect (spyBroadcast).toHaveBeenCalledWith("TransactionsUploadFail", { status: "error" });
+  });
+
+  it("should categorize transactions by card type", async () => {
+    const csvContent = "cardNumber,amount,timestamp\n4111111111111111,100.50,2025-05-01T10:00:00Z";
+    const file = mockFile("transactions.csv", "text/csv", csvContent);
+
+    await TransactionsService.handleFileProcessing([file]);
+
+    const transactionsByCardType = TransactionsService.getTransactionsByCardType();
+    expect(transactionsByCardType["Visa"]).toBe(100.5);
+  });
+
+  it("should categorize transactions by day", async () => {
+    const csvContent = "cardNumber,amount,timestamp\n4111111111111111,100.50,2025-05-01T10:00:00Z";
+    const file = mockFile("transactions.csv", "text/csv", csvContent);
+
+    await TransactionsService.handleFileProcessing([file]);
+
+    const transactionsByDay = TransactionsService.getTransactionsByDay();
+    expect(transactionsByDay["2025-05-01"]).toBe(100.5);
+  });
+
+  it("should clear all internal data structures", () => {
+    TransactionsService.clearTransactions();
+
+    expect(TransactionsService.getTransactionsByCard()).toEqual({});
+    expect(TransactionsService.getTransactionsByCardType()).toEqual({});
+    expect(TransactionsService.getTransactionsByDay()).toEqual({});
+    expect(TransactionsService.getRejectedTransactions()).toEqual([]);
   });
 });
