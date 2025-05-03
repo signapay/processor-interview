@@ -129,7 +129,7 @@ export const TransactionsProvider: React.FC<{ children: React.ReactNode }> = ({
     const data = JSON.parse(event.data);
     switch (data.event) {
       case WSEvents.TransactionsUploadSuccess:
-        showSuccess("Transactions processed successfully. Reloading...");
+        showSuccess("Transactions processed successfully. Refetching...");
         fetchTransactions();
         break;
       case WSEvents.TransactionsUploadFail:
@@ -137,7 +137,7 @@ export const TransactionsProvider: React.FC<{ children: React.ReactNode }> = ({
         console.error("Error uploading transactions:", data.message);
         break;
       case WSEvents.TransactionsDeleteSuccess:
-        showSuccess("Transactions deleted successfully. Reloading...");
+        showSuccess("Transactions deleted successfully. Refetching...");
         clearTransactions();
         break;
       default:
