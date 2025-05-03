@@ -11,8 +11,6 @@
     "@fast-csv/parse": "^5.0.2",
     "@sinclair/typebox": "^0.34.33",
     "@tqman/nice-logger": "^1.1.1",
-    "add": "^2.0.6",
-    "bun": "^1.2.11",
     "card-validator": "^10.0.2",
     "elysia": "latest",
     "fast-xml-parser": "^5.2.1"
