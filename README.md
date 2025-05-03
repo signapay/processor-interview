@@ -3,6 +3,7 @@
 ## 🚀 Getting Started
 
 ### Prerequisites
+
 Ensure you have [Bun](https://bun.sh/) installed:
 
 ```bash
@@ -16,11 +17,13 @@ curl -fsSL https://bun.sh/install | bash
 ### 📦 Backend Setup
 
 1. Navigate to the backend folder:
+
    ```bash
    cd backend
    ```
 
 2. Install dependencies:
+
    ```bash
    bun install
    ```
@@ -35,16 +38,19 @@ curl -fsSL https://bun.sh/install | bash
 ### 🖥️ Frontend Setup
 
 1. Navigate to the frontend folder:
+
    ```bash
    cd frontend
    ```
 
 2. Install dependencies:
+
    ```bash
    bun install
    ```
 
 3. Start the development server:
+
    ```bash
    bun run dev
    ```
@@ -73,6 +79,7 @@ curl -fsSL https://bun.sh/install | bash
 ## ⚠️ Assumptions & Known Limitations
 
 ### Assumptions
+
 - **Processed Volume** refers to the **absolute value** of each transaction. I'm not sure if that's correct but that was my assumption.
 - A card is **considered valid** if:
   1. The `card-validator` library successfully identifies its type.

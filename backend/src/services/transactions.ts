@@ -131,7 +131,7 @@ abstract class TransactionsService {
     }
   }
 
-    static async handleFileProcessing(files: any[]) {
+  static async handleFileProcessing(files: any[]) {
     try {
       await this.applyDelay();
       await this.processFiles(files);

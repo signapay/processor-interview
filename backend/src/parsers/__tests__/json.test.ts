@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'bun:test'
+import { describe, expect, it } from "bun:test";
 import { parseJson } from "../json";
 
 describe("parseJson", () => {
@@ -9,7 +9,7 @@ describe("parseJson", () => {
   });
 
   it("should throw an error for invalid JSON content", () => {
-    const invalidJsonContent = '{key: value}';
+    const invalidJsonContent = "{key: value}";
     expect(() => parseJson(invalidJsonContent)).toThrow(SyntaxError);
   });
 });

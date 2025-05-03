@@ -17,7 +17,9 @@ describe("Transactions Route", () => {
   });
 
   it("should return transactions by card type", async () => {
-    spyOn(TransactionsService, "getTransactionsByCardType").mockReturnValueOnce({});
+    spyOn(TransactionsService, "getTransactionsByCardType").mockReturnValueOnce(
+      {},
+    );
 
     const response = await app
       .handle(new Request("http://localhost/transactions/by-card-type"))
@@ -37,7 +39,9 @@ describe("Transactions Route", () => {
   });
 
   it("should return rejected transactions", async () => {
-    spyOn(TransactionsService, "getRejectedTransactions").mockReturnValueOnce([]);
+    spyOn(TransactionsService, "getRejectedTransactions").mockReturnValueOnce(
+      [],
+    );
 
     const response = await app
       .handle(new Request("http://localhost/transactions/rejected"))
@@ -48,17 +52,25 @@ describe("Transactions Route", () => {
 
   it("should process uploaded files", async () => {
     const mockFiles = new FormData();
-    mockFiles.append("files", new File(["content"], "test.csv", { type: "text/csv" }));
-    mockFiles.append("files", new File(["content"], "test.json", { type: "application/json" }));
+    mockFiles.append(
+      "files",
+      new File(["content"], "test.csv", { type: "text/csv" }),
+    );
+    mockFiles.append(
+      "files",
+      new File(["content"], "test.json", { type: "application/json" }),
+    );
 
-    spyOn(TransactionsService, "handleFileProcessing").mockImplementationOnce(async () => {});
+    spyOn(TransactionsService, "handleFileProcessing").mockImplementationOnce(
+      async () => {},
+    );
 
     const response = await app
       .handle(
         new Request("http://localhost/transactions", {
           method: "POST",
           body: mockFiles,
-        })
+        }),
       )
       .then((res) => res.json());
 
@@ -66,13 +78,16 @@ describe("Transactions Route", () => {
   });
 
   it("should delete all transactions", async () => {
-    spyOn(TransactionsService, "handleTransactionDeletion").mockImplementationOnce(async () => {});
+    spyOn(
+      TransactionsService,
+      "handleTransactionDeletion",
+    ).mockImplementationOnce(async () => {});
 
     const response = await app
       .handle(
         new Request("http://localhost/transactions", {
           method: "DELETE",
-        })
+        }),
       )
       .then((res) => res.json());
 

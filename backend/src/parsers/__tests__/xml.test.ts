@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'bun:test'
+import { describe, expect, it } from "bun:test";
 import { parseXml } from "../xml";
 
 describe("parseXml", () => {
