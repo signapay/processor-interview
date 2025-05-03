@@ -1,7 +1,5 @@
-import { Elysia } from "elysia";
+import { app } from "./app";
 
-const app = new Elysia().get("/", () => "Hello Elysia").listen(3000);
+app.listen(Bun.env.PORT || 3000);
 
-console.log(
-  `🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`
-);
+console.log("HTTP on http://localhost:3000");

@@ -6,6 +6,9 @@
     "dev": "bun run --watch src/index.ts"
   },
   "dependencies": {
+    "@elysiajs/bearer": "^1.2.0",
+    "@elysiajs/cors": "^1.2.0",
+    "@tqman/nice-logger": "^1.1.1",
     "elysia": "latest"
   },
   "devDependencies": {
