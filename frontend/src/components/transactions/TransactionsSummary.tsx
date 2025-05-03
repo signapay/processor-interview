@@ -3,46 +3,21 @@ import TotalByCard from "@/components/transactions/sections/TotalByCard";
 import TotalByCardType from "@/components/transactions/sections/TotalByCardType";
 import TotalByDay from "@/components/transactions/sections/TotalByDay";
 import RejectedTransactions from "@/components/transactions/sections/RejectedTransactions";
+import { Transaction } from "@/contexts/TransactionsContext";
 
-export interface Transaction {
-  cardNumber: string;
-  amount: number;
-  timestamp: string;
-  rejected?: boolean;
+interface TransactionsSummaryProps {
+  transactionsByCard: Record<string, number>;
+  transactionsByCardType: Record<string, number>;
+  transactionsByDay: Record<string, number>;
+  rejectedTransactions: Transaction[];
 }
 
-// Mock data for the TransactionsSummary component
-const transactionsByCard = {
-  "1234-5678-9012-3456": 1500.5,
-  "9876-5432-1098-7654": 2300.75,
-};
-
-const transactionsByCardType = {
-  Visa: 3000.25,
-  MasterCard: 800.0,
-};
-
-const transactionsByDay = {
-  "2025-05-01": 1200.0,
-  "2025-05-02": 1600.5,
-};
-
-const rejectedTransactions = [
-  {
-    cardNumber: "1234-5678-9012-3456",
-    amount: 100.0,
-    timestamp: "2025-05-01T10:00:00Z",
-    rejected: true,
-  },
-  {
-    cardNumber: "9876-5432-1098-7654",
-    amount: 200.0,
-    timestamp: "2025-05-02T15:30:00Z",
-    rejected: true,
-  },
-];
-
-const TransactionsSummary = () => {
+const TransactionsSummary = ({
+  transactionsByCard,
+  transactionsByCardType,
+  transactionsByDay,
+  rejectedTransactions,
+}: TransactionsSummaryProps) => {
   return (
     <Grid container spacing={2}>
       <Grid size={{ xs: 12, lg: 6 }}>

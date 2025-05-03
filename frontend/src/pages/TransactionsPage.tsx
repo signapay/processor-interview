@@ -1,14 +1,24 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Box, Backdrop, CircularProgress } from "@mui/material";
 import TransactionsFloatingMenu from "@/components/transactions/TransactionsFloatingMenu";
 import EmptyTransactionsState from "@/components/transactions/EmptyTransactionsState";
 import TransactionsSummary from "@/components/transactions/TransactionsSummary";
 import DeleteTransactionsModal from "@/components/transactions/modals/DeleteTransactionsModal";
+import { useTransactions } from "@/contexts/TransactionsContext";
 
 const TransactionsPage = () => {
+  const {
+    fetchTransactions,
+    fetchingTransactions,
+    hasTransactions,
+    transactionsByCard,
+    transactionsByCardType,
+    transactionsByDay,
+    rejectedTransactions,
+    uploadFiles,
+    deleteAllTransactions,
+  } = useTransactions();
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
-  const fetchingTransactions = false;
-  const hasTransactions = true;
 
   const handleOpenDeleteModal = () => {
     setDeleteModalOpen(true);
@@ -19,12 +29,19 @@ const TransactionsPage = () => {
   };
 
   const handleConfirmDelete = () => {
+    deleteAllTransactions();
     setDeleteModalOpen(false);
   };
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log("File upload triggered", event);
+    if (event.target.files) {
+      uploadFiles(event.target.files);
+    }
   };
+
+  useEffect(() => {
+    fetchTransactions();
+  }, []);
 
   if (fetchingTransactions) {
     return (
@@ -45,7 +62,12 @@ const TransactionsPage = () => {
         {!hasTransactions && !fetchingTransactions ? (
           <EmptyTransactionsState />
         ) : (
-          <TransactionsSummary />
+          <TransactionsSummary
+            transactionsByCard={transactionsByCard}
+            transactionsByCardType={transactionsByCardType}
+            transactionsByDay={transactionsByDay}
+            rejectedTransactions={rejectedTransactions}
+          />
         )}
       </Box>
       <DeleteTransactionsModal
