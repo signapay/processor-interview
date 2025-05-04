@@ -10,8 +10,6 @@ Ensure you have [Bun](https://bun.sh/) installed:
 curl -fsSL https://bun.sh/install | bash
 ```
 
-> **Note**: This project was developed and tested using **Node.js v22**.
-
 ---
 
 ### 📦 Backend Setup
@@ -73,6 +71,8 @@ curl -fsSL https://bun.sh/install | bash
   - Card validation is handled using the `card-validator` library for reliable and consistent checks.
 - **UI**:
   - Built using **Material UI** for rapid development and mobile-first responsiveness. Try resizing your screen or using a mobile device!
+- **Future improvements**:
+  - Add Turbo as the monorepo manager and create packages to be shared between the two apps, like eslint, typings, etc
 
 ---
 
