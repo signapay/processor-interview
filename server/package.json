@@ -1,0 +1,19 @@
+{
+  "name": "server",
+  "version": "1.0.50",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "bun run --watch src/index.ts"
+  },
+  "dependencies": {
+    "elysia": "latest"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.26.0",
+    "bun-types": "latest",
+    "eslint": "^9.26.0",
+    "globals": "^16.0.0",
+    "typescript-eslint": "^8.32.0"
+  },
+  "module": "src/index.js"
+}
