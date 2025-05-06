@@ -42,7 +42,7 @@ export const uploadTransactionFiles = (formData: FormData) => {
   });
 };
 
-interface GetTransactionsReportParams {
+export interface GetTransactionsReportParams {
   groupBy: "card" | "cardType" | "day";
   startDate?: string;
   endDate?: string;
