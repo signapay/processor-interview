@@ -128,7 +128,7 @@ A full-stack application that processes credit card transactions from multiple f
 - TanStack Table with Virtualized rows for better performance
 
 ### Backend
-- Bun with Express
+- Node with Express
 - TypeScript
 - File-based storage (JSON)
 
@@ -136,7 +136,7 @@ A full-stack application that processes credit card transactions from multiple f
 
 ### Prerequisites
 
-- Bun (v1.2.12+)
+- Node (v22.15.0+)
 
 ### Installation
 
@@ -148,12 +148,12 @@ A full-stack application that processes credit card transactions from multiple f
 
 2. Install dependencies for both client and server
    ```bash
-   bun install
+   npm install
    ```
 
 3. Start the development servers
    ```bash
-   bun start
+   npm start
    ```
 
 This will run both the backend and client.
@@ -161,13 +161,13 @@ This will run both the backend and client.
 ### Build for Production
 
 ```bash
-bun run build
+npm run build
 ```
 
 ### Run in Production Mode
 
 ```bash
-bun run preview
+npm run preview
 ```
 
 ## Usage
