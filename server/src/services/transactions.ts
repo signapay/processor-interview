@@ -7,6 +7,7 @@ import {
   rejectedTransactions,
   transactions,
 } from "../db";
+import { time } from "drizzle-orm/pg-core";
 
 function getCardTypeFromNumber(
   cardNumber: string,
@@ -220,8 +221,8 @@ async function processXmlContent(content: string): Promise<void> {
       else
         rejectedTransactions.push({
           cardNumber: cardNumber.toString(),
-          timestamp,
-          amount,
+          timestamp: timestamp.toString(),
+          amount: amount.toString(),
         });
     }
 
