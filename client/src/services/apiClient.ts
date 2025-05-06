@@ -43,22 +43,31 @@ export const uploadTransactionFiles = (formData: FormData) => {
 };
 
 export interface GetTransactionsReportParams {
-  groupBy: "card" | "cardType" | "day";
   startDate?: string;
   endDate?: string;
 }
 
-export const getTransactionsReport = (params: GetTransactionsReportParams) => {
-  const queryParams: Record<string, string> = { groupBy: params.groupBy };
+export const getTransactionsReportByCard = () => {
+  return fetchAPI("/reports/transactions/by-card");
+};
+
+export const getTransactionsReportByCardType = () => {
+  return fetchAPI("/reports/transactions/by-card-type");
+};
+
+export const getTransactionsReportByDay = (
+  params: GetTransactionsReportParams,
+) => {
+  const queryParams: Record<string, string> = {};
   if (params.startDate) {
     queryParams.startDate = params.startDate;
   }
   if (params.endDate) {
     queryParams.endDate = params.endDate;
   }
-  return fetchAPI("/reports/transactions", { params: queryParams });
+  return fetchAPI("/reports/transactions/by-day", { params: queryParams });
 };
 
 export const getRejectedTransactionsReport = () => {
-  return fetchAPI("/reports/rejected-transactions");
+  return fetchAPI("/reports/transactions/rejected");
 };
