@@ -2,6 +2,8 @@
 
 # dependencies
 /node_modules
+/dist
+/drizzle
 /.pnp
 .pnp.js
 
@@ -40,3 +42,4 @@ yarn-error.log*
 **/*.log
 package-lock.json
 **/*.bun
+**/*.bun-build
