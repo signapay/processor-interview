@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react"; // Import useEffect and useCallback
 import ReportTable from "@/components/reports/ReportTable";
 import * as apiClient from "@/services/apiClient";
 
@@ -29,11 +29,31 @@ interface RejectedTransaction {
 
 type ReportTypeOption = "cardType" | "day" | "card" | "rejected" | "";
 
+// Helper function to format date to YYYY-MM-DD
+const formatDate = (date: Date): string => {
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart(2, "0"); // getMonth() is 0-indexed
+  const day = date.getDate().toString().padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
 export default function ReportsPage() {
   const [selectedReportType, setSelectedReportType] =
     useState<ReportTypeOption>("");
-  const [startDate, setStartDate] = useState<string>("");
-  const [endDate, setEndDate] = useState<string>("");
+
+  // Initialize dates with defaults: first day of current month and today
+  // Assuming current date is May 6, 2025, from your context
+  const today = new Date(2025, 4, 6); // Month is 0-indexed (0=Jan, 4=May)
+  const firstDayCurrentMonth = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    1,
+  );
+
+  const [startDate, setStartDate] = useState<string>(
+    formatDate(firstDayCurrentMonth),
+  );
+  const [endDate, setEndDate] = useState<string>(formatDate(today));
 
   const [mainReportData, setMainReportData] = useState<ReportDataItem[] | null>(
     null,
@@ -55,19 +75,26 @@ export default function ReportsPage() {
 
   const handleReportTypeSelect = (reportType: ReportTypeOption) => {
     setSelectedReportType(reportType);
-    setMainReportData(null);
-    setRejectedTransactionsData(null);
+    setMainReportData(null); // Clear previous data
+    setRejectedTransactionsData(null); // Clear previous data
     setError(null);
-    setCurrentReportTitle("");
-    if (reportType !== "day") {
-      setStartDate("");
-      setEndDate("");
-    }
+    setCurrentReportTitle(""); // Reset title, will be set by fetch
+    // Dates (startDate, endDate) retain their values.
+    // If 'day' is selected, date pickers will show them.
+    // If another type is selected, date pickers are hidden, but values persist for next time.
   };
 
-  const handleFetchReport = async () => {
+  const handleFetchReport = useCallback(async () => {
     if (!selectedReportType) {
+      // This condition might be primarily for the 'day' report button,
+      // as useEffect guards against empty selectedReportType for auto-fetches.
       setError("Please select a report type.");
+      setMainReportData(null);
+      setRejectedTransactionsData(null);
+      return;
+    }
+    if (selectedReportType === "day" && (!startDate || !endDate)) {
+      setError("Please select a valid start and end date for 'By Day' report.");
       setMainReportData(null);
       setRejectedTransactionsData(null);
       return;
@@ -75,14 +102,15 @@ export default function ReportsPage() {
 
     setIsLoading(true);
     setError(null);
-    setMainReportData(null);
-    setRejectedTransactionsData(null);
-    setCurrentReportTitle("");
+    setMainReportData(null); // Clear previous data before new fetch
+    setRejectedTransactionsData(null); // Clear previous data
+    setCurrentReportTitle(""); // Will be set based on fetched report
 
     try {
       let mainData: ReportDataItem[] | null = null;
       let rejectedData: RejectedTransaction[] | null = null;
 
+      // Always prepare the rejected transactions promise
       const rejectedReportPromise = apiClient.getRejectedTransactionsReport();
 
       if (selectedReportType === "rejected") {
@@ -99,6 +127,7 @@ export default function ReportsPage() {
         }
         const mainReportPromise = apiClient.getTransactionsReport(params);
 
+        // Fetch main report and rejected transactions report concurrently for non-rejected types
         const [mainResultSettled, rejectedResultSettled] =
           await Promise.allSettled([mainReportPromise, rejectedReportPromise]);
 
@@ -126,12 +155,19 @@ export default function ReportsPage() {
         }
 
         if (rejectedResultSettled.status === "fulfilled") {
-          rejectedData = rejectedResultSettled.value || [];
+          // For non-"rejected" reports, we might want to display rejected transactions
+          // separately or not at all, depending on UI/UX preference.
+          // For now, we'll fetch it but only explicitly display it if 'rejected' is selected.
+          // If you have a dedicated section for "always show rejected transactions summary",
+          // you could use this data.
+          // For this example, we assume 'rejectedData' is primarily for the 'rejected' report type.
+          // If selectedReportType is not "rejected", this data isn't directly shown by current logic.
         } else {
           console.error(
             "Error fetching rejected transactions:",
             rejectedResultSettled.reason,
           );
+          // Optionally append to existing error if main report also failed
           setError((prevError) =>
             prevError
               ? `${prevError} And failed to fetch rejected transactions.`
@@ -148,7 +184,16 @@ export default function ReportsPage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [selectedReportType, startDate, endDate]); // Dependencies for useCallback
+
+  // useEffect to trigger fetch when selectedReportType changes (for non-'day' types)
+  useEffect(() => {
+    if (selectedReportType && selectedReportType !== "day") {
+      handleFetchReport();
+    }
+    // No action needed if selectedReportType is empty or "day" -
+    // "day" uses the button, empty means no report selected.
+  }, [selectedReportType, handleFetchReport]); // handleFetchReport is a dependency
 
   const currencyFormatter = (value: number | string) =>
     value !== undefined ? `$${Number(value).toFixed(2)}` : "$0.00";
@@ -161,7 +206,7 @@ export default function ReportsPage() {
           {
             Header: "Total Volume",
             accessor: "totalAmount",
-            Cell: (val: number) => currencyFormatter(val),
+            Cell: (value: string | number) => currencyFormatter(value),
           },
         ];
       case "day":
@@ -170,7 +215,7 @@ export default function ReportsPage() {
           {
             Header: "Total Volume",
             accessor: "totalAmount",
-            Cell: (val: number) => currencyFormatter(val),
+            Cell: (value: string | number) => currencyFormatter(value),
           },
         ];
       case "card":
@@ -179,7 +224,7 @@ export default function ReportsPage() {
           {
             Header: "Total Volume",
             accessor: "totalAmount",
-            Cell: (val: number) => currencyFormatter(val),
+            Cell: (value: string | number) => currencyFormatter(value),
           },
         ];
       default:
@@ -189,21 +234,24 @@ export default function ReportsPage() {
 
   const rejectedTransactionColumns = [
     { Header: "Card Number", accessor: "cardNumber" },
-    { Header: "Timestamp", accessor: "timestamp" },
+    {
+      Header: "Timestamp",
+      accessor: "timestamp",
+      Cell: (val: string) => new Date(val).toLocaleDateString(),
+    },
     {
       Header: "Amount",
       accessor: "amount",
-      Cell: (val: number) => currencyFormatter(val),
+      Cell: (value: number | string) => currencyFormatter(value),
     },
   ];
 
   return (
     <div className="space-y-8 p-4 md:p-8">
-      <h1 className="text-3xl font-bold text-gray-800 mb-6">
-        Transaction Reports
-      </h1>
-
       <div className="bg-white p-6 rounded-lg shadow-md space-y-6">
+        <h1 className="text-2xl font-semibold mb-6 text-gray-700">
+          Transaction Reports
+        </h1>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Select Report Type
@@ -261,11 +309,12 @@ export default function ReportsPage() {
           </div>
         )}
 
-        {selectedReportType && (
+        {/* Fetch button only shown for "day" report type */}
+        {selectedReportType === "day" && (
           <div className="pt-4 mt-4 md:border-t md:border-gray-200">
             <button
               onClick={handleFetchReport}
-              disabled={isLoading}
+              disabled={isLoading || !startDate || !endDate} // Disable if loading or dates not set
               className="w-full md:w-auto bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-md shadow-sm
                          disabled:opacity-50 disabled:cursor-not-allowed transition duration-150 ease-in-out"
             >
@@ -284,7 +333,9 @@ export default function ReportsPage() {
         </div>
       )}
 
-      {selectedReportType !== "rejected" &&
+      {/* Main Report Table (not for 'rejected' type directly) */}
+      {selectedReportType &&
+        selectedReportType !== "rejected" &&
         mainReportData &&
         mainReportData.length > 0 && (
           <ReportTable
@@ -293,14 +344,15 @@ export default function ReportsPage() {
             columns={getMainReportColumns()}
           />
         )}
-      {selectedReportType !== "rejected" &&
+      {/* No data message for Main Report */}
+      {selectedReportType &&
+        selectedReportType !== "rejected" &&
         mainReportData &&
         mainReportData.length === 0 &&
-        !isLoading &&
-        selectedReportType && (
+        !isLoading && (
           <div className="mt-6 bg-white p-6 rounded-lg shadow">
             <h3 className="text-xl font-semibold mb-4 text-gray-700">
-              {currentReportTitle}
+              {currentReportTitle || "Report"}
             </h3>
             <p className="text-gray-500">
               No data available for this report with the selected criteria.
@@ -308,28 +360,24 @@ export default function ReportsPage() {
           </div>
         )}
 
+      {/* Rejected Transactions Table (only if 'rejected' type is selected) */}
       {selectedReportType === "rejected" &&
         rejectedTransactionsData &&
         rejectedTransactionsData.length > 0 && (
           <ReportTable
-            title={
-              selectedReportType === "rejected"
-                ? currentReportTitle
-                : "Rejected Transactions"
-            }
+            title={currentReportTitle || "Rejected Transactions"} // currentReportTitle should be set
             data={rejectedTransactionsData}
             columns={rejectedTransactionColumns}
           />
         )}
-      {rejectedTransactionsData &&
+      {/* No data message for Rejected Transactions Report */}
+      {selectedReportType === "rejected" &&
+        rejectedTransactionsData &&
         rejectedTransactionsData.length === 0 &&
-        !isLoading &&
-        selectedReportType && (
+        !isLoading && (
           <div className="mt-6 bg-white p-6 rounded-lg shadow">
             <h3 className="text-xl font-semibold mb-4 text-gray-700">
-              {selectedReportType === "rejected"
-                ? currentReportTitle
-                : "Rejected Transactions"}
+              {currentReportTitle || "Rejected Transactions"}
             </h3>
             <p className="text-gray-500">No rejected transactions found.</p>
           </div>
