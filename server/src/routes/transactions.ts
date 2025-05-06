@@ -16,7 +16,7 @@ export const transactionsRoutes = new Elysia().post(
     );
 
     await processTransactionFile(file);
-    return "OK";
+    return { message: "File uploaded successfully." };
   },
   {
     body: uploadBodySchema,
