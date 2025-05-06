@@ -7,7 +7,6 @@ import {
   rejectedTransactions,
   transactions,
 } from "../db";
-import { time } from "drizzle-orm/pg-core";
 
 function getCardTypeFromNumber(
   cardNumber: string,
