@@ -77,47 +77,20 @@ function createTransaction(
   };
 }
 
-async function saveTransaction(
-  rawCardNumber: string,
-  rawTimestamp: string,
-  rawAmount: string,
-) {
-  try {
-    const cardType = getCardTypeFromNumber(rawCardNumber);
-
-    if (!cardType || !isValid(rawCardNumber)) {
-      const newRejectedTransaction: NewRejectedTransaction = {
-        cardNumber: rawCardNumber,
-        timestamp: rawTimestamp,
-        amount: rawAmount,
-      };
-
-      await db.insert(rejectedTransactions).values(newRejectedTransaction);
-      return;
-    }
-
-    const timestamp = new Date(rawTimestamp);
-    const amountValue = parseFloat(rawAmount);
-    const amount = amountValue.toFixed(2);
-
-    const newTransaction: NewTransaction = {
-      cardNumber: rawCardNumber,
-      cardType: cardType,
-      timestamp,
-      amount,
-    };
-
-    await db.insert(transactions).values(newTransaction);
-  } catch (error) {
-    console.error(`Error trying to persist transaction: ${error}`);
-  }
-}
-
 async function saveTransactionBatch(
   transactionBatch: NewTransaction[],
 ): Promise<void> {
   try {
-    await db.insert(transactions).values(transactionBatch);
+    await db
+      .insert(transactions)
+      .values(transactionBatch)
+      .onConflictDoNothing({
+        target: [
+          transactions.cardNumber,
+          transactions.timestamp,
+          transactions.amount,
+        ],
+      });
   } catch (error) {
     console.error(`Error trying to persist batch of transactions: ${error}`);
   }
@@ -127,7 +100,16 @@ async function saveRejectedTransactionsBatch(
   rejectedTransactionBatch: NewRejectedTransaction[],
 ): Promise<void> {
   try {
-    await db.insert(rejectedTransactions).values(rejectedTransactionBatch);
+    await db
+      .insert(rejectedTransactions)
+      .values(rejectedTransactionBatch)
+      .onConflictDoNothing({
+        target: [
+          transactions.cardNumber,
+          transactions.timestamp,
+          transactions.amount,
+        ],
+      });
   } catch (error) {
     console.error(
       `Error trying to persist batch of rejected transactions: ${error}`,
@@ -196,25 +178,56 @@ async function processJsonContent(content: string): Promise<void> {
       throw new Error("JSON content is not an array");
     }
 
+    const transactions = [];
+    const rejectedTransactions = [];
+
     for (const item of parsedData) {
-      await saveTransaction(item.cardNumber, item.timestamp, item.amount);
+      const { cardNumber, timestamp, amount } = item;
+      const transactionData = createTransaction(cardNumber, timestamp, amount);
+      if (transactionData) transactions.push(transactionData);
+      else
+        rejectedTransactions.push({
+          cardNumber,
+          timestamp,
+          amount,
+        });
     }
+
+    if (transactions.length > 0) await saveTransactionBatch(transactions);
+    if (rejectedTransactions.length > 0)
+      await saveRejectedTransactionsBatch(rejectedTransactions);
   } catch (error) {
     throw new Error(`Error trying to parse the json file: ${error}`);
   }
 }
 
-const xmlParser = new XMLParser();
 async function processXmlContent(content: string): Promise<void> {
+  const xmlParser = new XMLParser();
   try {
     const parsed = xmlParser.parse(content);
+
+    const transactions = [];
+    const rejectedTransactions = [];
+
     for (const item of parsed.transactions.transaction) {
-      await saveTransaction(
-        item.cardNumber.toString(),
-        item.timestamp,
-        item.amount,
+      const { cardNumber, timestamp, amount } = item;
+      const transactionData = createTransaction(
+        cardNumber.toString(),
+        timestamp,
+        amount,
       );
+      if (transactionData) transactions.push(transactionData);
+      else
+        rejectedTransactions.push({
+          cardNumber: cardNumber.toString(),
+          timestamp,
+          amount,
+        });
     }
+
+    if (transactions.length > 0) await saveTransactionBatch(transactions);
+    if (rejectedTransactions.length > 0)
+      await saveRejectedTransactionsBatch(rejectedTransactions);
   } catch (error) {
     throw new Error(`Error trying to parse the XML file: ${error}`);
   }
