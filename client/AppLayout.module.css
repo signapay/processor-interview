@@ -1,0 +1,6 @@
+.main {
+  min-height: 100dvh;
+  margin: 0 auto;
+  margin-left: var(--sidebar-width);
+  padding-bottom: var(--footer-height);
+}

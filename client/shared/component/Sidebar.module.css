@@ -1,0 +1,131 @@
+.container {
+  --color: var(--color-2);
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: var(--sidebar-width);
+  height: 100dvh;
+  z-index: 200;
+}
+
+.ul {
+  display: flex;
+  flex-flow: column;
+  width: 100%;
+  height: 100%;
+  list-style: none;
+  margin-top: 0;
+  margin-bottom: 0;
+  padding: var(--spacing-xs) 0 var(--spacing-md);
+  background-color: var(--bg-color);
+}
+
+.item {
+  display: flex;
+  flex-flow: row;
+  align-items: center;
+  justify-content: center;
+  &:first-of-type {
+    margin: var(--spacing-sm) 0 var(--spacing-lg);
+  }
+}
+
+.itemAction {
+  justify-content: center;
+}
+
+.itemLink {
+  display: flex;
+  align-items: center;
+  justify-content: left;
+  gap: var(--spacing-xs);
+  width: 100%;
+  padding: var(--spacing-xs);
+  color: var(--color);
+  box-shadow: 1px 0 0 0 transparent inset;
+  transition: color 0.2s ease, box-shadow 0.2s ease;
+  & > svg {
+    color: var(--color);
+    width: 1.3rem;
+    height: 1.3rem;
+    transition: color 0.2s ease;
+  }
+  &.active {
+    box-shadow: 1px 0 0 0 var(--color) inset;
+  }
+  &.pending {
+    box-shadow: 1px 0 0 0 var(--color) inset;
+  }
+  &.transitioning {
+    box-shadow: 1px 0 0 0 var(--color) inset;
+  }
+}
+
+@media (max-width: 992px) {
+  .container {
+    top: initial;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100dvw;
+    height: var(--sidebar-footer-height);
+  }
+  .ul {
+    flex-flow: row;
+    justify-content: space-around;
+    justify-items: center;
+    align-items: center;
+    padding: 0;
+  }
+  .item {
+    height: 100%;
+    &:nth-of-type(5),
+    &:last-of-type {
+      margin-top: initial;
+    }
+  }
+  .itemLogo {
+    display: none;
+  }
+  .itemLink {
+    justify-content: center;
+    height: 100%;
+    flex-flow: column;
+    gap: 0;
+    font-size: 0.9rem;
+    box-shadow: 0 1px 0 0 transparent inset;
+    & > svg {
+      width: initial;
+      height: initial;
+    }
+    &.active {
+      box-shadow: 0 1px 0 0 var(--color) inset;
+    }
+    &.pending {
+      box-shadow: 0 1px 0 0 var(--color) inset;
+    }
+    &.transitioning {
+      box-shadow: 0 1px 0 0 var(--color) inset;
+    }
+    &:hover:not(.active) {
+      box-shadow: 0 1px 0 0 var(--color) inset;
+    }
+  }
+  .itemUser {
+    margin-top: initial;
+    margin-bottom: initial;
+  }
+}
+
+@media (max-width: 352px) {
+  .itemLink {
+    & > svg {
+      width: 1.8rem;
+      height: 1.8rem;
+    }
+  }
+  .itemLabel {
+    display: none;
+  }
+}

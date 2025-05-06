@@ -102,3 +102,116 @@ Bonus points (not required) for:
   - How to run your code
   - Any decisions or tradeoffs you made
   - Any assumptions or known limitations
+
+# Card Processor App
+
+A full-stack application that processes credit card transactions from multiple file formats and provides report summaries.
+
+## Features
+
+- Process transaction records from CSV, JSON, and XML files
+- Validate card numbers and classify by card type (Amex, Visa, MasterCard, Discover)
+- Submit transactions through the UI
+- Reports showing transaction summaries by card, card type, and day
+- View rejected transactions with reasons
+
+## Tech Stack
+
+### Frontend
+- React with TypeScript
+- Vite for build tooling
+- React Query for state management and data fetching
+- Mantine UI for components
+- CSS Modules for styling
+- TanStack Table with Virtualized rows for better performance
+
+### Backend
+- Bun with Express
+- TypeScript
+- File-based storage (JSON)
+
+## Getting Started
+
+### Prerequisites
+
+- Bun (v1.2.12+)
+
+### Installation
+
+1. Clone the repository
+   ```bash
+   git clone [repository-url]
+   cd card-processor
+   ```
+
+2. Install dependencies for both client and server
+   ```bash
+   bun install
+   ```
+
+3. Start the development servers
+   ```bash
+   bun start
+   ```
+
+This will run both the backend and client.
+
+### Build for Production
+
+```bash
+bun run build
+```
+
+### Run in Production Mode
+
+```bash
+bun run preview
+```
+
+## Usage
+
+1. Access the web interface at http://localhost:4500
+2. Use the "Process Files" button to load transaction data from files
+3. Switch between "Use test data" and full data sets
+4. View transaction history and reports
+5. Add new transactions manually via the upload form
+
+## Design Decisions and Tradeoffs
+
+### Backend
+
+- **File-based Storage**: Chose simple JSON file-based storage for simplicity. In a production environment, a proper database would be recommended.
+- **Transaction Processing**: Implemented validation logic to check card numbers based on the first digit as per requirements.
+- **File Format Support**: Added parsers for CSV, JSON, and XML formats to handle different data sources.
+
+### Frontend
+
+- **React Router**: Used for navigations, including modals which are loaded on demand with lazy and Suspense help.
+- **React Query**: Used for efficient data fetching with caching and automatic refetching.
+- **Mantine UI**: Provides a consistent and professional UI without needing custom styling for every component.
+- **Tabbed Interface**: Organized data into transaction and reporting views for better user experience.
+
+## Assumptions and Limitations
+
+- Card validation is simplified and based only on the first digit and length check.
+- For real-world applications, additional validation like Luhn algorithm would be recommended.
+- The application assumes all file formats (CSV, JSON, XML) follow the expected structure.
+- There's no authentication/authorization implemented - in a real-world scenario, this would be necessary.
+- The system does not handle transactions with the same ID (no upsert logic).
+- Only a few unit tests were added for core helpers.
+
+## Future Enhancements
+
+- Add more unit and integration tests
+- Implement proper database storage (e.g. PostgreSQL)
+- Add user authentication and authorization
+- Improve card validation with industry standards
+- Add data export functionality (CSV, PDF)
+- Add more advanced filtering and sorting options
+- Add realtime communication via Web Sockets or Server Sent Events
+- Add advanced graph/charts reporting
+- Cache the report and implement eviction policy
+
+## More advanced stuff
+- Process data in batches (useful for big files)
+- Stream the processing data to the frontend (render as it is incrementally processed in real-time)
