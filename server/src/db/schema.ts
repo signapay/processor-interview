@@ -24,9 +24,7 @@ export const transactions = pgTable(
     timestamp: timestamp("timestamp", { withTimezone: true }).notNull(),
     amount: decimal("amount", { precision: 12, scale: 2 }).notNull(),
   },
-  (table) => [
-    unique("unique_tx_idx").on(table.cardNumber, table.timestamp, table.amount),
-  ],
+  (table) => [unique().on(table.cardNumber, table.timestamp, table.amount)],
 );
 
 export type Transaction = typeof transactions.$inferSelect;
@@ -40,9 +38,7 @@ export const rejectedTransactions = pgTable(
     timestamp: varchar("timestamp"),
     amount: varchar("amount"),
   },
-  (table) => [
-    unique("unique_tx_idx").on(table.cardNumber, table.timestamp, table.amount),
-  ],
+  (table) => [unique().on(table.cardNumber, table.timestamp, table.amount)],
 );
 export type RejectedTransaction = typeof rejectedTransactions.$inferSelect;
 export type NewRejectedTransaction = typeof rejectedTransactions.$inferInsert;
