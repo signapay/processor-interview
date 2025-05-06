@@ -54,6 +54,29 @@ function isValid(cardNumber: string): boolean {
   return sum % 10 === 0;
 }
 
+function createTransaction(
+  rawCardNumber: string,
+  rawTimestamp: string,
+  rawAmount: string,
+): NewTransaction | null {
+  const cardType = getCardTypeFromNumber(rawCardNumber);
+
+  if (!cardType || !isValid(rawCardNumber)) {
+    return null;
+  }
+
+  const timestamp = new Date(rawTimestamp);
+  const amountValue = parseFloat(rawAmount);
+  const amount = amountValue.toFixed(2);
+
+  return {
+    cardNumber: rawCardNumber,
+    cardType: cardType,
+    timestamp,
+    amount,
+  };
+}
+
 async function saveTransaction(
   rawCardNumber: string,
   rawTimestamp: string,
@@ -90,6 +113,28 @@ async function saveTransaction(
   }
 }
 
+async function saveTransactionBatch(
+  transactionBatch: NewTransaction[],
+): Promise<void> {
+  try {
+    await db.insert(transactions).values(transactionBatch);
+  } catch (error) {
+    console.error(`Error trying to persist batch of transactions: ${error}`);
+  }
+}
+
+async function saveRejectedTransactionsBatch(
+  rejectedTransactionBatch: NewRejectedTransaction[],
+): Promise<void> {
+  try {
+    await db.insert(rejectedTransactions).values(rejectedTransactionBatch);
+  } catch (error) {
+    console.error(
+      `Error trying to persist batch of rejected transactions: ${error}`,
+    );
+  }
+}
+
 async function processCsvStream(
   stream: ReadableStream<Uint8Array<ArrayBufferLike>>,
 ): Promise<void> {
@@ -99,6 +144,8 @@ async function processCsvStream(
   try {
     while (true) {
       const { done, value } = await reader.read();
+      const transactions = [];
+      const rejectedTransactions = [];
       if (done) {
         const decodedValue = decoder.decode(value, { stream: true });
         if (decodedValue) console.log(`Last chunk: ${decodedValue}`);
@@ -116,8 +163,25 @@ async function processCsvStream(
         }
 
         const [rawCardNumber, rawTimestamp, rawAmount] = line.split(",");
-        await saveTransaction(rawCardNumber, rawTimestamp, rawAmount);
+        const transactionData = createTransaction(
+          rawCardNumber,
+          rawTimestamp,
+          rawAmount,
+        );
+
+        if (transactionData) transactions.push(transactionData);
+        else
+          rejectedTransactions.push({
+            cardNumber: rawCardNumber,
+            timestamp: rawTimestamp,
+            amount: rawAmount,
+          });
       }
+
+      if (transactions.length > 0) await saveTransactionBatch(transactions);
+
+      if (rejectedTransactions.length > 0)
+        await saveRejectedTransactionsBatch(rejectedTransactions);
     }
   } catch (error) {
     throw new Error(`Error trying to parse the csv file: ${error}`);
