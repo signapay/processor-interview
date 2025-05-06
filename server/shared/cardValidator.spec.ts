@@ -28,24 +28,24 @@ describe('Card Validator', () => {
   test('should reject cards with invalid starting numbers', () => {
     const result = validateCardNumber('7123456789012345');
     expect(result.isValid).toBe(false);
-    expect(result.rejectionReason).toBe('Unrecognized card type');
+    expect(result.rejectionReason).toBe('Unrecognized type');
   });
 
   test('should reject cards with invalid length', () => {
     const result = validateCardNumber('41111');
     expect(result.isValid).toBe(false);
-    expect(result.rejectionReason).toBe('Invalid card number length');
+    expect(result.rejectionReason).toBe('Invalid number length');
   });
 
   test('should reject cards with non-digit characters', () => {
     const result = validateCardNumber('4111111A111111');
     expect(result.isValid).toBe(false);
-    expect(result.rejectionReason).toBe('Card number contains non-digit characters');
+    expect(result.rejectionReason).toBe('Number contains non-digit characters');
   });
 
   test('should handle empty card numbers', () => {
     const result = validateCardNumber('');
     expect(result.isValid).toBe(false);
-    expect(result.rejectionReason).toBe('Card number is missing');
+    expect(result.rejectionReason).toBe('Number is missing');
   });
 });

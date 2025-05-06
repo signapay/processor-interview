@@ -50,6 +50,7 @@ const columns = [
     header: 'Status',
     id: 'status',
     accessorFn: (row) => row.isValid,
+    size: 200,
     cell: ({ row }) =>
       row.original.isValid ? (
         <span className="positive">ok</span>
