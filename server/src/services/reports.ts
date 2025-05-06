@@ -1,4 +1,4 @@
-import { and, gte, lte, sql, sum } from "drizzle-orm";
+import { and, desc, gte, lte, sql, sum } from "drizzle-orm";
 import { db, transactions, rejectedTransactions } from "../db";
 
 export async function getTransactionsByCardNumber() {
@@ -39,12 +39,6 @@ export async function getTransactionsByCardType() {
 
 export async function getTransactionsByDay(startDate: string, endDate: string) {
   try {
-    if (!startDate || !endDate) {
-      throw new Error(
-        "startDate and endDate are required when grouping by day",
-      );
-    }
-
     const start = new Date(startDate);
     const end = new Date(endDate);
 
@@ -57,9 +51,10 @@ export async function getTransactionsByDay(startDate: string, endDate: string) {
     end.setHours(23, 59, 59, 999);
 
     const dateSelectionSQL = sql<string>`to_char(date_trunc('day', ${transactions.timestamp}), 'YYYY-MM-DD')`;
+
     const result = await db
       .select({
-        date: sql<string>`to_char(date_trunc('day', ${transactions.timestamp}), 'YYYY-MM-DD')`,
+        date: dateSelectionSQL,
         totalAmount: sql<number>`sum(${transactions.amount})`,
       })
       .from(transactions)
@@ -69,7 +64,8 @@ export async function getTransactionsByDay(startDate: string, endDate: string) {
           lte(transactions.timestamp, end),
         ),
       )
-      .groupBy(dateSelectionSQL);
+      .groupBy(dateSelectionSQL)
+      .orderBy(desc(dateSelectionSQL));
 
     return result;
   } catch (error) {
