@@ -107,7 +107,7 @@ Bonus points (not required) for:
 
 A full-stack application that processes credit card transactions from multiple file formats and provides report summaries.
 
-[![Watch the video](https://raw.githubusercontent.com/rogerpadilla/processor-interview/main/assets/thumbnail.jpg)](https://raw.githubusercontent.com/yourusername/yourrepository/main/assets/video.mp4)
+[![Watch the video](https://raw.githubusercontent.com/rogerpadilla/processor-interview/main/asset/thumbnail.jpg)](https://raw.githubusercontent.com/yourusername/yourrepository/main/asset/video.mov)
 
 ## Features
 
