@@ -3,6 +3,7 @@ import { processTransactionFile } from "../services/transactions";
 
 const uploadBodySchema = t.Object({
   file: t.File({
+    format: ["text/csv", "application/json", "application/xml"],
     maxSize: 10 * 1024 * 1024, // 10MB
   }),
 });
