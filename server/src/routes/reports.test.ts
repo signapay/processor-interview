@@ -3,7 +3,7 @@ import { app } from "../index";
 import * as reportsService from "../services/reports";
 
 describe("Reports Routes", () => {
-  describe("GET /reports/rejected-transactions", () => {
+  describe("GET /reports/transactions/rejected", () => {
     let getAllRejectedTransactionsSpy: ReturnType<typeof spyOn>;
 
     beforeEach(() => {
@@ -26,7 +26,7 @@ describe("Reports Routes", () => {
 
     it("should call getAllRejectedTransactions function", async () => {
       await app.handle(
-        new Request("http://localhost:3000/reports/rejected-transactions"),
+        new Request("http://localhost:3000/reports/transactions/rejected"),
       );
 
       expect(getAllRejectedTransactionsSpy).toHaveBeenCalledTimes(1);
@@ -34,7 +34,7 @@ describe("Reports Routes", () => {
 
     it("should return the result from getAllRejectedTransactions", async () => {
       const response = await app.handle(
-        new Request("http://localhost:3000/reports/rejected-transactions"),
+        new Request("http://localhost:3000/reports/transactions/rejected"),
       );
 
       const result = await response.json();
@@ -56,7 +56,7 @@ describe("Reports Routes", () => {
       );
 
       const response = await app.handle(
-        new Request("http://localhost:3000/reports/rejected-transactions"),
+        new Request("http://localhost:3000/reports/transactions/rejected"),
       );
 
       expect(response.status).toBe(500);
@@ -94,37 +94,9 @@ describe("Reports Routes", () => {
       getTransactionsByDaySpy.mockRestore();
     });
 
-    it("should throw an error when groupBy parameter is missing", async () => {
+    it("should call getTransactionsByCardNumber", async () => {
       const response = await app.handle(
-        new Request("http://localhost:3000/reports/transactions"),
-      );
-
-      expect(response.status).toBe(500);
-
-      const errorResponse = await response.text();
-      expect(errorResponse).toContain(
-        'Invalid groupBy parameter. Use "card", "cardType", or "day"',
-      );
-    });
-
-    it("should throw an error when groupBy parameter is invalid", async () => {
-      const response = await app.handle(
-        new Request(
-          "http://localhost:3000/reports/transactions?groupBy=invalid",
-        ),
-      );
-
-      expect(response.status).toBe(500);
-
-      const errorResponse = await response.text();
-      expect(errorResponse).toContain(
-        'Invalid groupBy parameter. Use "card", "cardType", or "day"',
-      );
-    });
-
-    it("should call getTransactionsByCardNumber when groupBy=card", async () => {
-      const response = await app.handle(
-        new Request("http://localhost:3000/reports/transactions?groupBy=card"),
+        new Request("http://localhost:3000/reports/transactions/by-card"),
       );
 
       expect(response.status).toBe(200);
@@ -140,7 +112,7 @@ describe("Reports Routes", () => {
       ]);
     });
 
-    it("should call getTransactionsByCardType when groupBy=cardType", async () => {
+    it("should call getTransactionsByCardType", async () => {
       getTransactionsByCardTypeSpy.mockResolvedValue([
         { cardType: "Visa", totalAmount: 1200.5 },
         { cardType: "Mastercard", totalAmount: 850.75 },
@@ -148,9 +120,7 @@ describe("Reports Routes", () => {
       ]);
 
       const response = await app.handle(
-        new Request(
-          "http://localhost:3000/reports/transactions?groupBy=cardType",
-        ),
+        new Request("http://localhost:3000/reports/transactions/by-card-type"),
       );
 
       expect(response.status).toBe(200);
@@ -167,7 +137,7 @@ describe("Reports Routes", () => {
       ]);
     });
 
-    it("should call getTransactionsByDay when groupBy=day", async () => {
+    it("should call getTransactionsByDay", async () => {
       getTransactionsByDaySpy.mockResolvedValue([
         {
           date: "2024-06-23",
@@ -180,7 +150,9 @@ describe("Reports Routes", () => {
       ]);
 
       const response = await app.handle(
-        new Request("http://localhost:3000/reports/transactions?groupBy=day"),
+        new Request(
+          "http://localhost:3000/reports/transactions/by-day?startDate=2024-06-23&endDate=2024-06-24",
+        ),
       );
 
       expect(response.status).toBe(200);
