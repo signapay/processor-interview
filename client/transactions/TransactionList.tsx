@@ -8,11 +8,11 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { type VirtualItem, type Virtualizer, useVirtualizer } from '@tanstack/react-virtual';
+import { type Virtualizer, useVirtualizer } from '@tanstack/react-virtual';
 import { formatDateToLocale } from 'client/shared/dateFormatter';
 import { formatAmount } from 'client/shared/numberFormatter';
 import { ArrowDownIcon, ArrowUpIcon } from 'lucide-react';
-import { type RefObject, useRef } from 'react';
+import { type RefObject, memo, useLayoutEffect, useRef } from 'react';
 import type { Transaction } from '../shared/entity';
 import { useTitle } from '../shared/hooks/useTitle';
 import s from './TransactionList.module.css';
@@ -126,45 +126,80 @@ export default function TransactionList() {
               </tr>
             ))}
           </thead>
-          <TableBody table={table} tableContainerRef={tableContainerRef} />
+          <TableBodyWrapper table={table} tableContainerRef={tableContainerRef} />
         </table>
       </div>
     </div>
   );
 }
 
-interface TableBodyProps {
+interface TableBodyWrapperProps {
   table: Table<Transaction>;
   tableContainerRef: RefObject<HTMLDivElement>;
 }
 
-function TableBody({ table, tableContainerRef }: TableBodyProps) {
+function TableBodyWrapper({ table, tableContainerRef }: TableBodyWrapperProps) {
+  const rowRefsMap = useRef<Map<number, HTMLTableRowElement>>(new Map());
+
   const { rows } = table.getRowModel();
 
-  // Important: Keep the row virtualizer in the lowest component possible to avoid unnecessary re-renders.
   const rowVirtualizer = useVirtualizer<HTMLDivElement, HTMLTableRowElement>({
     count: rows.length,
-    estimateSize: () => 30, //estimate row height for accurate scrollbar dragging
+    estimateSize: () => 33, // estimate row height for accurate scrollbar dragging
     getScrollElement: () => tableContainerRef.current,
-    //measure dynamic row height, except in firefox because it measures table border height incorrectly
+    // measure dynamic row height, except in firefox because it measures table border height incorrectly
     measureElement:
       typeof window !== 'undefined' && navigator.userAgent.indexOf('Firefox') === -1
         ? (element) => element?.getBoundingClientRect().height
         : undefined,
     overscan: 5,
+    onChange: (instance) => {
+      // requestAnimationFrame(() => {
+      instance.getVirtualItems().forEach((virtualRow) => {
+        const rowRef = rowRefsMap.current.get(virtualRow.index);
+        if (!rowRef) return;
+        rowRef.style.transform = `translateY(${virtualRow.start}px)`;
+      });
+      // })
+    },
   });
+
+  useLayoutEffect(() => {
+    rowVirtualizer.measure();
+  }, [table.getState()]);
+
+  return <TableBody rowRefsMap={rowRefsMap} rowVirtualizer={rowVirtualizer} table={table} />;
+}
+
+interface TableBodyProps {
+  table: Table<Transaction>;
+  rowVirtualizer: Virtualizer<HTMLDivElement, HTMLTableRowElement>;
+  rowRefsMap: RefObject<Map<number, HTMLTableRowElement>>;
+}
+
+function TableBody({ rowVirtualizer, table, rowRefsMap }: TableBodyProps) {
+  const { rows } = table.getRowModel();
+  const virtualRowIndexes = rowVirtualizer.getVirtualIndexes();
 
   return (
     <tbody
       style={{
         display: 'grid',
-        height: `${rowVirtualizer.getTotalSize()}px`, //tells scrollbar how big the table is
-        position: 'relative', //needed for absolute positioning of rows
+        height: `${rowVirtualizer.getTotalSize()}px`, // tells scrollbar how big the table is
+        position: 'relative', // needed for absolute positioning of rows
       }}
     >
-      {rowVirtualizer.getVirtualItems().map((virtualRow) => {
-        const row = rows[virtualRow.index] as Row<Transaction>;
-        return <TableBodyRow key={row.id} row={row} virtualRow={virtualRow} rowVirtualizer={rowVirtualizer} />;
+      {virtualRowIndexes.map((virtualRowIndex) => {
+        const row = rows[virtualRowIndex];
+        return (
+          <TableBodyRowMemo
+            key={row.id}
+            row={row}
+            rowRefsMap={rowRefsMap}
+            rowVirtualizer={rowVirtualizer}
+            virtualRowIndex={virtualRowIndex}
+          />
+        );
       })}
     </tbody>
   );
@@ -172,20 +207,25 @@ function TableBody({ table, tableContainerRef }: TableBodyProps) {
 
 interface TableBodyRowProps {
   row: Row<Transaction>;
-  virtualRow: VirtualItem;
+  rowRefsMap: RefObject<Map<number, HTMLTableRowElement>>;
   rowVirtualizer: Virtualizer<HTMLDivElement, HTMLTableRowElement>;
+  virtualRowIndex: number;
 }
 
-function TableBodyRow({ row, virtualRow, rowVirtualizer }: TableBodyRowProps) {
+function TableBodyRow({ row, rowRefsMap, rowVirtualizer, virtualRowIndex }: TableBodyRowProps) {
   return (
     <tr
-      data-index={virtualRow.index} //needed for dynamic row height measurement
-      ref={(node) => rowVirtualizer.measureElement(node)} //measure dynamic row height
+      data-index={virtualRowIndex} // needed for dynamic row height measurement
+      ref={(node) => {
+        if (node && virtualRowIndex) {
+          rowVirtualizer.measureElement(node); // measure dynamic row height
+          rowRefsMap.current.set(virtualRowIndex, node); // store ref for virtualizer to apply scrolling transforms
+        }
+      }}
       key={row.id}
       style={{
         display: 'flex',
         position: 'absolute',
-        transform: `translateY(${virtualRow.start}px)`, //this should always be a `style` as it changes on scroll
         width: '100%',
       }}
     >
@@ -206,3 +246,6 @@ function TableBodyRow({ row, virtualRow, rowVirtualizer }: TableBodyRowProps) {
     </tr>
   );
 }
+
+// test out when rows don't re-render at all (future TanStack Virtual release can make this unnecessary)
+const TableBodyRowMemo = memo(TableBodyRow, (_prev, next) => next.rowVirtualizer.isScrolling) as typeof TableBodyRow;
