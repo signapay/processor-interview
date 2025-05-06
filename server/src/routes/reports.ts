@@ -11,16 +11,16 @@ export const reportsRoutes = new Elysia()
     try {
       const { groupBy, startDate, endDate } = query;
 
-      if (!groupBy || !["card", "card-type", "day"].includes(groupBy)) {
+      if (!groupBy || !["card", "cardType", "day"].includes(groupBy)) {
         throw new Error(
-          'Invalid groupBy parameter. Use "card", "card-type", or "day"',
+          'Invalid groupBy parameter. Use "card", "cardType", or "day"',
         );
       }
 
       switch (groupBy) {
         case "card":
           return await getTransactionsByCardNumber();
-        case "card-type":
+        case "cardType":
           return await getTransactionsByCardType();
         case "day":
           return await getTransactionsByDay(startDate, endDate);

@@ -103,7 +103,7 @@ describe("Reports Routes", () => {
 
       const errorResponse = await response.text();
       expect(errorResponse).toContain(
-        'Invalid groupBy parameter. Use "card", "card-type", or "day"',
+        'Invalid groupBy parameter. Use "card", "cardType", or "day"',
       );
     });
 
@@ -118,7 +118,7 @@ describe("Reports Routes", () => {
 
       const errorResponse = await response.text();
       expect(errorResponse).toContain(
-        'Invalid groupBy parameter. Use "card", "card-type", or "day"',
+        'Invalid groupBy parameter. Use "card", "cardType", or "day"',
       );
     });
 
@@ -140,7 +140,7 @@ describe("Reports Routes", () => {
       ]);
     });
 
-    it("should call getTransactionsByCardType when groupBy=card-type", async () => {
+    it("should call getTransactionsByCardType when groupBy=cardType", async () => {
       getTransactionsByCardTypeSpy.mockResolvedValue([
         { cardType: "Visa", totalAmount: 1200.5 },
         { cardType: "Mastercard", totalAmount: 850.75 },
@@ -149,7 +149,7 @@ describe("Reports Routes", () => {
 
       const response = await app.handle(
         new Request(
-          "http://localhost:3000/reports/transactions?groupBy=card-type",
+          "http://localhost:3000/reports/transactions?groupBy=cardType",
         ),
       );
 
