@@ -5,6 +5,7 @@ import {
   decimal,
   pgEnum,
   varchar,
+  uniqueIndex,
 } from "drizzle-orm/pg-core";
 
 export const cardTypeEnum = pgEnum("card_type", [
@@ -14,13 +15,25 @@ export const cardTypeEnum = pgEnum("card_type", [
   "Discover",
 ]);
 
-export const transactions = pgTable("transactions", {
-  id: serial("id").primaryKey(),
-  cardNumber: varchar("card_number", { length: 16 }).notNull(),
-  cardType: cardTypeEnum("card_type").notNull(),
-  timestamp: timestamp("timestamp", { withTimezone: true }).notNull(),
-  amount: decimal("amount", { precision: 12, scale: 2 }).notNull(),
-});
+export const transactions = pgTable(
+  "transactions",
+  {
+    id: serial("id").primaryKey(),
+    cardNumber: varchar("card_number", { length: 16 }).notNull(),
+    cardType: cardTypeEnum("card_type").notNull(),
+    timestamp: timestamp("timestamp", { withTimezone: true }).notNull(),
+    amount: decimal("amount", { precision: 12, scale: 2 }).notNull(),
+  },
+  (table) => {
+    return {
+      uniqueTxConstraint: uniqueIndex("unique_tx_idx").on(
+        table.cardNumber,
+        table.timestamp,
+        table.amount,
+      ),
+    };
+  },
+);
 
 export type Transaction = typeof transactions.$inferSelect;
 export type NewTransaction = typeof transactions.$inferInsert;

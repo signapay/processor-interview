@@ -54,7 +54,7 @@ function isValid(cardNumber: string): boolean {
   return sum % 10 === 0;
 }
 
-function saveTransaction(
+async function saveTransaction(
   rawCardNumber: string,
   rawTimestamp: string,
   rawAmount: string,
@@ -69,7 +69,7 @@ function saveTransaction(
         amount: rawAmount,
       };
 
-      db.insert(rejectedTransactions).values(newRejectedTransaction);
+      await db.insert(rejectedTransactions).values(newRejectedTransaction);
       return;
     }
 
@@ -84,9 +84,9 @@ function saveTransaction(
       amount,
     };
 
-    db.insert(transactions).values(newTransaction);
+    await db.insert(transactions).values(newTransaction);
   } catch (error) {
-    throw new Error(`Error trying to persist transaction: ${error}`);
+    console.error(`Error trying to persist transaction: ${error}`);
   }
 }
 
@@ -116,7 +116,7 @@ async function processCsvStream(
         }
 
         const [rawCardNumber, rawTimestamp, rawAmount] = line.split(",");
-        saveTransaction(rawCardNumber, rawTimestamp, rawAmount);
+        await saveTransaction(rawCardNumber, rawTimestamp, rawAmount);
       }
     }
   } catch (error) {
@@ -133,7 +133,7 @@ async function processJsonContent(content: string): Promise<void> {
     }
 
     for (const item of parsedData) {
-      saveTransaction(item.cardNumber, item.timestamp, item.amount);
+      await saveTransaction(item.cardNumber, item.timestamp, item.amount);
     }
   } catch (error) {
     throw new Error(`Error trying to parse the json file: ${error}`);
@@ -145,7 +145,11 @@ async function processXmlContent(content: string): Promise<void> {
   try {
     const parsed = xmlParser.parse(content);
     for (const item of parsed.transactions.transaction) {
-      saveTransaction(item.cardNumber.toString(), item.timestamp, item.amount);
+      await saveTransaction(
+        item.cardNumber.toString(),
+        item.timestamp,
+        item.amount,
+      );
     }
   } catch (error) {
     throw new Error(`Error trying to parse the XML file: ${error}`);
