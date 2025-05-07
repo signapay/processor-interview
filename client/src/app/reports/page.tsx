@@ -5,6 +5,8 @@ import ByCardType from "@/components/reports/ByCardType";
 import ByCard from "@/components/reports/ByCard";
 import ByDay from "@/components/reports/ByDay";
 import RejectedTransactions from "@/components/reports/RejectedTransactions";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 type ReportTypeOption = "cardType" | "day" | "card" | "rejected" | "";
 
@@ -26,10 +28,8 @@ export default function ReportsPage() {
     1,
   );
 
-  const [startDate, setStartDate] = useState<string>(
-    formatDate(firstDayCurrentMonth),
-  );
-  const [endDate, setEndDate] = useState<string>(formatDate(today));
+  const [startDate, setStartDate] = useState<Date>(firstDayCurrentMonth);
+  const [endDate, setEndDate] = useState<Date>(today);
   const [triggerDayReportFetch, setTriggerDayReportFetch] = useState(false);
 
   const reportTypes: { label: string; value: ReportTypeOption }[] = [
@@ -46,6 +46,17 @@ export default function ReportsPage() {
     }
   };
 
+  const handleDateChange = (date: Date | null, isStartDate: boolean) => {
+    if (!date) return;
+    
+    if (isStartDate) {
+      setStartDate(date);
+    } else {
+      setEndDate(date);
+    }
+    setTriggerDayReportFetch(false);
+  };
+
   const renderReportComponent = () => {
     switch (selectedReportType) {
       case "cardType":
@@ -55,8 +66,8 @@ export default function ReportsPage() {
       case "day":
         return (
           <ByDay
-            startDate={startDate}
-            endDate={endDate}
+            startDate={formatDate(startDate)}
+            endDate={formatDate(endDate)}
             triggerFetch={triggerDayReportFetch}
           />
         );
@@ -104,15 +115,15 @@ export default function ReportsPage() {
               >
                 Start Date
               </label>
-              <input
-                type="date"
-                id="startDate"
-                value={startDate}
-                onChange={(e) => {
-                  setStartDate(e.target.value);
-                  setTriggerDayReportFetch(false);
-                }}
-                className="mt-1 block w-full pl-3 pr-2 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md shadow-sm appearance-none"
+              <DatePicker
+                selected={startDate}
+                onChange={(date: Date | null) => handleDateChange(date, true)}
+                selectsStart
+                startDate={startDate}
+                endDate={endDate}
+                maxDate={endDate}
+                className="mt-1 block w-full pl-3 pr-2 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md shadow-sm"
+                dateFormat="yyyy-MM-dd"
               />
             </div>
             <div>
@@ -122,16 +133,25 @@ export default function ReportsPage() {
               >
                 End Date
               </label>
-              <input
-                type="date"
-                id="endDate"
-                value={endDate}
-                onChange={(e) => {
-                  setEndDate(e.target.value);
-                  setTriggerDayReportFetch(false);
-                }}
-                className="mt-1 block w-full pl-3 pr-2 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md shadow-sm appearance-none"
+              <DatePicker
+                selected={endDate}
+                onChange={(date: Date | null) => handleDateChange(date, false)}
+                selectsEnd
+                startDate={startDate}
+                endDate={endDate}
+                minDate={startDate}
+                maxDate={today}
+                className="mt-1 block w-full pl-3 pr-2 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md shadow-sm"
+                dateFormat="yyyy-MM-dd"
               />
+            </div>
+            <div className="md:col-span-2 flex justify-end">
+              <button
+                onClick={() => setTriggerDayReportFetch(true)}
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              >
+                Load Report
+              </button>
             </div>
           </div>
         )}

@@ -16,41 +16,35 @@ export interface ByDayProps {
 export default function ByDay({
   startDate,
   endDate,
-  triggerFetch,
 }: ByDayProps) {
   const [data, setData] = useState<VolumeByDayItem[] | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [hasFetched, setHasFetched] = useState<boolean>(false);
 
   useEffect(() => {
-    // Only fetch when triggerFetch changes from false to true
-    if (triggerFetch && !hasFetched) {
-      const fetchData = async () => {
-        setIsLoading(true);
-        setError(null);
+    const fetchData = async () => {
+      setIsLoading(true);
+      setError(null);
 
-        try {
-          const params = {
-            startDate,
-            endDate,
-          };
-          const result = await apiClient.getTransactionsReportByDay(params);
-          setData(result || []);
-          setHasFetched(true);
-        } catch (err) {
-          console.error("Error fetching day report:", err);
-          setError(
-            err instanceof Error ? err.message : "Failed to fetch day report",
-          );
-        } finally {
-          setIsLoading(false);
-        }
-      };
+      try {
+        const params = {
+          startDate,
+          endDate,
+        };
+        const result = await apiClient.getTransactionsReportByDay(params);
+        setData(result || []);
+      } catch (err) {
+        console.error("Error fetching day report:", err);
+        setError(
+          err instanceof Error ? err.message : "Failed to fetch day report",
+        );
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-      fetchData();
-    }
-  }, [triggerFetch, startDate, endDate, hasFetched]);
+    fetchData();
+  }, [startDate, endDate]);
 
   const columns = [
     { Header: "Date", accessor: "date" },

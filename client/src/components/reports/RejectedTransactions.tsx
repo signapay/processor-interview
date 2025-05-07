@@ -46,6 +46,10 @@ export default function RejectedTransactions() {
       Cell: (value: number | string | undefined) =>
         value !== undefined ? `$${Number(value).toFixed(2)}` : "$0.00",
     },
+    {
+      Header: "Reason",
+      accessor: "reason",
+    },
   ];
 
   if (isLoading) {
