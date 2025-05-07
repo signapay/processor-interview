@@ -14,6 +14,22 @@ services:
     env_file:
       - ./server/.env.docker
 
+  client:
+    build:
+      context: ./client
+      target: dev
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./client:/usr/src/client:cached
+      - /usr/src/client/node_modules
+    tty: true
+    stdin_open: true
+    depends_on:
+      - server
+    env_file:
+      - ./client/.env.docker
+
   db:
     image: postgres:15-alpine
     restart: always
