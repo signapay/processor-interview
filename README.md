@@ -50,76 +50,17 @@ A full-stack application for processing and reporting credit card transactions. 
    docker compose up
    ```
 
-3. Access the application:
+3. **Run database migrations:**
+   After the containers are up, run the following commands to ensure the database tables are created and up to date:
+   ```bash
+   # In a new terminal, from the root of the project
+   docker compose exec server bunx drizzle-kit generate
+   docker compose exec server bunx drizzle-kit push
+   ```
+
+4. Access the application:
    - Frontend: http://localhost:3001
    - Backend API: http://localhost:3000
-
-### Development Setup
-
-1. Install dependencies:
-   ```bash
-   # Server
-   cd server
-   bun install
-
-   # Client
-   cd ../client
-   npm install
-   ```
-
-2. Set up environment variables:
-   - Copy `.env.docker` to `.env` in both server and client directories
-   - Update the variables as needed
-
-3. Start the development servers:
-   ```bash
-   # Server
-   cd server
-   bun run dev
-
-   # Client
-   cd ../client
-   npm run dev
-   ```
-
-### Production Setup
-
-The application includes production-ready Docker configurations that use multi-stage builds to create optimized production images.
-
-1. Build the production images:
-   ```bash
-   # Build all services
-   docker compose build --target prod
-
-   # Or build individual services
-   docker compose build --target prod server
-   docker compose build --target prod client
-   ```
-
-2. Set up production environment variables:
-   - Copy `.env.docker` to `.env.prod` in both server and client directories
-   - Update the variables with production values
-   - Ensure to set appropriate production values for:
-     - Database credentials
-     - API endpoints
-     - Security settings
-
-3. Run in production mode:
-   ```bash
-   # Start all services in production mode
-   docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
-
-   # Or start individual services
-   docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d server
-   docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d client
-   ```
-
-4. Production considerations:
-   - The production build uses optimized images with minimal dependencies
-   - Static assets are pre-built and served efficiently
-   - Database connections are configured for production use
-   - Logging is configured for production environments
-   - Health checks are enabled for container orchestration
 
 ## Known Limitations and Future Improvements
 
