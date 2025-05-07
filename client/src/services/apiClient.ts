@@ -1,4 +1,5 @@
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+const API_KEY = process.env.NEXT_PUBLIC_API_KEY || "";
 
 interface FetchAPIOptions extends RequestInit {
   params?: Record<string, string>;
@@ -16,6 +17,7 @@ async function fetchAPI(endpoint: string, options: FetchAPIOptions = {}) {
     ...options,
     headers: {
       ...options.headers,
+      'x-api-key': API_KEY,
     },
   });
 
