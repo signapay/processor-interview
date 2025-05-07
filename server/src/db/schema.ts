@@ -19,7 +19,7 @@ export const transactions = pgTable(
   "transactions",
   {
     id: serial("id").primaryKey(),
-    cardNumber: varchar("card_number", { length: 16 }).notNull(),
+    cardNumber: varchar("card_number", { length: 19 }).notNull(),
     cardType: cardTypeEnum("card_type").notNull(),
     timestamp: timestamp("timestamp", { withTimezone: true }).notNull(),
     amount: decimal("amount", { precision: 12, scale: 2 }).notNull(),
@@ -37,6 +37,7 @@ export const rejectedTransactions = pgTable(
     cardNumber: varchar("card_number"),
     timestamp: varchar("timestamp"),
     amount: varchar("amount"),
+    reason: varchar("reason"),
   },
   (table) => [unique().on(table.cardNumber, table.timestamp, table.amount)],
 );

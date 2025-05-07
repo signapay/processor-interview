@@ -58,11 +58,13 @@ function createTransaction(
   rawCardNumber: string,
   rawTimestamp: string,
   rawAmount: string,
-): NewTransaction | null {
+): NewTransaction | {err: string} {
   const cardType = getCardTypeFromNumber(rawCardNumber);
 
-  if (!cardType || !isValid(rawCardNumber)) {
-    return null;
+  if (!cardType) return { err: "No card type found" };
+
+  if (!isValid(rawCardNumber)) {
+    return { err: "Invalid card number" };
   }
 
   const timestamp = new Date(rawTimestamp);
@@ -151,13 +153,16 @@ async function processCsvStream(
           rawAmount,
         );
 
-        if (transactionData) transactions.push(transactionData);
-        else
+        if ('err' in transactionData) {
           rejectedTransactions.push({
             cardNumber: rawCardNumber,
             timestamp: rawTimestamp,
             amount: rawAmount,
+            reason: transactionData.err,
           });
+        } else {
+          transactions.push(transactionData);
+        }
       }
 
       if (transactions.length > 0) await saveTransactionBatch(transactions);
@@ -184,13 +189,16 @@ async function processJsonContent(content: string): Promise<void> {
     for (const item of parsedData) {
       const { cardNumber, timestamp, amount } = item;
       const transactionData = createTransaction(cardNumber, timestamp, amount);
-      if (transactionData) transactions.push(transactionData);
-      else
+      if ('err' in transactionData) {
         rejectedTransactions.push({
           cardNumber,
           timestamp,
           amount,
+          reason: transactionData.err,
         });
+      } else {
+        transactions.push(transactionData);
+      }
     }
 
     if (transactions.length > 0) await saveTransactionBatch(transactions);
@@ -216,13 +224,16 @@ async function processXmlContent(content: string): Promise<void> {
         timestamp,
         amount,
       );
-      if (transactionData) transactions.push(transactionData);
-      else
+      if ('err' in transactionData) {
         rejectedTransactions.push({
-          cardNumber: cardNumber.toString(),
-          timestamp: timestamp.toString(),
-          amount: amount.toString(),
+          cardNumber,
+          timestamp,
+          amount,
+          reason: transactionData.err,
         });
+      } else {
+        transactions.push(transactionData);
+      }
     }
 
     if (transactions.length > 0) await saveTransactionBatch(transactions);
