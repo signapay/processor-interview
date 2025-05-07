@@ -18,14 +18,12 @@ import { sql } from "drizzle-orm";
 
 describe("Transaction Service", () => {
   describe("getAllRejectedTransactions", () => {
-    // Define proper types for the spies
     let selectSpy: ReturnType<
       typeof spyOn<NodePgDatabase<typeof schema>, "select">
     >;
     let fromSpy: ReturnType<typeof jest.fn>;
 
     beforeEach(() => {
-      // Use type assertion to handle the mock implementation
       fromSpy = spyOn(
         db as unknown as { from: () => Promise<unknown[]> },
         "from",
@@ -57,7 +55,6 @@ describe("Transaction Service", () => {
 
       try {
         await getAllRejectedTransactions();
-        // Force test to fail if the function doesn't throw
         expect(true).toBe(false);
       } catch (error: unknown) {
         if (error instanceof Error) {
@@ -81,9 +78,7 @@ describe("Transaction Service", () => {
     let groupBySpy: jest.Mock;
 
     beforeEach(() => {
-      // Setup the spy chain for db.select().from().groupBy()
       groupBySpy = jest.fn().mockReturnValue({
-        // Mock return value that matches the expected result structure
         mockResults: true,
       });
 
@@ -117,7 +112,6 @@ describe("Transaction Service", () => {
 
       try {
         await getTransactionsByCardNumber();
-        // Force test to fail if the function doesn't throw
         expect(true).toBe(false);
       } catch (error: unknown) {
         if (error instanceof Error) {

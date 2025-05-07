@@ -21,7 +21,7 @@ export default function ReportsPage() {
   const [selectedReportType, setSelectedReportType] =
     useState<ReportTypeOption>("");
 
-  const today = new Date(2025, 4, 6); // Month is 0-indexed (0=Jan, 4=May)
+  const today = new Date(2025, 4, 6);
   const firstDayCurrentMonth = new Date(
     today.getFullYear(),
     today.getMonth(),

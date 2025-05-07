@@ -1,4 +1,4 @@
-import { db, transactions, rejectedTransactions } from "../src/db"; // Ajuste o caminho se necessário
+import { db, transactions, rejectedTransactions } from "../src/db";
 
 async function clearDatabaseTables() {
   console.log(

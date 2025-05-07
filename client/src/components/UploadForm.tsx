@@ -10,12 +10,10 @@ interface FileStatus {
 
 export default function UploadForm() {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-  // Store status for each file by its name
   const [fileStatuses, setFileStatuses] = useState<Record<string, FileStatus>>(
     {},
   );
   const [isOverallLoading, setIsOverallLoading] = useState<boolean>(false);
-  // General message or error for the form itself
   const [formMessage, setFormMessage] = useState<string>("");
   const [formError, setFormError] = useState<string>("");
 
@@ -26,13 +24,12 @@ export default function UploadForm() {
       const filesArray = Array.from(event.target.files);
       if (filesArray.length > MAX_FILES) {
         setFormError(`You can select a maximum of ${MAX_FILES} files.`);
-        setSelectedFiles([]); // Clear selection or keep previous valid one
-        event.target.value = ""; // Clear the input
+        setSelectedFiles([]);
+        event.target.value = "";
       } else {
         setSelectedFiles(filesArray);
-        setFormError(""); // Clear previous error
+        setFormError("");
       }
-      // Reset statuses and messages when file selection changes
       setFileStatuses({});
       setFormMessage("");
     }
@@ -69,7 +66,7 @@ export default function UploadForm() {
       }));
 
       const formData = new FormData();
-      formData.append("file", file); // Backend expects 'file' key
+      formData.append("file", file);
 
       try {
         const result = await apiClient.uploadTransactionFiles(formData);
@@ -91,15 +88,9 @@ export default function UploadForm() {
       }
     });
 
-    // Wait for all uploads to complete (or fail)
     await Promise.allSettled(uploadPromises);
     setIsOverallLoading(false);
     setFormMessage("All selected files have been processed.");
-    // Optionally clear selected files after processing
-    // setSelectedFiles([]);
-    // if (event.currentTarget) {
-    //   event.currentTarget.reset();
-    // }
   };
 
   return (
@@ -114,16 +105,16 @@ export default function UploadForm() {
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
           <label
-            htmlFor="transactionFiles" // Changed id for consistency
+            htmlFor="transactionFiles"
             className="block text-sm font-medium text-gray-700 mb-1"
           >
             Transaction Files (Select 1 to {MAX_FILES})
           </label>
           <input
             type="file"
-            id="transactionFiles" // Changed id
-            name="transactionFiles" // Name attribute for the input field
-            multiple // Allow multiple file selection
+            id="transactionFiles"
+            name="transactionFiles"
+            multiple
             onChange={handleFileChange}
             className="block w-full text-sm text-gray-500
                                file:mr-4 file:py-2 file:px-4
@@ -131,7 +122,7 @@ export default function UploadForm() {
                                file:text-sm file:font-semibold
                                file:bg-blue-50 file:text-blue-700
                                hover:file:bg-blue-100"
-            accept=".xml,.csv,.json" // As per original requirement
+            accept=".xml,.csv,.json"
           />
         </div>
         <button
@@ -146,9 +137,8 @@ export default function UploadForm() {
         </button>
       </form>
 
-      {/* Display form-level messages/errors */}
       {isOverallLoading &&
-        !Object.keys(fileStatuses).length && ( // Show general loading if statuses not yet set
+        !Object.keys(fileStatuses).length && (
           <div className="mt-4 text-center text-sm text-gray-500">
             Preparing uploads...
           </div>
@@ -164,7 +154,6 @@ export default function UploadForm() {
         </div>
       )}
 
-      {/* Display individual file statuses */}
       {Object.entries(fileStatuses).length > 0 && (
         <div className="mt-6 space-y-2">
           <h3 className="text-md font-semibold text-gray-700">
@@ -180,14 +169,14 @@ export default function UploadForm() {
                     ? "bg-red-100 text-red-800"
                     : statusInfo.status === "uploading"
                       ? "bg-blue-100 text-blue-800"
-                      : "bg-gray-100 text-gray-800" // pending
+                      : "bg-gray-100 text-gray-800"
               }`}
             >
               <span>
                 <strong>{fileName}:</strong> {statusInfo.message}
               </span>
               {statusInfo.status === "uploading" && (
-                <span className="italic text-xs">Processing...</span> // Simple loading indicator
+                <span className="italic text-xs">Processing...</span>
               )}
             </div>
           ))}

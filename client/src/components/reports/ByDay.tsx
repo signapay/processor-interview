@@ -10,7 +10,6 @@ interface VolumeByDayItem {
 export interface ByDayProps {
   startDate: string;
   endDate: string;
-  triggerFetch: boolean; // Add this prop to the interface
 }
 
 export default function ByDay({
