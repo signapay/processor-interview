@@ -3,11 +3,20 @@ import { TransactionService } from "../../application/services/TransactionServic
 export class TransactionoController {
   constructor(private transactionService: TransactionService) {}
 
-  async handleRequest(): Promise<any> {
-    const message = await this.transactionService.getTransaction();
-    return {
-      statusCode: 200,
-      body: JSON.stringify({ message: message.content }),
-    };
+  async handleRequest(event: any): Promise<any> {
+    try {
+      const contentType = event.headers["content-type"] || event.headers["Content-Type"];
+      const result = await this.transactionService.processTransactions(event.body, contentType);
+
+      return {
+        statusCode: 200,
+        body: JSON.stringify(result),
+      };
+    } catch (error: any) {
+      return {
+        statusCode: 500,
+        body: JSON.stringify({ error: error.message }),
+      };
+    }
   }
 }

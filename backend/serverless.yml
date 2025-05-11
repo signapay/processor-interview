@@ -5,12 +5,12 @@ provider:
   runtime: nodejs18.x
 
 functions:
-  getTransaction:
+  processTransactions:
     handler: dist/lambda.handler
     events:
       - http:
-          path: transaction
-          method: get
+          path: process
+          method: post
 
 plugins:
   - serverless-offline

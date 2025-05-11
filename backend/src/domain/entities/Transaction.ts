@@ -1,4 +1,5 @@
-export class Transaction {
-    constructor(public content: string) {}Transaction: any
-  }
-  
+export interface Transaction {
+  cardNumber: string;
+  timestamp: string;
+  amount: number;
+}

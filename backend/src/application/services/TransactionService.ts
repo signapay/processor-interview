@@ -1,5 +1,5 @@
 import { Transaction } from "../../domain/entities/Transaction";
 
 export interface TransactionService {
-  getTransaction(): Promise<Transaction>;
+  processTransactions(data: string, contentType: string): Promise<Record<string, Record<string, number[]>>>;
 }
