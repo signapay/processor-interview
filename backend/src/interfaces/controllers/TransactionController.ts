@@ -1,6 +1,6 @@
 import { TransactionService } from "../../application/services/TransactionService";
 
-export class TransactionoController {
+export class TransactionController {
   constructor(private transactionService: TransactionService) {}
 
   async handleRequest(event: any): Promise<any> {
